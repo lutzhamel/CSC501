@@ -1,26 +1,42 @@
 # CSC501
 
-<a href="csc501-ln001.pdf">Introduction</a><br>
-<a href="csc501-ln002.pdf">String Rewriting Systems</a>(updated 9/16/16)<br>
-<a href="csc501-ln003.pdf">Grammars</a> <br>
-<a href="csc501-ln004.pdf">Natural Semantics</a> (Part 1)<br>
-<a href="csc501-ln005.pdf">Natural Semantics</a> (Part 2) <br>
-<a href="csc501-ln006.pdf">Natural Semantics</a> (Part 3) <br>
-<a href="csc501-ln007.pdf">Induction</a> (Part 1) <br>
-<a href="csc501-ln008.pdf">Induction</a> (Part 2) <br>
-<a href="prolog-tutorial.pdf">Prolog Tutorial</a><br>
-<a href="csc501-ln009.pdf">Executable Specifications - state, arithmetic expressions</a><br>
-<a href="csc501-ln010.pdf">Executable Specifications - boolean expressions, commands</a><br>
-<a href="csc501-ln011.pdf">Executable Specifications - declarations, type systems</a> <br>
-<a href="csc501-ln012.pdf">Executable Specifications - I/O, block structured languages</a> <br>
-<a href="csc501-ln013.pdf">Executable Specifications - functions</a> <br>
-<a href="csc501-ln014.pdf">Executable Specifications - program correctness</a><br>
-<a href="csc501-ln015.pdf">Executable Specifications - pre- and postconditions</a><br>
-<a href="csc501-ln016.pdf">Executable Specifications - program correctness and iteration</a><br>
-<a href="csc501-ln017.pdf">Executable Specifications - loop invariants</a><br>
-<a href="csc501-ln018.pdf">Executable Specifications - program correctness and recursive functions</a><br>
-<a href="csc501-ln019.pdf">Executable Specifications - translational semantics</a><br>
-<a href="csc501-ln020.pdf">Executable Specifications - translation, source and target semantics</a><br>
-<a href="csc501-ln021.pdf">Executable Specifications - compiler correctness</a><br>
-<a href="csc501-ln022.pdf">Elements of Model Theory</a><br>
-<a href="semester-review.pdf">Semester Review</a><br>
+### Basics
+
+https://raw.githubusercontent.com/lutzhamel/CSC501/main/notes/
+
+[Introduction](https://raw.githubusercontent.com/lutzhamel/CSC501/main/notes/csc501-ln001.pdf)<br>
+[String Rewriting Systems](https://raw.githubusercontent.com/lutzhamel/CSC501/main/notes/csc501-ln002.pdf)<br>
+[Grammars](https://raw.githubusercontent.com/lutzhamel/CSC501/main/notes/csc501-ln003.pdf)<br>
+
+### Natural Semantics
+
+[Natural Semantics (Part 1)](https://raw.githubusercontent.com/lutzhamel/CSC501/main/notes/csc501-ln004.pdf)<br>
+[Natural Semantics (Part 2)](https://raw.githubusercontent.com/lutzhamel/CSC501/main/notes/csc501-ln005.pdf)<br>
+[Natural Semantics (Part 3)](https://raw.githubusercontent.com/lutzhamel/CSC501/main/notes/csc501-ln006.pdf)<br>
+[Induction (Part 1)](https://raw.githubusercontent.com/lutzhamel/CSC501/main/notes/csc501-ln007.pdf)<br>
+[Induction (Part 2)](https://raw.githubusercontent.com/lutzhamel/CSC501/main/notes/csc501-ln008.pdf)<br>
+
+### Executable Specifications
+
+[Prolog Tutorial](https://raw.githubusercontent.com/lutzhamel/CSC501/main/notes/prolog-tutorial.pdf)<br>
+[state, arithmetic expressions](https://raw.githubusercontent.com/lutzhamel/CSC501/main/notes/csc501-ln009.pdf)<br>
+[boolean expressions, commands](https://raw.githubusercontent.com/lutzhamel/CSC501/main/notes/csc501-ln010.pdf)<br>
+[declarations, type systems](https://raw.githubusercontent.com/lutzhamel/CSC501/main/notes/csc501-ln011.pdf)<br>
+[I/O, block structured languages](https://raw.githubusercontent.com/lutzhamel/CSC501/main/notes/csc501-ln012.pdf)<br>
+[functions](https://raw.githubusercontent.com/lutzhamel/CSC501/main/notes/csc501-ln013.pdf)<br>
+[program correctness](https://raw.githubusercontent.com/lutzhamel/CSC501/main/notes/csc501-ln014.pdf)<br>
+[pre- and postconditions](https://raw.githubusercontent.com/lutzhamel/CSC501/main/notes/csc501-ln015.pdf)<br>
+[program correctness and iteration](https://raw.githubusercontent.com/lutzhamel/CSC501/main/notes/csc501-ln016.pdf)<br>
+[loop invariants](https://raw.githubusercontent.com/lutzhamel/CSC501/main/notes/csc501-ln017.pdf)<br>
+[program correctness and recursive functions](https://raw.githubusercontent.com/lutzhamel/CSC501/main/notes/csc501-ln018.pdf)<br>
+[translational semantics](https://raw.githubusercontent.com/lutzhamel/CSC501/main/notes/csc501-ln019.pdf)<br>
+[translation, source and target semantics](https://raw.githubusercontent.com/lutzhamel/CSC501/main/notes/csc501-ln020.pdf)<br>
+[compiler correctness](https://raw.githubusercontent.com/lutzhamel/CSC501/main/notes/csc501-ln021.pdf)<br>
+
+### Model Theory
+
+[Elements of Model Theory](https://raw.githubusercontent.com/lutzhamel/CSC501/main/notes/csc501-ln022.pdf)<br>
+
+### Review
+
+[Semester Review](https://raw.githubusercontent.com/lutzhamel/CSC501/main/notes/semester-review.pdf)<br>
