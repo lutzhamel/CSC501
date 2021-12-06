@@ -1,7 +1,9 @@
 # CSC501
 
+<center>
 <img src="https://raw.githubusercontent.com/lutzhamel/CSC501/main/notes/images/legoknot.jpg"
-  width="600" height="500">
+  width="400" height="300">
+</center>
 
 ### Basics
 
