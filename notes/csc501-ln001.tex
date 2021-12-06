@@ -6,7 +6,7 @@
 \begin{itemize}
 \item Subtitle: An Introduction to Formal Methods.
 \item	Instructor: Dr. Lutz Hamel
-\item	Email: hamel@cs.uri.edu
+\item	Email: lutzhamel@uri.edu
 \item	Office: Tyler, Rm 251
 \end{itemize}
 
@@ -19,19 +19,19 @@
 \end{frame}
 
 \begin{frame}{Books}
-There are no required books in this course; however, occasionally I will assign readings based on material 
+There are no required books in this course; however, occasionally I will assign readings based on material
 available on the web.
 \end{frame}
 
 \begin{frame}{Course Objectives}
 
-The aim of this course is to 
+The aim of this course is to
 \begin{itemize}
-\item Familiarize you with the basic techniques of applying formal methods to programming languages. 
+\item Familiarize you with the basic techniques of applying formal methods to programming languages.
 
-\item This includes constructing models for programming languages and using these models to prove properties such as correctness and equivalence of programs. 
+\item This includes constructing models for programming languages and using these models to prove properties such as correctness and equivalence of programs.
 
-\item Look at all major programming language constructs including assignments, loops, type systems, and procedure calls together with their models. 
+\item Look at all major programming language constructs including assignments, loops, type systems, and procedure calls together with their models.
 
 \item Introduce mechanical theorem provers so that we can test and prove properties of non-trivial programs.
 \end{itemize}
@@ -51,7 +51,7 @@ The aim of this course is to
 
 \begin{frame}{Formal Systems}
 \vspace{.1in}
-{\bf Definition:} 
+{\bf Definition:}
 A {\bf formal system} consists of a {\em formal language} and a set of  {\em inference rules}.
 The formal language is composed of
 primitive symbols that make up well formed formulas and the inference rules are used to derive expressions from other expressions within the formal system. A formal system may be formulated and studied for its intrinsic properties, or it may be intended as a description (i.e. a model) of external phenomena.\footnote{Wikipedia}
@@ -64,12 +64,12 @@ In order to be truly useful in computer science, we require our formal systems t
 \begin{frame}{Uses of Formal Methods}
 
 \begin{description}
-\item[\em Implementation Issues] Formally specified models can be considered machine-independent specifications of 
-program behavior. They can act as ``yard sticks'' for the correctness of program implementations, transformations, and 
-optimizations. 
-\item[\em Verification] Basis of methods for reasoning about program 
-properties (e.g. equivalence) and program specifications (program correctness). 
-\item[\em Language Design] Can bring to light ambiguities and unforeseen 
+\item[\em Implementation Issues] Formally specified models can be considered machine-independent specifications of
+program behavior. They can act as ``yard sticks'' for the correctness of program implementations, transformations, and
+optimizations.
+\item[\em Verification] Basis of methods for reasoning about program
+properties (e.g. equivalence) and program specifications (program correctness).
+\item[\em Language Design] Can bring to light ambiguities and unforeseen
 subtleties in programming language constructs.
 \end{description}
 \end{frame}
@@ -101,8 +101,8 @@ will generate a list of integers from 1 through 10.
 Mirroring our intuition, language definitions consist of two parts:
 
 \begin{description}
-\item[\em Syntax] The formal description of the 
-{\bf structure} of  well-formed expressions, phrases, programs, etc. 
+\item[\em Syntax] The formal description of the
+{\bf structure} of  well-formed expressions, phrases, programs, etc.
 \item[\em Semantics] The formal description of the {\bf  meaning} of the syntactic features of a programming language
 usually understood in terms of the runtime {\bf behavior} each syntactic construct evokes.  The formal description of the behavior of all
 the syntactic features of a language is considered a {\bf model} of the language.
@@ -217,7 +217,7 @@ Now consider an antecedent that is not true,
 \end{array}
 \]
 }
-Since the antecedent is not true rule $(3)$ allows us to conclude the 
+Since the antecedent is not true rule $(3)$ allows us to conclude the
 opposite of what the implication dictates.  However, the following is also
 valid reasoning,
 {\scriptsize
@@ -269,7 +269,7 @@ That is, the operator only produces a true value if $A$ and $B$ have the same tr
 Another, and very useful, way to look at the equivalence operator is as follows:
 \[
 A \Leftrightarrow B \equiv A \Rightarrow B \wedge B \Rightarrow A
-\] 
+\]
 {\bf Exercise:} Construct  the above truth table using this definition of the equivalence operator.
 \end{frame}
 
@@ -297,7 +297,7 @@ statements,
 Some examples,
 \begin{itemize}
 \item $\forall x,\exists y.\, y = x^2$
-\item $\forall x, \forall y.\, \mbox{female}(x) \wedge \mbox{child}(x,y) \Rightarrow \mbox{mother}(x,y)$ 
+\item $\forall x, \forall y.\, \mbox{female}(x) \wedge \mbox{child}(x,y) \Rightarrow \mbox{mother}(x,y)$
 \end{itemize}
 
 \end{frame}
@@ -313,7 +313,7 @@ A = \{a,b,c\}.
 There are a number of standard sets which come in handy,
 \begin{itemize}
 \item $\emptyset$ denotes the empty set, i. e. $\emptyset = \{ \}$,
-\item $\mathbb N$ denotes the set of all natural numbers including 0, e. g. ${\mathbb N} = \{0,1,2,3,\cdots\}$, 
+\item $\mathbb N$ denotes the set of all natural numbers including 0, e. g. ${\mathbb N} = \{0,1,2,3,\cdots\}$,
 \item $\mathbb I$ denotes the set of all integers, ${\mathbb I}= \{\cdots,-2,-1,0,1,2,\cdots\}$,
 \item $\mathbb R$ denotes the set of all reals,
 \item $\mathbb B$ denotes the set of boolean values, ${\mathbb B} = \{\mathit{true}, \mathit{false} \}$.
@@ -405,7 +405,7 @@ write
 a\, R\, b.
 \]
 Consider the relational operator $\le$ applied to the set ${\mathbb N}\times {\mathbb N}$.
-This induces a relation, call it $\le \subseteq {\mathbb N}\times {\mathbb N}$, with 
+This induces a relation, call it $\le \subseteq {\mathbb N}\times {\mathbb N}$, with
 $(a,b) \in \le$ (or $a \le b$ in our relational notation) if $a\in{\mathbb N}$ is less or equal to $b\in{\mathbb N}$.
 \end{frame}
 
@@ -446,7 +446,7 @@ where $x,y,z \in X$.
 \vspace{.1in}
 
 The {\em smallest} equivalence relation in some set $X$ is the equality relation defined above.
-The {\em largest} equivalence relation is some set is the cross product $X\times X$. (Consider the 
+The {\em largest} equivalence relation is some set is the cross product $X\times X$. (Consider the
 smallest/largest equiv. relation in $\mathbb I$)
 \end{frame}
 
@@ -477,7 +477,7 @@ Otherwise we say that the function is {\em undefined} at point $x$ and we write 
 
 \vspace{.1in}
 
-Note that $f(\perp) = \perp$  and we say the $f$ is {\em strict}.  
+Note that $f(\perp) = \perp$  and we say the $f$ is {\em strict}.
 \vspace{.1in}
 
 We say that $f\co X \rightarrow Y$ is a {\em total} function if $f$ is defined for all $x\in X$.
@@ -520,4 +520,3 @@ be the predicate that returns true if the object is a human and will return fals
 
 \end{document}
 %%%%%%%%%%%%%%%%%%%%%%%%%%% end of template1.tex %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

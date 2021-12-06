@@ -2,8 +2,6 @@
 
 ### Basics
 
-https://github.com/lutzhamel/CSC501/blob/main/notes/
-
 [Introduction](https://github.com/lutzhamel/CSC501/blob/main/notes/csc501-ln001.pdf)<br>
 [String Rewriting Systems](https://github.com/lutzhamel/CSC501/blob/main/notes/csc501-ln002.pdf)<br>
 [Grammars](https://github.com/lutzhamel/CSC501/blob/main/notes/csc501-ln003.pdf)<br>
