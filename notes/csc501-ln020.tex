@@ -1,0 +1,298 @@
+\documentclass{beamer}
+\include{defs}
+\begin{document}
+
+\begin{frame}[fragile]{Semantics of the Source Language}
+
+\scriptsize
+Source Language:
+\tiny
+\begin{verbatim}
+  A ::= n
+     |  x
+     |  add(A,A)
+     |  sub(A,A)
+     |  mult(A,A)
+
+  B ::= true
+     |  false
+     |  eq(A,A)
+     |  le(A,A)
+     |  not(B)
+     |  and(B,B)
+     |  or(B,B)
+
+  C ::= skip
+     |  assign(x,A)
+     |  seq(C,C)
+     |  if(B,C,C)
+     |  whiledo(B,C)
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]{Semantics of the Source Language}
+
+\scriptsize
+Semantics are the same compared to our initial simple imperative language; arithmetic
+expressions:
+
+\tiny
+\begin{alltt}
+(C,_) -->> C :-                    % constants
+    int(C),!.
+
+(X,State) -->> Val :-              % variables
+    atom(X),
+    lookup(X,State,Val),!.
+
+(add(A,B),State) -->> Val :-       % addition
+    (A,State) -->> ValA,
+    (B,State) -->> ValB,
+    Val xis ValA + ValB,!.
+
+(sub(A,B),State) -->> Val :-       % subtraction
+    (A,State) -->> ValA,
+    (B,State) -->> ValB,
+    Val xis ValA - ValB,!.
+
+(mult(A,B),State) -->> Val :-     % multiplication
+    (A,State) -->> ValA,
+    (B,State) -->> ValB,
+    Val xis ValA * ValB,!.
+\end{alltt}
+\end{frame}
+
+\begin{frame}[fragile]{Semantics of the Source Language}
+
+\scriptsize
+Boolean
+expressions:
+
+\tiny
+\begin{alltt}
+(true,_) -->> true :- !.               % constants
+
+(false,_) -->> false :- !.             % constants
+
+(eq(A,B),State) -->> Val :-            % equality
+    (A,State) -->> ValA,
+    (B,State) -->> ValB,
+    Val xis (ValA =:= ValB),!.
+
+(le(A,B),State) -->> Val :-            % le
+    (A,State) -->> ValA,
+    (B,State) -->> ValB,
+    Val xis (ValA =< ValB),!.
+
+(not(A),State) -->> Val :-             % not
+    (A,State) -->> ValA,
+    Val xis (not ValA),!.
+
+(and(A,B),State) -->> Val :-           % and
+    (A,State) -->> ValA,
+    (B,State) -->> ValB,
+    Val xis (ValA and ValB),!.
+
+(or(A,B),State) -->> Val :-            % or
+    (A,State) -->> ValA,
+    (B,State) -->> ValB,
+    Val xis (ValA or ValB),!.
+\end{alltt}
+\end{frame}
+
+
+\begin{frame}[fragile]{Semantics of the Source Language}
+
+\scriptsize
+Statements:
+
+\tiny
+\begin{alltt}
+(skip,State) -->> State :- !.          % skip                                                                                                
+
+(assign(X,A),State) -->> OState :-     % assignment                                                                                          
+    (A,State) -->> ValA,
+    put(X,ValA,State,OState),!.
+
+(seq(C0,C1),State) -->> OState :-      % composition, seq                                                                                    
+    (C0,State) -->> S0,
+    (C1,S0) -->> OState,!.
+
+(if(B,C0,_),State) -->> OState :-     % if                                                                                                   
+    (B,State) -->> true,
+    (C0,State) -->> OState,!.
+
+(if(B,_,C1),State) -->> OState :-     % if                                                                                                   
+    (B,State) -->> false,
+    (C1,State) -->> OState,!.
+
+(whiledo(B,_),State) -->> OState :-    % while                                                                                               
+    (B,State) -->> false,
+    State=OState,!.
+
+(whiledo(B,C),State) -->> OState :-    % while                                                                                               
+    (B,State) -->> true,
+    (C,State) -->> SC,
+    (whiledo(B,C),SC) -->> OState,!.
+\end{alltt}
+\end{frame}
+
+\begin{frame}[fragile]{Semantics of the Target Language}
+
+\scriptsize
+Target Language:
+\tiny
+\begin{verbatim}
+ prog ::= [ cmseq ]   |  [ ]
+
+ cmseq ::=  cm  |  cm , cmseq
+
+ cm ::= push(V)
+     |  add
+     |  sub
+     |  mult
+     |  and
+     |  or
+     |  neg
+     |  eq
+     |  le
+     |  pop(x)
+     |  label(L)
+     |  jmp(L)
+     |  jmpt(L)
+     |  jmpf(L)
+     |  stop
+
+ V ::=  x  |  n  | true | false
+
+ L ::=  <alpha string>
+\end{verbatim}
+
+ A state in our machine is a term of arity two where the first component
+ is an integer stack used for expression evaluation and the second component
+ is a binding environment for variables:
+\begin{quote}
+    '(Stack,Environment)'
+\end{quote}
+
+\end{frame}
+
+\begin{frame}[fragile]{Semantics of the Target Language}
+
+\scriptsize
+Flow of control instructions:  perhaps the most surprising part of the semantics for our target language
+is the notion of a {\em continuation}.  A continuation is a way to model the address space of the target machine
+so that we can perform {\em jumps} to labels.
+
+\tiny
+\begin{alltt}
+% the predicate '(+Syntax,+Continuation,+State) -->> -State' computes
+% the semantic value for each syntactic structure
+
+([],_,State) -->> State :- !.         % an empty instruction sequence is a noop
+
+([stop|_],_,State) -->> State :- !.   % the 'stop' instruction ignores the rest of the program
+
+([jmp(L)|_],Cont,State) -->> OState :-
+    afindlabel(L,Cont,JT),
+    (JT,Cont,State) -->> OState,!.
+
+([jmpt(_)|P],Cont,([false|Stk],Env)) -->> OState :-
+        (P,Cont,(Stk,Env)) -->> OState,!.
+    
+([jmpt(L)|_],Cont,([true|Stk],Env)) -->> OState :-
+         afindlabel(L,Cont,JT),(JT,Cont,(Stk,Env)) -->> OState,!.
+    
+([jmpf(L)|_],Cont,([false|Stk],Env)) -->> OState :-
+         afindlabel(L,Cont,JT),(JT,Cont,(Stk,Env)) -->> OState,!.
+
+([jmpf(_)|P],Cont,([true|Stk],Env)) -->> OState :-
+        (P,Cont,(Stk,Env)) -->> OState,!.
+\end{alltt}
+
+\end{frame}
+
+\begin{frame}[fragile]{Semantics of the Target Language}
+
+\scriptsize
+A continuation is a copy of the original program and we use it to look up jump targets:
+
+{\tiny
+\begin{alltt}
+% the predicate 'afindlabel(+Label,+Continuation,-JumpTarget)'
+% looks up a label definition in the continutation and returns its associate code.
+:- dynamic afindlabel/3.
+
+afindlabel(L,[label(L)|P],[label(L)|P]).
+
+afindlabel(L,[_|P],JT) :-
+    afindlabel(L,P,JT).
+
+afindlabel(_,[],_) :-
+   writeln('ERROR: label not found.'),!,fail.
+\end{alltt}
+}
+\end{frame}
+
+\begin{frame}[fragile]{Semantics of the Target Language}
+
+\scriptsize
+Computational instructions:
+\tiny
+\begin{verbatim}
+%%% computational instructions
+([Instr|P],Cont,State) -->> OState :-  % interpret an instruction sequence.
+    (Instr,Cont,State) -->> IState,
+    (P,Cont,IState) -->> OState,!.
+
+(push(C),_,(Stk,Env)) -->> ([C|Stk],Env) :-        % constants
+    int(C),!.
+
+(push(X),_,(Stk,Env)) -->> ([ValX|Stk],Env) :-     % variables
+    atom(X),
+    alookup(X,Env,ValX),!.
+
+(pop(X),_,([ValA|Stk],Env)) -->> (Stk,OEnv) :-  % store
+    aput(X,ValA,Env,OEnv),!.
+
+(add,_,([ValB,ValA|Stk],Env)) -->> ([Val|Stk],Env) :-  % addition
+    Val xis ValA + ValB,!.
+
+...
+
+(and,_,([ValB,ValA|Stk],Env)) -->> ([Val|Stk],Env) :-  % and
+    Val xis (ValA and ValB),!.
+
+...
+
+(neg,_,([ValA|Stk],Env)) -->> ([Val|Stk],Env) :-  % not
+    Val xis (not ValA),!.
+
+(label(_),_,State) -->> State :- !.
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]{Semantics of the Target Language}
+
+\scriptsize
+Interpreting the target language in its model,
+\begin{alltt}
+?- ['target.pl'].
+%  xis.pl compiled 0.00 sec, 6,824 bytes
+% target.pl compiled 0.00 sec, 14,600 bytes
+true.
+
+?- assert(program([push(1),push(2),add])).
+true.
+
+?- program(P), (P,{\color{red}P},([],e)) -->> S.
+P = [push(1), push(2), add],
+S = ([3], e).
+
+?- 
+\end{alltt}
+The {\tt P} in red is the continuation.
+\end{frame}
+
+\end{document}
+

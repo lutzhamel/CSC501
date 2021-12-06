@@ -1,0 +1,155 @@
+\documentclass{beamer}
+\include{defs}
+\begin{document}
+
+\begin{frame}[fragile]{Pre- and Postconditions}
+
+\scriptsize
+
+Up to now our program specifications only considered the effect of the program on
+the state, we simply assumed that the state before the program executes is suitable.
+
+\vspace{.1in}
+
+Let us refine our notion of program specification a little bit to include a specification
+of what we expect the state to look like before our program executes.
+
+\vspace{.1in}
+
+We do this with a pair of predicates: the precondition $\rm pre$ and the postcondition $\rm post$,\footnote{\tiny Definitions due to Wikipedia.}
+\begin{description}
+\item[Precondition] --
+A precondition is a predicate
+that must always be true just prior to the execution of some section of code. 
+If a precondition is violated,
+the effect of the section of code becomes undefined and thus may or may not
+carry out its intended work. 
+
+\item[Postcondition] --
+A postcondition is a predicate that must always be true just after the execution of some section of code.  If the postcondition is violated then the section of code did not execute correctly.
+\end{description}
+
+\end{frame}
+
+\begin{frame}[fragile]{Pre- and Postconditions}
+
+\small
+
+Formally we state this as follows:
+\[
+\forall s,\exists Q\; [\sem{(p,s}{Q} \wedge {\rm pre}(s) \Rightarrow{\rm post}(Q)],
+\]
+for some program $p$, where $s$ and $Q$ are states.
+
+\vspace{.1in}
+
+\begin{quote}
+\it The program is correct if when the precondition holds on the initial state then this implies that the
+postcondition holds on the final state.
+\end{quote}
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Pre- and Postconditions}
+
+\small
+
+Consider again our swap program.  Being more explicit about the contents
+of the initial state we have the precondition
+\[
+{\rm pre}(R) \equiv  {\rm lookup}(x,R,vx) \wedge {\rm lookup}(y,R,vy)
+\]
+and the postcondition
+\[
+{\rm post}(T) \equiv  {\rm lookup}(x,T,vy) \wedge {\rm lookup}(y,T,vx)
+\]
+\end{frame}
+
+
+\begin{frame}[fragile]{Pre- and Postconditions}
+
+{\scriptsize
+\begin{verbatim}
+% swap-prepost.pl
+:-['sem.pl'].
+
+:- >>> 'show that program P="assign(t,x) seq assign(x,y) seq assign(y,t))"'.
+:- >>> 'satisfies the program specification:'.
+:- >>> ' pre(R) = lookup(x,R,vx) ^ lookup(y,R,vy)'.
+:- >>> ' post(T) = lookup(x,T,vy) ^ lookup(y,T,vx)'.
+
+program(assign(t,x) seq assign(x,y) seq assign(y,t)).                                              
+                                                                                                   
+:- >>> 'assert precondition'.                                                                      
+:- asserta(lookup(x,s,vx)).
+:- asserta(lookup(y,s,vy)).                                                                        
+                                                                                                   
+:- >>> 'show that postcondition holds'.                                                            
+:- program(P),
+     (P,s) -->> Q,
+     lookup(x,Q,vy),
+     lookup(y,Q,vx).                                                                               
+\end{verbatim}
+}
+\end{frame}
+
+\begin{frame}[fragile]{Pre- and Postconditions}
+
+\small
+
+Consider the program that computes the maximum value of two variables, $n$ and $m$,
+and deposits the result into $z$.
+
+\vspace{.1in}
+
+The precondition is
+\[
+{\rm pre}(S) \equiv {\rm lookup}(m,S,vm) \wedge {\rm lookup}(n,S,vn)
+\]
+and the postcondition is
+\[
+{\rm post}(Q) \equiv {\rm lookup}(z,Q,VZ) \wedge V \mbox{ xis }({\rm max}(vm,vn)) \wedge VZ = V
+\]
+\end{frame}
+
+\begin{frame}[fragile]{Pre- and Post-Conditions}
+
+\tiny
+\begin{verbatim}
+% max-prepost.pl
+:-['sem.pl'].
+
+:- >>> 'show that program P="if(le(n,m),assign(z,m),assign(z,n))"'.
+:- >>> 'satisfies the program specification:'.
+:- >>> ' pre(S) = lookup(m,S,vm) ^ lookup(n,S,vm)'.
+:- >>> ' post(Q) = lookup(z,Q,VZ)) ^ V xis max(vm,vn) ^ VZ = V'.
+
+program(if(le(n,m),assign(z,m),assign(z,n))).
+
+:- >>> 'assert precondition'.
+:- asserta(lookup(m,s,vm)).
+:- asserta(lookup(n,s,vn)).                                                                        
+                                                                                                   
+:- >>> 'show that postcondition holds; case analysis on values vm and vn'.                                                       
+:- >>> 'case max(vm,vn)=vm'.                                                                       
+:- asserta(vm xis max(vm,vn)).
+% this implies that
+:- asserta(true xis (vn =< vm)).
+:- program(P),  (P,s) -->> Q, lookup(z,Q,VZ), V xis max(vm,vn), VZ = V.
+:- retract(vm xis max(vm,vn)).
+:- retract(true xis (vn =< vm)).
+
+:- >>> 'case max(vm,vn)=vn'.
+:- asserta(vn xis max(vm,vn)).
+% this implies that
+:- asserta(false xis (vn =< vm)).
+:- program(P), (P,s) -->> Q, lookup(z,Q,VZ), V xis max(vm,vn), VZ = V.
+:- retract(vn xis max(vm,vn)).
+:- retract(false xis (vn =< vm)).
+\end{verbatim}
+
+\end{frame}
+
+\end{document}
+

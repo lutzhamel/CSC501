@@ -1,0 +1,269 @@
+\documentclass{beamer}
+\include{defs}
+\begin{document}
+
+\begin{frame}[fragile]{Models}
+
+\begin{quote}
+One person's syntax is another person's semantics.
+\end{quote}
+
+One particular view of semantics is that is a regression of languages.  Consider our translational semantics:
+\[
+\mbox{source language $\rightarrow$ stack machine language $\rightarrow$ Prolog}
+\]
+If we only consider the first half of this diagram then we are assigning semantics to the source language in terms
+of syntactic snippets of the stack machine language.  
+
+\vspace{.1in}
+
+If we only consider the second part of the diagram then
+we are interpreting stack machine language syntax in terms of Prolog constructs (the thing we have done all along
+in this course).
+\end{frame}
+
+
+\begin{frame}[fragile]{Models}
+A fundamental question in semantics is: When is it reasonable to end this regression? 
+
+\vspace{.1in}
+
+The answer: when the final language
+in this regression is a formal language that can be understood in mathematical terms.
+
+\vspace{.1in}
+
+There is a reason why we chose Prolog as our semantic modeling language, because Prolog itself has
+a semantics -- Model Theory,
+
+\[
+\mbox{Prolog $\rightarrow$ Model Theory}
+\]
+
+That is, every Prolog program can be interpreted in a ``first order model'' sometimes also called the {\em Herbrand Universe}.\footnote{{en.wikipedia.org/wiki/Term\_algebra}}
+\end{frame}
+
+\begin{frame}[fragile]{Models}
+
+Now, if look at what we have done for the major part of the course and then attach the semantics of Prolog we get this diagram,
+
+\[
+\mbox{source language $\rightarrow$ Prolog $\rightarrow$ Model Theory}
+\]
+
+Considering that interpretation is transitive this means by using Prolog as our defining language for our source languages
+we obtain formal (mathematical) models for our own languages!
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Elements of Model Theory}
+
+\begin{itemize}
+\item 
+Model theory is the study of semantics for logic and provides the formal justification 
+for using Prolog as a defining language and as a theorem prover.
+
+\item
+Similar to our models we constructed in this class, the models in Model  Theory
+provide an interpretation for the syntactic units appearing in a logic program.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]{Elements of Model Theory}
+
+\small
+\begin{itemize}
+\item 
+Let's start with what we know, we know how to write logic programs and deduce 
+knowledge from them.
+
+\item
+Let's consider the following logic program $P$:
+{\scriptsize
+\begin{alltt}
+odd(s(0)).
+odd(s(s(X))) :- odd(X).
+\end{alltt}
+}
+Here the functor {\tt s} represents the successor function that takes an integer value and produces the integer
+value that follows that integer.  That is {\tt s(0)} represents 1 and {\tt s(s(0))} represents 2, etc.
+
+\item
+Given this program we now can pose queries to extract knowledge:
+{\scriptsize
+\begin{alltt}
+?- odd(s(s(s(s(s(0)))))).
+true 
+
+?- odd(s(s(0))).
+false.
+
+?- 
+\end{alltt}
+}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]{Elements of Model Theory}
+
+\small
+\begin{itemize}
+\item 
+Given our program $P$ and our query $q$:
+{\scriptsize
+\begin{alltt}
+?- odd(s(s(s(s(s(0)))))).
+true 
+\end{alltt}
+}
+We say that $q$ {\em derives} from $P$ and we write
+\[
+P \vdash q
+\]
+
+\item
+Here the $\vdash$ operator represents inferencing in logic and in this particular case it represents
+inferencing via {\em resolution}.
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Elements of Model Theory}
+
+\small
+\begin{itemize}
+\item 
+Now, when we wrote our program $P$:
+{\scriptsize
+\begin{alltt}
+odd(s(0)).
+odd(s(s(X))) :- odd(X).
+\end{alltt}
+}
+we had a particular model in mind.  In particular, we probably thought about the natural numbers $\mathbb{N}$.
+
+\item
+Taking the natural numbers together with the $nodd$ operation gives us our model $M$:
+\[
+(\mathbb{N}, nodd) %%% TODO: the model should be expanded to include the booleans
+\]
+where $nodd : \mathbb{N} \rightarrow \{true,false\}$ is defined as the function\footnote{Notice that with this definition 0 is an even number.}
+\[
+nodd(x) = \left\{
+\begin{array}{ll}
+true & \mbox{ if $x\!\!\!\!\mod 2 = 0,$}\\
+false & \mbox{ if $x\!\!\!\!\mod 2 = 1,$}
+\end{array}
+\right .
+\]
+for all $x\in\mathbb{N}$.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Elements of Model Theory}
+
+\small
+\begin{itemize}
+\item
+It is now easy to show that each sentence $p \in P$ is {\em satisfied} by this model, {\it i.e.}, 
+each sentence $p\in P$ is true in model $M$, where $P$ is our {\tt odd} program.
+
+% TODO: should talk more about the actual interpretation.
+\item
+We can formally show this for the first sentence,
+\begin{alltt}
+odd(s(0)).
+\end{alltt}
+if we let ${\tt s(0)}\mapsto 1$ and ${\tt odd}\mapsto nodd$ then $nodd(1)$ is true in
+$M$.  
+
+\item Similarly for the sentence {\tt odd(s(s(X))) :- odd(X)}, this can be shown by induction over the odd natural numbers.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Elements of Model Theory}
+
+\begin{itemize}
+\item
+ If our model satisfies some sentence $p$ then we write:
+\[
+M \models p
+\]
+and we say that {\em sentence $p$ is true in model $M$}.
+
+\item
+If our model $M$ satisfies every sentence $p$ in $P$ then we write
+\[
+M \models P
+\]
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]{Elements of Model Theory}
+
+\small
+Assume that we have $M \models P$, 
+\begin{itemize}
+\item 
+We say that our logic is {\em sound} if anything that we can derive from our program $P$
+is also true in our model $M$. Formally,
+\[
+P \vdash p \Rightarrow M \models p
+\]
+
+\item
+We say that our logic is {\em complete} if anything that is true in the model can be
+derived from the program $P$. Formally,
+\[
+M \models p \Rightarrow P \vdash p
+\]
+
+\end{itemize}
+
+It has been shown that resolution is sound and complete,\footnote{
+{\it Foundations of Logic Programming},Lloyd, J.W.,Springer-Verlag, 1987.}
+that means, anything we can query from the program will be true in
+the model, and anything that is true in the model can be deduced from the
+program using queries.\footnote{Well, with some help - Prolog's implementation 
+of resolution turns out not to be complete.}
+\end{frame}
+
+
+\begin{frame}[fragile]{Elements of Model Theory}
+
+\small
+\begin{itemize}
+\item 
+In terms of programming language semantics, let $P$ be a description of
+a programming language model, let $M$ be the intended model, then because
+of soundness and completeness, any characteristic $c$ about our 
+programming language that can be deduced from $P$ will also be true 
+in the intended model,
+\[
+P \vdash c \Rightarrow M \models c
+\]
+and any characteristic $c$ that is true in $M$ can be proven,
+\[
+M \models c \Rightarrow P \vdash c
+\]
+
+\item
+That means, we are justified to use Prolog as a theorem prover to prove
+characteristics about our programming language models.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]{Elements of Model Theory}
+
+\begin{center}
+\makebox{\LARGE\color{red}THE END}
+\end{center}
+\end{frame}
+
+\end{document}
+

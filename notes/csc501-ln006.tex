@@ -1,0 +1,403 @@
+%template1.tex
+%The following LaTeX source file represents the simplest kind of slide presentation; no overlays, no included graphics. Substitute your favorite style for ``pascal''. To create the PDF file template1.pdf, (1) be sure to use the prosper class, then (2) execute the command latex template1.tex, and (3) the command dvipdf template1.dvi.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% template1.tex %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass{beamer}
+\include{defs}
+\begin{document}
+
+\begin{frame}{Program Evaluation}
+Compute the semantic value of the program $x := 2; y := 3$.  Assume the initial
+state $\sigma_0$.  We want to compute the value $\sigma \in \Sigma$ where
+\[
+( x := 2; y := 3,\sigma_0) \mapsto \sigma
+\]
+
+\vspace{.2in}
+
+From our evaluation rules we have,
+{\small
+\begin{prooftree}
+\AxiomC{}
+\UnaryInfC{$( 2,\sigma_0) \mapsto 2$}
+\UnaryInfC{$( x := 2, \sigma_0) \mapsto \sigma_0[2/x]$}
+\AxiomC{}
+\UnaryInfC{$( 3,\sigma_0[2/x]) \mapsto 3$}
+\UnaryInfC{$( y := 3, \sigma_0[2/x]) \mapsto (\sigma_0[2/x])[3/y]$}
+\BinaryInfC{$( x := 2; y := 3, \sigma_0) \mapsto (\sigma_0[2/x])[3/y]$}
+\end{prooftree}
+}
+
+We have $\sigma = (\sigma_0[2/x])[3/y]$. What is the value for
+$\sigma(y)$ and 
+$\sigma(x)$?
+How about $\sigma(z)$, $z \in \syntaxset{Loc}$? 
+
+\end{frame}
+
+
+\begin{frame}{Program Evaluation}
+Compute the semantic value of the program $x := 1; y := x + 1$.  Assume the initial
+state $\sigma_0$.  We want to compute the value $\sigma \in \Sigma$ where
+\[
+( x := 1; y := x + 1,\sigma_0) \mapsto \sigma
+\]
+
+\vspace{.2in}
+
+From our evaluation rules we have,
+{\small
+\begin{prooftree}
+\AxiomC{}
+\UnaryInfC{$( 1,\sigma_0) \mapsto 1$}
+\UnaryInfC{$( x := 1, \sigma_0) \mapsto \sigma_0[1/x]$}
+\AxiomC{}
+\UnaryInfC{\pairmap{x}{\sigma_0[1/x]}{1}}
+\AxiomC{}
+\UnaryInfC{$( 1,\sigma_0[1/x]) \mapsto 1$}
+\BinaryInfC{\pairmap{x + 1}{\sigma_0[1/x]}{2}}
+\UnaryInfC{$( y :=  x + 1, \sigma_0[1/x]) \mapsto (\sigma_0[1/x])[2/y]$}
+\BinaryInfC{$( x := 1; y := x + 1, \sigma_0) \mapsto (\sigma_0[1/x])[2/y]$}
+\end{prooftree}
+}
+
+We have $\sigma = (\sigma_0[1/x])[2/y]$.
+
+\end{frame}
+
+
+
+\begin{frame}{Program Evaluation}
+Compute the semantic value of the program $x := 2; x := 4$.  Assume the initial
+state $\sigma_0$.  We want to compute the value $\sigma \in \Sigma$ where
+\[
+( x := 2; x := 4,\sigma_0) \mapsto \sigma
+\]
+
+\vspace{.2in}
+
+From our evaluation rules we have,
+{\small
+\begin{prooftree}
+\AxiomC{}
+\UnaryInfC{$( 2,\sigma_0) \mapsto 2$}
+\UnaryInfC{$( x := 2, \sigma_0) \mapsto \sigma_0[2/x]$}
+\AxiomC{}
+\UnaryInfC{$( 4,\sigma_0[2/x]) \mapsto 4$}
+\UnaryInfC{$( x := 4, \sigma_0[2/x]) \mapsto \sigma_0[4/x]$}
+\BinaryInfC{$( x := 2; x := 4, \sigma_0) \mapsto \sigma_0[4/x]$}
+\end{prooftree}
+}
+
+We have $\sigma = \sigma_0[4/x]$. What is the value for
+$\sigma(y)$ and 
+$\sigma(x)$?
+How about $\sigma(z)$, $z \in \syntaxset{Loc}$? 
+
+\end{frame}
+
+
+\begin{frame}{Program Evaluation}
+Compute the semantic value of the program 
+\[
+x := 1; \ifstmt{x = 1}{x := 2}{x := 3}.
+\]  
+Assume the initial
+state $\sigma_0$.  We want to compute the value $\sigma \in \Sigma$ where
+\[
+( x := 1; \ifstmt{x = 1}{x := 2}{x := 3},\sigma_0) \mapsto \sigma
+\]
+
+\vspace{.2in}
+
+From our evaluation rules we have,
+{\tiny
+\begin{prooftree}
+\def\ScoreOverhang{1pt}
+\def\defaultHypSeparation{\hskip.1in}
+
+% eval assignment
+\AxiomC{$( 1,\sigma_0) \mapsto 1$}
+\UnaryInfC{$( x := 1, \sigma_0) \mapsto \sigma_0[1/x]$}
+
+% eval condition of if
+\AxiomC{$( x,\sigma_0[1/x]) \mapsto 1$}
+\AxiomC{$( 1,\sigma_0[1/x]) \mapsto 1$}
+\BinaryInfC{$( x = 1, \sigma_0[1/x]) \mapsto {\bf true}$}
+
+% eval statement in then clause
+\AxiomC{$( 2,\sigma_0[1/x]) \mapsto 2$}
+\UnaryInfC{$( x := 2, \sigma_0[1/x]) \mapsto \sigma_0[2/x]$}
+
+% eval if statement
+\BinaryInfC{$( \ifstmt{x = 1}{x := 2}{x := 3},\sigma_0[1/x]) \mapsto \sigma_0[2/x]$}
+
+% eval the whole program
+\BinaryInfC{$( x := 1; \ifstmt{x = 1}{x := 2}{x := 3},\sigma_0) \mapsto \sigma_0[2/x]$}
+\end{prooftree}
+}
+\end{frame}
+
+\begin{frame}{Program Evaluation}
+Compute the semantic value of the program 
+\[
+x := 2; \ifstmt{x = 1}{x := 2}{x := 3}.
+\]  
+Assume the initial
+state $\sigma_0$.  We want to compute the value $\sigma \in \Sigma$ where
+\[
+( x := 2; \ifstmt{x = 1}{x := 2}{x := 3},\sigma_0) \mapsto \sigma
+\]
+
+\vspace{.2in}
+
+From our evaluation rules we have,
+{\tiny
+\begin{prooftree}
+\def\ScoreOverhang{1pt}
+\def\defaultHypSeparation{\hskip.1in}
+
+% eval assignment
+\AxiomC{$( 2,\sigma_0) \mapsto 2$}
+\UnaryInfC{$( x := 2, \sigma_0) \mapsto \sigma_0[2/x]$}
+
+% eval condition of if
+\AxiomC{$( x,\sigma_0[2/x]) \mapsto 2$}
+\AxiomC{$( 1,\sigma_0[2/x]) \mapsto 1$}
+\BinaryInfC{$( x = 1, \sigma_0[2/x]) \mapsto {false}$}
+
+% eval statement in then clause
+\AxiomC{$( 3,\sigma_0[2/x]) \mapsto 3$}
+\UnaryInfC{$( x := 3, \sigma_0[2/x]) \mapsto \sigma_0[3/x]$}
+
+% eval if statement
+\BinaryInfC{$( \ifstmt{x = 1}{x := 2}{x := 3},\sigma_0[2/x]) \mapsto \sigma_0[3/x]$}
+
+% eval the whole program
+\BinaryInfC{$( x := 2; \ifstmt{x = 1}{x := 2}{x := 3},\sigma_0) \mapsto \sigma_0[3/x]$}
+\end{prooftree}
+}
+\end{frame}
+
+\begin{frame}{Program Evaluation}
+Compute the semantic value of the program 
+\[
+x := 1; \whilestmt{x = 1}{x := 2}.  
+\]
+Assume the initial
+state $\sigma_0$.  We want to compute the value $\sigma \in \Sigma$ where
+\[
+( x := 1; \whilestmt{x = 1}{x := 2},\sigma_0) \mapsto \sigma
+\]
+\end{frame}
+
+\begin{frame}{Program Evaluation}
+We do this evaluation in parts otherwise it is too unmanageable. Let
+\[
+( x:= 1, \sigma_0) \mapsto \sigma'
+\]
+for $\sigma' \in \Sigma$.  
+\begin{prooftree}
+\AxiomC{\pairmap{1}{\sigma_0}{1}}
+\UnaryInfC{\pairmap{x := 1}{\sigma_0}{\sigma_0[1/x]}}
+\end{prooftree}
+
+Therefore, $\sigma' = \sigma_0[1/x]$.
+\end{frame}
+
+\begin{frame}{Program Evaluation}
+We now compute,
+\[
+\pairmap{\whilestmt{x = 1}{x := 2}}{\sigma'}{\sigma}
+\]
+or
+\[
+\pairmap{\whilestmt{x = 1}{x := 2}}{\sigma_0[1/x]}{\sigma}
+\]
+
+{\tiny
+\begin{prooftree}
+\def\ScoreOverhang{1pt}
+\def\defaultHypSeparation{\hskip.05in}
+
+
+\AxiomC{$\vdots$}
+\UnaryInfC{$( x = 1, \sigma_0[1/x]) \mapsto {true}$}
+
+
+\AxiomC{$\vdots$}
+\UnaryInfC{$( x := 2, \sigma_0[1/x]) \mapsto  \sigma_0[2/x]$}
+
+
+
+\AxiomC{$\vdots$}
+\UnaryInfC{$( x = 1, \sigma_0[2/x]) \mapsto {false}$}
+\UnaryInfC{$( \whilestmt{x = 1}{x := 2},\sigma_0[2/x]) \mapsto \sigma_0[2/x]$}
+
+\TrinaryInfC{$( \whilestmt{x = 1}{x := 2},\sigma_0[1/x]) \mapsto \sigma_0[2/x]$}
+
+\end{prooftree}
+
+}
+
+Therefore, $\sigma = \sigma_0[2/x]$.
+\end{frame}
+
+\begin{frame}{Program Equivalence 1}
+Given $c_0, c_1 \in \syntaxset{Com}$, then we can define program equivalence as
+\fframe{
+\[
+c_0 \sim c_1 \mbox{ iff } \forall \sigma\in\Sigma, \exists \sigma' \in \Sigma.\; \pairmap{c_0}{\sigma}{\sigma'} \wedge \pairmap{c_1}{\sigma}{\sigma'}
+\]
+}
+
+%\vspace{.2in}
+
+\end{frame}
+
+\begin{frame}{Program Equivalence}
+Show that $x := 1\, ; y:= x \; \sim \; x:=1\, ; y:= 1$ for $x,y\in\syntaxset{Loc}$ and $1\in\syntaxset{I}$.
+
+\vspace{.1in}
+
+{\em Proof:}  We show that
+\[
+\forall \sigma,\exists\sigma'.\; (x := 1\, ; y:= x,\sigma)\mapsto\sigma' \wedge (x := 1\, ; y:= 1,\sigma)\mapsto\sigma' 
+\]
+for $\sigma,\sigma'\in \Sigma$.  Consider $(x := 1\, ; y:= x,\sigma)\mapsto\sigma' $, our semantics
+gives us the following derivation,
+{\scriptsize
+\begin{prooftree}
+\AxiomC{$(1,\sigma)\mapsto 1$}
+\UnaryInfC{$(x := 1,\sigma)\mapsto\sigma[1/x]$}
+
+\AxiomC{$(x,\sigma[1/x])\mapsto \sigma[1/x](x) = 1$}
+\UnaryInfC{$(y := x,\sigma[1/x])\mapsto(\sigma[1/x])[1/y]$}
+
+\BinaryInfC{$(x := 1\, ; y:= x,\sigma)\mapsto(\sigma[1/x])[1,y] $}
+\end{prooftree}
+}
+with $\sigma' = (\sigma[1/x])[1,y]$.
+
+\end{frame}
+
+\begin{frame}{Program Equivalence}
+
+Now consider $(x := 1\, ; y:= 1,\sigma)\mapsto\sigma' $, our semantics
+gives us the following derivation,
+{\scriptsize
+\begin{prooftree}
+\AxiomC{$(1,\sigma)\mapsto 1$}
+\UnaryInfC{$(x := 1,\sigma)\mapsto\sigma[1/x]$}
+
+\AxiomC{$(1,\sigma[1/x])\mapsto  1$}
+\UnaryInfC{$(y := 1,\sigma[1/x])\mapsto(\sigma[1/x])[1/y]$}
+
+\BinaryInfC{$(x := 1\, ; y:= 1,\sigma)\mapsto(\sigma[1/x])[1,y] $}
+\end{prooftree}
+}
+with $\sigma' = (\sigma[1/x])[1,y]$.
+
+\vspace{.1in}
+
+This concludes the proof. $\Box$
+
+\end{frame}
+
+\begin{frame}{Program Equivalence}
+\small
+Show that $x := x \sim {\bf skip}$ for $x \in \syntaxset{Loc}$.
+
+\vspace{.1in}
+
+{\em Proof:}  We show that
+\[
+\forall \sigma, \exists \sigma'.\; \pairmap{x := x}{\sigma}{\sigma'} \wedge \pairmap{\bf skip}{\sigma}{\sigma'}
+\]
+for $\sigma, \sigma' \in \Sigma$ and $x \in \syntaxset{Loc}$.
+Consider $\pairmap{x := x}{\sigma}{\sigma'}$ with some
+states $\sigma, \sigma' \in \Sigma$ and $x \in \syntaxset{Loc}$.  
+We then have a derivation
+\begin{prooftree}
+\AxiomC{\pairmap{x}{\sigma}{\sigma(x)}}
+\RightLabel{, where $\sigma' = \sigma[\sigma(x)/x]$}
+\UnaryInfC{\pairmap{x := x}{\sigma}{\sigma'}}
+\end{prooftree}
+We now show that $\sigma' = \sigma$.  It is easy to see that for any $y\in \syntaxset{Loc}$ with
+$y \ne x$ we have $\sigma'(y) = \sigma[\sigma(x)/x](y) = \sigma(y)$.
+Also note that $\sigma'(x) = \sigma[\sigma(x)/x](x) = \sigma(x)$.  These are the only two 
+possibilities and therefore we have $\sigma'(z) =\sigma(z)$ for all $z\in \syntaxset{Loc}$.
+Functions that agree on the co-domain values over their whole domains are considered to be
+equal.  This implies that $\sigma' = \sigma$ and therefore $\pairmap{x := x}{\sigma}{\sigma}$.
+That is, the statement $x:= x$ preserves the state.
+\end{frame}
+
+\begin{frame}{Program Equivalence}
+
+Now consider $({\bf skip},\sigma)\mapsto \sigma'$ with $\sigma,\sigma'\in\Sigma$.  Our 
+operational semantics gives us a derivation
+\begin{prooftree}
+\AxiomC{}
+\RightLabel{, where $\sigma' = \sigma$}
+\UnaryInfC{\pairmap{\bf skip}{\sigma}{\sigma'}}
+\end{prooftree}
+It follows that the statement $\bf skip$ preserves the state.  
+
+\vspace{.1in}
+
+This concludes the proof. $\Box$
+\end{frame}
+
+\begin{frame}{Program Equivalence}
+
+How would you show $x := 1\, ; y:= x \; \sim \; y:=1\, ; x:= y$?  What is the problem here?  
+How would you solve it?
+
+\end{frame}
+
+
+\begin{frame}{Program Equivalence}
+Are the programs
+\[
+p \equiv c_0; \ifstmt{b}{c_1}{c_2}
+\]
+and
+\[
+p' \equiv \ifstmt{b}{(c_0; c_1)}{(c_0; c_2)}
+\]
+equivalent?  For all $c_0, c_1, c_2 \in \syntaxset{Com}$ and $b \in \syntaxset{Bexp}$.
+\end{frame}
+
+\begin{frame}{Program Equivalence}
+
+\small
+
+{\bf Proposition:} $p \not\sim p'$.
+
+{\bf Proof:} It suffices to show that there exists some program fragment $c_0, c_1, c_2$ or
+boolean expression $b$ such that the two programs $p$ and $p'$ do not compute the same
+final state $\sigma'$ given the same initial state $\sigma$.  One such choice is:
+$c_0 \equiv x := 1$, $c_1 \equiv x := 2$,  $c_2 \equiv x := 3$, and $b \equiv x = 1$.
+With this assignment we have 
+\[
+p \equiv x := 1; \ifstmt{x = 1}{x := 2}{x := 3}
+\] 
+and
+\[
+p' \equiv \ifstmt{x = 1}{(x := 1; x:= 2)}{(x := 1; x := 3)}.
+\]
+Program equivalence implies that
+for all $\sigma, \sigma' \in \Sigma$ we have $\pairmap{p}{\sigma}{\sigma'}$ and
+$\pairmap{p'}{\sigma}{\sigma'}$.  Since this must hold for all states, it must also hold for
+some state $\sigma[0/x]$.  However, it is easily verified that \pair{p}{\sigma[0/x]} and \pair{p'}{\sigma[0/x]}
+evaluate to different semantic values and therefore $p$ and $p'$ cannot be equivalent. $\Box$
+\end{frame}
+
+\begin{frame}{Assignments}
+
+HW\#2 -- see webpage
+
+\end{frame}
+\end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%% end of template1.tex %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

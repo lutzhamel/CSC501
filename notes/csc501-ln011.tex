@@ -1,0 +1,598 @@
+%template1.tex
+%The following LaTeX source file represents the simplest kind of slide presentation; no overlays, no included graphics. Substitute your favorite style for ``pascal''. To create the PDF file template1.pdf, (1) be sure to use the prosper class, then (2) execute the command latex template1.tex, and (3) the command dvipdf template1.dvi.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% template1.tex %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass{beamer}
+\include{defs}
+\begin{document}
+
+\begin{frame}[fragile]{Declarations}
+\begin{itemize}
+\item
+In programming languages, a \ul{declaration} specifies the identifier, type, and other properties (e.g. `static') of language elements such as variables and functions. \footnote{loosely quoted from http://en.wikipedia.org/wiki/Type\_declaration}
+
+
+\item
+A declaration is used to announce the \ul{existence} of the language element as part of the semantics of the language.  
+
+\item
+Many languages (such as C and Java) require variables to be declared before use.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]{Declarations}
+\scriptsize
+Let's extend  our IMP programming language with variable declarations.  We continue to assume that 
+the only type we have in our language is the integer type.  This means the only job of the variable declaration
+at this point is to announce the existence of a variable.
+
+\vspace{.1in}
+
+We will enforce two rules:
+\begin{itemize}
+\item  We need to declare variables before using them (`${\bf var}(x)$' syntax), using an undeclared variable
+will result in an error.
+\item Declaring the same variable twice is not allowed.
+\end{itemize}
+
+Consider the following programs, determine if they are valid or not valid according to the rules:
+\[
+{\bf assign}(x, 3)
+\]
+\[
+{\bf var}(x) \; {\bf seq}\; {\bf assign}(x, 3)
+\]
+\[
+{\bf var}(x) \; {\bf seq}\; {\bf assign}(x, 3) \; {\bf seq} \; {\bf var}(x) \; {\bf seq}\; {\bf assign}(x, 4)
+\]
+\[
+{\bf var}(x) \; {\bf seq}\; {\bf assign}(x, 3) \; {\bf seq}\; {\bf assign}(x, {\bf add}(y,1))
+\]
+\[
+{\bf var}(x) \; {\bf seq}\; {\bf assign}(x, 3) \; {\bf seq} \; {\bf var}(y) \; {\bf seq}\; {\bf assign}(x, {\bf add}(y,1))
+\]
+\end{frame}
+
+\begin{frame}[fragile]{\large Declaration Semantics}
+We add the `${\bf var}(x)$' command to the syntax:
+
+\vspace{.1in}
+
+\begin{minipage}[t]{1.8in}
+\tiny
+\begin{alltt}
+  A ::= n
+     |  x
+     |  add(A,A)
+     |  sub(A,A)
+     |  mult(A,A)
+
+  B ::= true
+     |  false
+     |  eq(A,A)
+     |  le(A,A)
+     |  not(B)
+     |  and(B,B)
+     |  or(B,B)
+\end{alltt}
+\end{minipage}
+\begin{minipage}[t]{1.8in}
+\tiny
+\begin{alltt}
+
+  C ::= skip
+     |  {\color{red}var(x)}      
+     |  assign(x,A)
+     |  seq(C,C)
+     |  if(B,C,C)
+     |  whiledo(B,C)
+\end{alltt}
+\end{minipage}
+\end{frame}
+
+
+\begin{frame}[fragile]{\large Declaration Semantics}
+From a semantics perspective, the `${\bf var}(x)$' command needs to remember that the variable $x$ was declared in the program.  This gives rise to the following rule,
+
+\vspace{.1in}
+
+{\tiny
+\begin{alltt}
+(var(X),State) -->> OState :-          % decl, if lookup is successful
+    lookup(X,State,_),!,	       % then var(x) must fail,	only
+    fail.			       % one var declaration allowed
+
+(var(X),State) -->> OState :-          % decl, we have shown that lookup is not
+    put(X,0,State,OState),!.           % successful, therefore enter the new var
+
+\end{alltt}
+}
+
+\vspace{.1in}
+
+This implies that our lookup needs to fail in the initial state,
+
+\vspace{.1in}
+
+{\tiny
+\begin{alltt}
+lookup(_,s0,_) :- !,fail.
+\end{alltt}
+}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{\large Declaration Semantics}
+Assignments can only succeed if the variable on the left side was declared,
+
+\vspace{.1in}
+
+{\tiny
+\begin{alltt}
+(assign(X,A),State) -->> OState :-     % assignment
+    lookup(X,State,_),	      	       % only allowed to assign	to variables
+    (A,State) -->> ValA,      	       % that have been	declared
+    put(X,ValA,State,OState),!.
+\end{alltt}
+}
+
+\vspace{.1in}
+
+Since this is the only semantic rule for assignments, if the lookup fails, the program will fail.
+Expressions with variables can only be evaluated if the variable has been declared,
+
+\vspace{.1in}
+
+{\tiny
+\begin{alltt}
+(X,State) -->> Val :-              % variables
+    atom(X),
+    lookup(X,State,Val),!.
+\end{alltt}
+}
+
+\vspace{.1in}
+
+{\bf Note:} Nothing has changed with this semantic rule, except that lookup fails if the {\tt X} is not declared.
+
+\end{frame}
+
+\begin{frame}[fragile]{\large Declaration Semantics}
+\tiny
+\begin{alltt}
+?- ['sem-decl.pl'].
+%   xis.pl compiled 0.00 sec, 6,920 bytes
+%  preamble.pl compiled 0.00 sec, 8,084 bytes
+%  xis.pl compiled 0.01 sec, 148 bytes
+% sem-decl.pl compiled 0.01 sec, 14,948 bytes
+true.
+
+?- (assign(x, 3),s0)-->>V.
+false.
+
+?- ((var(x) seq assign(x, 3)),s0)-->>V.
+V = state([bind(3, x), bind(0, x)], s0).
+
+?- ((var(x) seq assign(x, 3) seq var(x) seq assign(x, 4)),s0)-->>V.
+false.
+
+?- ((var(x) seq assign(x, 3) seq assign(x, plus(y, 1))),s0)-->>V.
+false.
+
+?- ((var(x) seq assign(x, 3) seq var(y) seq assign(x, add(y, 1))),s0)-->>V. 
+V = state([bind(1, x), bind(0, y), bind(3, x), bind(0, x)], s0).
+
+?- 
+
+\end{alltt}
+\end{frame}
+
+\begin{frame}[fragile]{Types}
+
+\small
+
+Types and type systems are fundamental in modern programming languages.  Typed variables and expressions 
+in programs allow the language system to assist the programmer by detecting {\em illegally typed expressions}
+which usually constitutes a logic/programming error.
+
+\vspace{.1in}
+We define a type as follows:
+\fframe{
+\begin{quote}
+A type is a set of values.
+\end{quote}
+}
+This means the type `{\tt real}' constitutes the set of all real values and the type `{\tt int}' constitutes the set of all integer values.
+
+\end{frame}
+
+\begin{frame}[fragile]{Types}
+
+\small
+When we combine the notion of a type and variable declarations we restrict what we are allowed to store in the variable.
+For example, the declaration in C,
+{\scriptsize
+\begin{alltt}
+int v;
+\end{alltt}
+}
+restricts the values that are allowed to be stored in the variable {\tt 'v}' to the set of integer values.
+
+\vspace{.1in}
+Limiting the kind of values a variable is allowed to assume will allow the system to catch errors. Consider the
+C code snippet,
+{\scriptsize
+\begin{alltt}
+int i = "1";
+\end{alltt}
+}
+The compiler will reject this with a type error.\footnote{However, in C the statement {\tt int i = '1'} with {\tt '1'} being
+a character constant is legal -- the set of character constants is a {\em subtype} of the integers.}
+
+\end{frame}
+
+\begin{frame}[fragile]{Types}
+
+\small
+
+Our notion of a type as a set of values extends to more complex types.  Consider the array declaration,
+{\scriptsize
+\begin{alltt}
+int a[5];
+\end{alltt}
+}
+This declaration limits the values that the variable `{\tt a}' can assume to arrays of size 5 with integer elements.
+Here are some example values from that set,
+\[
+\left\{[1,2,3,4,5],[102,4026,798,2,999],[-22,4,56,-654,0],\ldots\right\}
+\]
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Types}
+
+\small
+Type errors can also appear in expressions.  Consider the C statement,
+{\scriptsize
+\begin{alltt}
+  String s = "hello world" + 3.0;
+\end{alltt}
+}
+However, many languages allow for certain type combinations to appear in expressions.
+Consider the C code,
+{\scriptsize
+\begin{alltt}
+  int i = 3;
+  float f = i * 5.5;
+\end{alltt}
+}
+Here, even though the operands of the multiplication operator are of different types, C will allow this kind of expression.
+Mixed type expressions are usually allowed as long as the types involved have a {\em subtype/supertype} relationship.
+\end{frame}
+
+\begin{frame}[fragile]{Types}
+
+\small
+Interestingly, the notion of a type as a set of values also extends to object oriented languages
+if we view objects as values in a particular set of object (a particular type!).
+Consider the following Java snippet,
+{\scriptsize
+\begin{alltt}
+class Foobar \{\ldots\};
+
+Foobar o = new Foobar();
+\end{alltt}
+}
+Here the class statement introduces the new type `{\tt Foobar}' as a set of objects that can be instantiated from the
+class.  The next statement declares a variable `{\tt o}' of type `{\tt Foobar}' and thereby restricts the variable to only
+accept values (objects) from the set `{\tt Foobar}'.
+
+\vspace{.1in}
+The following code would fail in a Java program:
+{\scriptsize
+\begin{alltt}
+class Foobar \{\ldots\};
+class Goobar \{\ldots\};
+
+Foobar o = new Goobar();
+\end{alltt}
+}
+It is precisely these kinds of errors that type systems are designed to catch.
+\end{frame}
+
+\begin{frame}[fragile]{Types}
+
+\small
+Our view of a type as a set allows us to develop the notion of a {\em subtype}:
+
+\begin{quote}
+If the values of a type are fully contained within another type, then we call the former a subtype of the latter.
+\end{quote}
+More precisely, let $A$ and $B$ be types and interpreting these types as sets, then $A$ is a {\em subtype} of $B$ if
+\[
+A \subset B.
+\]
+Or conversely we call $B$ a {\em supertype} of $A$.
+
+\vspace{.1in}
+In Java and C we have the following {\em type hierarchy}:
+{\scriptsize
+\[
+{\tt char} \subset {\tt short} \subset {\tt int} \subset {\tt float} \subset {\tt double}
+\]
+}
+
+Not all programming languages support type hierarchies.  The language ML, for example, has no notion of subtype.
+Here, all types are completely separate sets, subset inclusion is not allowed.
+\end{frame}
+
+
+\begin{frame}[fragile]{Types}
+
+\small
+If a language supports subtypes then we can convert the types of expressions along those subtype/supertype
+relationships.
+\begin{itemize}
+\item{\bf Widening conversion --} here we convert the value of an expression from a {\em subtype to its supertype}.
+This is often also referred to as {\em type promotion}.  Consider the code snippet,
+{\scriptsize
+\begin{alltt}
+float f = 3;
+\end{alltt}
+}
+To make this statement work the language system will promote the integer constant 3 to a {\em float}
+value and then assign it to the variable $f$.
+
+\item{\bf Narrowing conversion --} here we convert the value of an expression from a {\em supertype to a subtype}.
+Consider,
+{\scriptsize
+\begin{alltt}
+int i = 3.6;
+\end{alltt}
+}
+The programming language C will simply truncate the value to turn the floating point value to an integer value.
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Types}
+
+\small
+Expressions that have types which are not related along subtype/supertype relations cannot be converted
+and therefore typically generate errors in a language system.  Consider the C program snippet from before,
+{\scriptsize
+\begin{alltt}
+  String s = "hello world" + 3.0;
+\end{alltt}
+}
+In C, ${\tt String} \not\subset {\tt float}$ and ${\tt float} \not\subset {\tt String}$, therefore the above statement cannot be
+executed.
+\end{frame}
+
+\begin{frame}[fragile]{Typed Arithmetic}
+
+We experiment with a very simple type system.  It only has two types, namely, {\tt int} and {\tt real}.
+
+\vspace{.1in}
+We assume that these two types are related via a subtype/supertype relationship:
+\[
+{\tt int} \subset {\tt real}.
+\]
+This will allow us to implement type promotion and narrowing conversion in our type system.
+\end{frame}
+
+\begin{frame}[fragile]{Typed Arithmetic}
+We introduce a new syntactic domain
+\[
+	\syntaxset{Type} = \{ {\bf int}, {\bf real}\}
+\]
+We can now have declarations of the form
+\[
+\begin{array}{l}
+C \mbox{ ::= } {\bf var}(x,T)\\
+T \mbox{ ::= } {\bf int} \; |\;  {\bf real}
+\end{array}
+\]
+In addition we introduce the syntactic domain of floating point values $\syntaxset{R}$ (with the semantic denotation of $\mathbb R$) such that
+\[
+A \mbox{ ::= } v
+\]
+where $v\in \syntaxset{I}\cup\syntaxset{R}$ can be either an integer or floating point constant.
+\end{frame}
+
+\begin{frame}[fragile]{\large Type Declaration Semantics}
+Putting this all together,
+
+\vspace{.1in}
+
+\begin{minipage}[t]{1.8in}
+\tiny
+\begin{alltt}
+  A ::= {\color{red}v}  
+     |  x
+     |  add(A,A)
+     |  sub(A,A)
+     |  mult(A,A)
+
+  B ::= true
+     |  false
+     |  eq(A,A)
+     |  le(A,A)
+     |  not(B)
+     |  and(B,B)
+     |  or(B,B)
+\end{alltt}
+\end{minipage}
+\begin{minipage}[t]{1.8in}
+\tiny
+\begin{alltt}
+  {\color{red}T ::= int  |  real} 
+      
+  C ::= skip
+     |  {\color{red}var(x,T) }
+     |  assign(x,A)
+     |  seq(C,C)
+     |  if(B,C,C)
+     |  whiledo(B,C)
+\end{alltt}
+\end{minipage}
+\end{frame}
+
+
+\begin{frame}[fragile]{Typed Arithmetic}
+
+\small
+Our semantics needs to be able to deal with the following programs:
+\begin{enumerate}
+\item ${\bf var}(x,{\bf real}) \;{ \bf seq }\; {\bf assign}(x, 3)$ (type promotion)
+\item ${\bf var}(y,{\bf int}) \;{ \bf seq }\; {\bf assign}(y, 3.5)$ (narrowing conversion)
+\item ${\bf var}(x,{\bf real})\; { \bf seq } \;{\bf assign}(x, {\bf add}(3.5,2))$ (type promotion in expressions)
+\item ${\bf var}(x,{\bf real})\; { \bf seq }\; {\bf var}(y,{\bf int})\; { \bf seq }  \;{\bf assign}(y, 1)\; { \bf seq }  \;{\bf assign}(x, y)$ (type promotion of
+variable values in expressions)
+\end{enumerate}
+
+
+\end{frame}
+
+\begin{frame}[fragile]{Typed Arithmetic}
+
+\small
+Semantics:
+\begin{itemize}
+\item We think about the types as sets, however, in our semantics the type names can just be viewed as tags attached
+to variable declarations.  Since we know that there is a subtype/supertype relation between the types we can use
+the tags to infer type promotions or narrowing conversions.
+
+\item We attach type tag names to variable binding terms.
+
+\item We do all our arithmetic in
+floating point, truncating the value if we need to.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]{Typed Arithmetic}
+The semantic rule for a variable declaration,
+{\tiny
+\begin{alltt}
+(var(X,int),State) -->> _ :-                % var %decl%
+    lookup(X,_,State,_),!,
+     fail.
+
+(var(X,int),State) -->> OState :-       % var %decl%
+    put(X,int,{\color{red}0},State,OState),!.
+
+(var(X,real),State) -->> _ :-           % var %decl%
+    lookup(X,_,State,_),!,
+    fail.
+
+(var(X,real),State) -->> OState :-      % var %decl%
+    put(X,real,{\color{red}0.0},State,OState),!.
+
+\end{alltt}
+}
+\end{frame}
+
+\begin{frame}[fragile]{Typed Arithmetic}
+The semantic rules for an assignment statement,
+{\tiny
+\begin{alltt}
+(assign(X,A),State) -->> OState :-      % assignment to real var  %decl%
+    lookup(X,{\color{red}real},State,_),
+    (A,State) -->> ValA,
+    {\color{red}FValA xis float(ValA)},
+    put(X,real,FValA,State,OState),!.
+
+(assign(X,A),State) -->> OState :-     % assignment to int var  %decl%
+    lookup(X,{\color{red}int},State,_),
+    (A,State) -->> ValA,
+    {\color{red}IValA xis truncate(ValA)},
+    put(X,int,IValA,State,OState),!.
+\end{alltt}
+}
+\end{frame}
+
+\begin{frame}[fragile]{Typed Arithmetic}
+The semantic rules for constants and variables,
+{\tiny
+\begin{alltt}
+(C,_) -->> FVal :-                  % int constants %decl%
+    int(C),
+    {\color{red}FVal xis float(C)},!.              % promote from int to real
+
+(C,_) -->> C :-                     % real constants %decl%
+    real(C),!.
+
+(X,State) -->> FVal :-              % int variables %decl%
+    atom(X),
+    lookup(X,{\color{red}int},State,IVal),
+    {\color{red}FVal xis float(IVal)},!.
+
+(X,State) -->> FVal :-              % real variables %decl%
+    atom(X),
+    lookup(X,{\color{red}real},State,FVal),!.
+
+\end{alltt}
+}
+\end{frame}
+
+
+\begin{frame}[fragile]{Typed Arithmetic}
+\tiny
+\begin{alltt}
+?- ['sem-type.pl'].
+%   xis.pl compiled 0.01 sec, 7,792 bytes
+%  preamble.pl compiled 0.01 sec, 8,956 bytes
+%  xis.pl compiled 0.00 sec, 148 bytes
+% sem-type.pl compiled 0.01 sec, 16,828 bytes
+true.
+
+?- ((var(x, real) seq assign(x, 3)),s0) -->> V.
+V = state([bind(3.0, real, x), bind(0.0, real, x)], s0).
+
+?- ((var(y, int) seq assign(y, 3.5)),s0) -->> V.
+V = state([bind(3, int, y), bind(0, int, y)], s0).
+
+?- ((var(x, real) seq assign(x, add(3.5, 2))),s0) -->> V.
+V = state([bind(5.5, real, x), bind(0.0, real, x)], s0).
+
+?- ((var(x, real) seq var(y, int) seq assign(y,1) seq assign(x, y)),s0) -->> V.
+V = state([bind(1.0, real, x), bind(1, int, y), bind(0, int, y), bind(0.0, real, x)], s0).
+
+?- 
+\end{alltt}
+\end{frame}
+
+\begin{frame}[fragile]{Typed Arithmetic}
+
+\small
+What kind of changes would we have to make to the semantic specification if we
+wanted to keep integer arithmetic as integer arithmetic and only promote the type when necessary?
+\end{frame}
+
+\begin{frame}[fragile]{Typed Arithmetic}
+
+\small
+Assume that the subtype/supertype relationship does not exist, i.e., ${\tt int} \not\subset {\tt real}$ .
+Further, assume that we have two new additional operators as part of our programming language syntax:
+\[
+\nonterm{A} ::= \term{promote}(\nonterm{A}) \orbar \term{narrow}(\nonterm{A})
+\]
+where the first operator promotes the type of an arithmetic expression from {\tt int} to {\tt real} and the second
+operator narrows the type of an arithmetic expression from {\tt real} to {\tt int}.  Since there is not subtype/supertype
+relationship between the types all mixed type expression will fail unless we insert our explicit type conversion operators,
+\begin{enumerate}
+\item ${\bf var}(x,{\bf real}) \;{ \bf seq }\; {\bf assign}(x, \term{promote}(3))$ 
+\item ${\bf var}(y,{\bf int}) \;{ \bf seq }\; {\bf assign}(y, \term{narrow}(3.5))$ 
+\item ${\bf var}(x,{\bf real})\; { \bf seq } \;{\bf assign}(x, {\bf add}(3.5,\term{promote}(2)))$
+\item ${\bf var}(x,{\bf real})\; { \bf seq }\; {\bf var}(y,{\bf int})\; { \bf seq }  \;{\bf assign}(x, \term{promote}(y))$ 
+\end{enumerate}
+What kind of changes do you envision for our type system specification?
+\end{frame}
+\end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%% end of template1.tex %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

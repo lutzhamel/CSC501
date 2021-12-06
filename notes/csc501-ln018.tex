@@ -1,0 +1,327 @@
+\documentclass{beamer}
+\include{defs}
+\begin{document}
+\begin{frame}[fragile]{Program Correctness \& Iteration}
+
+Review of proving programs correct that have loops and in-determinants.
+
+\vspace{.1in}
+
+Pre- and post-conditions for a program with a loop
+\begin{quote}
+\begin{minipage}{1.5in}
+\{$\rm pre$\}\\
+{\rm init} {\bf seq}\\
+\{$\rm inv$\}  \\                                  
+{\bf while} $b$ {\bf do}  \\                       
+{\tt\verb"   "}\{$\rm inv$ $\wedge$ $b$\}  \\
+{\tt\verb"   "}$c$    \\
+{\tt\verb"   "}\{$\rm inv$\}  \\                            
+\{$\rm inv$ $\wedge$ $\neg b$\}\\
+\{$\rm post$\}  
+\end{minipage}
+\begin{minipage}{2in}
+{\bf NOTE: } We now have pre- and postconditions for each statement in this iterative
+program. {\em These conditions will hold in all iterations of the loop}.
+\end{minipage}
+\end{quote}                          
+\end{frame}
+
+
+\begin{frame}[fragile]{Program Correctness \& Iteration}
+This gives us a new proof rule for {\em partial correctness} of loops:
+\begin{quote}
+if\\
+{\verb"    "}$\{\rm pre\}$ {\rm init} $\{\rm inv\}$ $\wedge$\\
+{\verb"    "}$\{{\rm inv} \wedge b\}$ c $\{\rm inv\}$ $\wedge$\\
+{\verb"    "}${\rm inv} \wedge \neg b \Rightarrow {\rm post}$\\
+then\\
+{\verb"    "}`${\rm init}\; {\bf seq}\; \whilestmt{b}{c}$' is correct\\
+\end{quote}
+
+{\bf NOTE: } We call this partial correctness because we make no assertions about termination.
+All we assert is that, if the computation terminates, then it will be correct.
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Program Correctness \& Iteration}
+
+\small
+
+Or written in our notation, partial correctness of loops:
+\begin{quote}
+if\\
+{\verb"    "}$\sem{({\rm init},S)}{Q} \wedge [{\rm pre}(S)\Rightarrow {\rm inv}(Q)]\; \wedge$\\ 
+{\verb"    "}$\sem{(c,S)}{Q} \wedge \sem{(b,S)}{B} \wedge [({\rm inv}(S) \wedge B)\Rightarrow {\rm inv}(Q)]\; \wedge$\\
+{\verb"    "}$\sem{(b,T)}{B} \wedge [(inv(T) \wedge \neg\,B) \Rightarrow post(T)]$\\
+{\verb"    "}\\
+then 
+\begin{quote}
+{\verb"    "}`${\rm init}\; {\bf seq}\; \whilestmt{b}{c}$'  is correct\\
+\end{quote}
+\end{quote}
+
+
+\end{frame}
+
+\begin{frame}[fragile]{Program Correctness \& Iteration}
+\tiny
+\begin{alltt}
+% pow-n-loop.pl                                                                                                                              
+
+:- ['sem-func.pl'].
+
+:- >>> 'prove that the program p:'.
+:- >>> '       var(i) seq'.
+:- >>> '       var(z) seq'.
+:- >>> '       assign(i,1) seq'.
+:- >>> '       assign(z,m) seq'.
+:- >>> '       whiledo(not(eq(i,n)),'.
+:- >>> '               assign(i,add(i,1)) seq'.
+:- >>> '               assign(z,mult(z,m))'.
+:- >>> '       )'.
+:- >>> 'is correct for any value of m and n with n>0'.
+:- >>> 'pre(R) = initialstate(env([bind(vm,m),bind(vn,n)],s))'.
+:- >>> 'post(T) = lookup(z,T,vm^vn)'.
+:- >>> 'inv(Q) = lookup(i,Q,vi) ^ lookup(z,Q,vm^vi)'.
+
+:- >>> 'define the parts of our program'.
+init((var(i) seq var(z) seq assign(i,1) seq assign(z,m))).
+guard(not(eq(i,n))).
+body((assign(i,add(i,1)) seq assign(z,mult(z,m)))).
+
+:- >>> 'define a model for our power operation'.
+:- dynamic pow/3.
+pow(B,1,B).
+
+pow(B,P,R) :-
+    T1 is P-1,
+    pow(B,T1,T2),
+    R is B*T2.
+\end{alltt}
+\end{frame}
+
+\begin{frame}[fragile]{Program Correctness \& Iteration}
+\tiny
+\begin{alltt}
+:- >>> 'first proof obligation'.
+:- >>> 'assume precondition'.
+:- asserta(initialstate(env([bind(vm,m),bind(vn,n)],s))).
+:- >>> 'prove the invariant'.
+:- init(P),initialstate(IS),(P,IS) -->> Q,lookup(i,Q,VI),lookup(z,Q,VZ),pow(vm,VI,VZ).
+:- retract(initialstate(env([bind(vm,m),bind(vn,n)],s))).
+
+:- >>> 'second  proof obligation'.
+:- >>> 'assume invariant on s'.
+:- asserta(initialstate(env([bind(vi,i),bind(vz,z),bind(vm,m),bind(vn,n)],s))).
+:- asserta(pow(vm,vi,vz)).
+% implies                                                                                                                                    
+:- asserta(pow(vm,vi+1,vz*vm)).
+:- >>> 'assume guard on s'.
+:- asserta((not(eq(i,n)),s) -->> true).
+:- >>> 'prove the invariant on Q'.
+:- body(Bd),initialstate(IS),(Bd,IS) -->> Q,lookup(i,Q,VI),lookup(z,Q,VZ),pow(vm,VI,VZ).
+:- retract(initialstate(env([bind(vi,i),bind(vz,z),bind(vm,m),bind(vn,n)],s))).
+:- retract(pow(vm,vi,vz)).
+:- retract(pow(vm,vi+1,vz*vm)).
+:- retract((not(eq(i,n)),s) -->> true).
+\end{alltt}
+\end{frame}
+
+\begin{frame}[fragile]{Program Correctness \& Iteration}
+\tiny
+\begin{alltt}
+:- >>> 'third  proof obligation'.
+:- >>> 'assume the invariant on s'.
+:- asserta(initialstate(env([bind(vi,i),bind(vz,z),bind(vm,m),bind(vn,n)],s))).
+:- asserta(pow(vm,vi,vz)).
+:- >>> 'assume NOT guard on any s'.
+:- asserta((not(eq(i,n)),s) -->> not(true)).
+% implies                                                                                                                                    
+:- asserta((eq(i,n),s) -->> true).
+% implies                                                                                                                                    
+:- asserta(pow(vm,vn,vz)).
+:- >>> 'prove postcondition on s'.
+:- initialstate(IS),lookup(z,IS,VZ),pow(vm,vn,VZ).
+:- retract(initialstate(env([bind(vi,i),bind(vz,z),bind(vm,m),bind(vn,n)],s))).
+:- retract(pow(vm,vi,vz)).
+:- retract((not(eq(i,n)),s) -->> not(true)).
+:- retract((eq(i,n),s) -->> true).
+:- retract(pow(vm,vn,vz)).
+\end{alltt}
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Program Correctness \& Recursive Function Calls}
+\small
+The key insights to proving programs with recursive function correct is that 
+\begin{itemize}
+\item
+There exist at least one
+variable in argument list of the recursive function 
+we call the {\em recursion variable} which measures the progress of
+the recursion.
+
+\item
+The body of the recursive function consists of at least two separate parts:
+\begin{itemize}
+\item the part of the body that gets executed when recursion terminates (the base case)
+\item the part of the body that gets executed during normal recursion (the recursive step)
+\end{itemize}
+
+\item
+We can always identify an ``accumulator variable'' that contains the partially computed result at
+any particular step in the recursion.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Program Correctness \& Recursive Function Calls}
+
+We introduce two new predicates for the correctness proof:
+\begin{description}
+\item[callcond] - describes the current condition within a called function
+\item[finv] - this is the {\em function invariant} and is similar to the loop invariant,
+it describes the condition at the ``accumulator variable''
+\end{description}
+\end{frame}
+
+
+\begin{frame}[fragile]{Program Correctness \& Recursive Function Calls}
+\scriptsize
+This allows us to state the following proof schema:
+\vspace{.1in}
+
+\begin{minipage}{2in}
+\tiny
+\begin{alltt}
+function f (i)  
+   if (<term cond>)
+      {\rm\{callcond ^ term cond\}}
+      return = <base case value>
+      {\rm\{finv\}}
+   else
+      {\rm\{callcond ^ not term cond\}}
+      return = <local comp> + f(i-1)
+      {\rm\{finv\}}
+
+{\rm\{pre ^ finv\}}
+z = f(k)  
+{\rm\{post\}}
+\end{alltt}
+\end{minipage}
+$\Rightarrow$
+\begin{minipage}{1.5in}
+\tiny
+\begin{alltt}
+function f (i)  
+   if (<term cond>)
+      {\rm\{callcond ^ term cond\}}
+      body1
+      {\rm\{finv\}}
+   else
+      {\rm\{callcond ^ not term cond\}}
+      body2
+      {\rm\{finv\}}
+
+{\rm\{pre ^ finv\}}
+final  
+{\rm\{post\}}
+\end{alltt}
+\end{minipage}
+
+\vspace{.2in}
+
+Proof Obligations:
+\begin{enumerate}
+\item \{callcond $\wedge$ termination condition\} body1 \{finv\}
+\item \{callcond $\wedge$ $\neg$ termination condition\} body2 \{finv\}
+\item \{pre $\wedge$ finv\} final \{post\}
+\end{enumerate}
+\end{frame}
+
+
+\begin{frame}[fragile]{Program Correctness \& Recursive Function Calls}
+\tiny
+\begin{alltt}
+% pow-n-func.pl                                                                                                                              
+:- ['sem-func.pl'].
+:- >>> 'prove that the program p:'.
+:- >>> '     (fun(pow,'.
+:- >>> '            [b,p],'.
+:- >>> '            var(result) seq'.
+:- >>> '            if(eq(p,1),'.
+:- >>> '               assign(result,b),'.
+:- >>> '               assign(result,mult(b,call(pow,[assign(b,b),assign(p,sub(p,1))])))),'.
+:- >>> '            result) seq'.
+:- >>> '        var(z) seq'.
+:- >>> '        assign(z,call(pow,[assign(b,m),assign(p,n)]))'.
+:- >>> 'is correct for any value of n and m and n>0'.
+:- >>> 'pre(R) = initialstate(env([bind(vm,m),bind(vn,n)],s))'.
+:- >>> 'post(T) = lookup(z,T,vm^vn)'.
+:- >>> 'inv(Q) = lookup(b,Q,vb) ^ lookup(p,Q,vp) ^ lookup(result,Q,vb^vp)'.
+
+:- >>> 'define the parts of our program'.
+guard(eq(p,1)).
+body1(var(result) seq assign(result,b)).
+body2(var(result) seq assign(result,mult(b,call(pow,[assign(b,b),assign(p,sub(p,1))])))).
+final(var(z) seq assign(z,result)).
+
+:- >>> 'define a model for our power operation'.
+:- dynamic pow/3.
+pow(B,1,B).
+
+pow(B,P,R) :-
+    T1 is P-1,
+    pow(B,T1,T2),
+    R is B*T2.
+\end{alltt}
+\end{frame}
+
+\begin{frame}[fragile]{Program Correctness \& Recursive Function Calls}
+\tiny
+\begin{alltt}
+:- >>> 'Proof by case analysis on recursion variable p'.
+:- >>> 'first proof obligation'.
+:- >>> 'assume call condition -- guard is true'.
+:- asserta(initialstate(env([bind(vb,b),bind(1,p)],s))).
+:- >>> 'prove the invariant'.
+:- body1(P),initialstate(IS),(P,IS)-->>Q,lookup(b,Q,VB),lookup(p,Q,VP),lookup(result,Q,VR),pow(VB,VP,VR).
+:- retract(initialstate(env([bind(vb,b),bind(1,p)],s))).
+
+:- >>> 'second proof obligation'.
+:- >>> 'assume call condition -- guard is false: vp =/= 1'.
+:- asserta(initialstate(env([bind(vb,b),bind(vp,p)],s))).
+% assume that the recursive call returns a value k                                                                                           
+:- asserta((call(pow,[assign(b,b),assign(p,sub(p,1))]),S) -->> (k,S)).
+% where the value k is defined as                                                                                                            
+:- asserta(pow(vb,vp-1,k)).
+% which implies                                                                                                                              
+:- asserta(pow(vb,vp,vb*k)).
+:- >>> 'prove the invariant'.
+:- body2(P),initialstate(IS),(P,IS)-->>Q,lookup(b,Q,VB),lookup(p,Q,VP),lookup(result,Q,VR),pow(VB,VP,VR).
+:- retract(initialstate(env([bind(vb,b),bind(vp,p)],s))).
+:- retract((call(pow,[assign(b,b),assign(p,sub(p,1))]),S) -->> (k,S)).
+:- retract(pow(vb,vp-1,k)).
+:- retract(pow(vb,vp,vb*k)).
+\end{alltt}
+\end{frame}
+
+\begin{frame}[fragile]{Program Correctness \& Recursive Function Calls}
+\tiny
+\begin{alltt}
+:- >>> 'third proof obligation'.
+:- >>> 'assume precondition -- result = q = vm^vn'.
+:- >>> '   this follows from the second proof obligation with vp = vn'.
+:- asserta(initialstate(env([bind(vm,m),bind(vn,n),bind(q,result)],s))).
+:- asserta(pow(vm,vn,q)).
+:- >>> 'prove the post condition'.
+:- final(P),initialstate(IS),(P,IS)-->>Q,lookup(z,Q,VZ),pow(vm,vn,VZ).
+:- retract(initialstate(env([bind(vm,m),bind(vn,n),bind(q,result)],s))).
+:- retract(pow(vm,vn,q)).
+\end{alltt}
+\end{frame}
+
+\end{document}
+

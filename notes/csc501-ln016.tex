@@ -1,0 +1,198 @@
+\documentclass{beamer}
+\include{defs}
+\begin{document}
+
+
+\begin{frame}[fragile]{Iteration Program Correctness}
+
+\small
+{\bf Correctness of Programs without Iteration:}
+
+\vspace{.1in}
+
+Let $\rm pre$ and $\rm post$ be predicates over states, and let $p$
+be a program, then 
+\[
+[\sem{(p,s)}{Q} \wedge {\rm pre}(s) \Rightarrow {\rm pos}t(Q)]\mbox{ implies $p$ is correct}
+\]
+for all $s \in {\tt state}$.  We often write
+\[
+\{{\rm pre}\} p \{{\rm post}\} \mbox{ implies $p$ is correct}
+\]
+where the state $s$ is implicit.
+
+
+
+\end{frame}
+
+\begin{frame}[fragile]{Program Correctness}
+
+\small
+
+Unfortunately this notion of correctness does not extend to the general case of programs
+with iteration.\footnote{Pre- and post conditions cannot be used to show program correctness
+for all values of the loop index - you would need some sort of inductive argument as we will
+see a little later on.}
+However, we can still use this proof rule to prove {\em specific} programs correct.  This
+program computes the factorial of $3$:
+\[
+p \equiv {\rm while}(le(1,i), {\rm assign}(z,{\rm mult}(z,i)) \; {\rm seq}\; {\rm assign}(i,{\rm sub}(i,1)))
+\]
+with the precondition
+\[
+{\rm pre}(S) \equiv {\rm lookup}(i,S,{\color{red}3}) \wedge {\rm lookup}(z,S,1)
+\]
+and the postcondition
+\[
+{\rm post}(Q) \equiv {\rm lookup}(i,Q,0) \wedge {\rm lookup}(z,Q,3!)
+\]
+That is, the program is correct iff
+\[
+\{{\rm pre}\}\; p \; \{{\rm post}\}
+\]
+\end{frame}
+
+\begin{frame}[fragile]{Program Correctness}
+
+\small
+
+This works because for specific values for $i$ we can {\em unfold} the iteration and view
+$p$ essentially as a sequence of statements without iteration:
+\[
+\begin{array}{rl}
+p'\equiv & {\rm assign}(z,{\rm mult}(z,i)) \; {\rm seq}\; {\rm assign}(i,{\rm sub}(i,1)) \;{\rm seq}\\
+	& {\rm assign}(z,{\rm mult}(z,i)) \; {\rm seq}\; {\rm assign}(i,{\rm sub}(i,1)) \;{\rm seq}\\
+          & {\rm assign}(z,{\rm mult}(z,i)) \; {\rm seq}\; {\rm assign}(i,{\rm sub}(i,1)) 
+\end{array}
+\]
+And is clear that our proof rule
+\[
+\{{\rm pre}\}\; p' \; \{{\rm post}\}
+\]
+applies.\footnote{One way to show this is to develop pre and post conditions for each statement and
+then compose them to get the overall correctness proof.}
+\end{frame}
+
+\begin{frame}[fragile]{Program Correctness}
+
+\small
+
+Now consider our program for any value of i:
+\[
+p \equiv {\rm while}(le(1,i), {\rm assign}(z,{\rm mult}(z,i)) \; {\rm seq}\; {\rm assign}(i,{\rm sub}(i,1)))
+\]
+with the precondition
+\[
+{\rm pre}(S) \equiv {\rm lookup}(i,S,{\color{red}vi}) \wedge {\rm lookup}(z,S,1)
+\]
+and the postcondition
+\[
+{\rm post}(Q) \equiv {\rm lookup}(i,S,0) \wedge {\rm lookup}(z,S,{\color{red}vi!})
+\]
+Now, in order to prove $p$ correct we would have to show that our proof rule
+\[
+\{{\rm pre}\}\; p \; \{{\rm post}\}
+\]
+holds for every value of $vi$, that is, every possible unfolding of the while loop.
+Clearly that is not possible.
+\end{frame}
+
+\begin{frame}[fragile]{Program Correctness}
+
+To get around this we could probably come up  with some sort of inductive argument
+on the loop iteration (recall our induction on states a while back).
+
+\vspace{.1in}
+
+Turns out that there is a very clever way to do this without induction:  {\em loop invariants}
+
+\vspace{.1in}
+
+Loop invariants allow us to perform "inductionless induction".
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Program Correctness}
+In this new approach we divide programs with loops into parts:
+\[
+\{{\rm pre}\} \;{\rm init}\; {\bf seq}\; \whilestmt{b}{c}\;\{post\}
+\]
+
+where {\rm init} is code that sets up the loop.
+
+\vspace{.1in}
+
+We now introduce a new predicate called {\rm inv} that captures the loop invariant
+in such a way that it relates one iteration to the next in a similar sense as does the inductive step
+during an inductive argument.
+\end{frame}
+
+\begin{frame}[fragile]{Program Correctness \& Iteration}
+
+We augment our proof procedure with an additional predicate on states: $\rm inv$.
+
+\vspace{.1in}
+
+With this we can set up the predicates for the loop as follows:
+\begin{quote}
+\begin{minipage}{1.5in}
+\{$\rm pre$\}\\
+{\rm init} {\bf seq}\\
+\{$\rm inv$\}  \\                                  
+{\bf while} $b$ {\bf do}  \\                       
+{\tt\verb"   "}\{$\rm inv$ $\wedge$ $b$\}  \\
+{\tt\verb"   "}$c$    \\
+{\tt\verb"   "}\{$\rm inv$\}  \\                            
+\{$\rm inv$ $\wedge$ $\neg b$\}\\
+\{$\rm post$\}  
+\end{minipage}
+\begin{minipage}{2in}
+{\bf NOTE: } We now have pre- and postconditions for each statement in this iterative
+program. {\em These conditions will hold in all iterations of the loop}.
+\end{minipage}
+\end{quote}                          
+\end{frame}
+
+
+\begin{frame}[fragile]{Program Correctness}
+This gives us a new proof rule for {\em partial correctness} of loops:
+\begin{quote}
+if\\
+{\verb"    "}$\{\rm pre\}$ {\rm init} $\{\rm inv\}$ $\wedge$\\
+{\verb"    "}$\{{\rm inv} \wedge b\}$ c $\{\rm inv\}$ $\wedge$\\
+{\verb"    "}$({\rm inv} \wedge \neg b) \Rightarrow {\rm post}$\\
+then\\
+{\verb"    "}`${\rm init}\; {\bf seq}\; \whilestmt{b}{c}$' is correct\\
+\end{quote}
+
+{\bf NOTE: } We call this partial correctness because we make no assertions about termination.
+All we assert is that, if the computation terminates, then it will be correct.
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Program Correctness}
+
+\small
+
+Or written in our notation, partial correctness of loops:
+\begin{quote}
+if\\
+{\verb"    "}$\sem{({\rm init},S)}{Q} \wedge [{\rm pre}(S)\Rightarrow {\rm inv}(Q)]\; \wedge$\\ 
+{\verb"    "}$\sem{(c,S)}{Q} \wedge \sem{(b,S)}{B} \wedge [({\rm inv}(s) \wedge B)\Rightarrow {\rm inv}(Q)]\; \wedge$\\
+{\verb"    "}$\sem{(b,T)}{B} \wedge [(inv(T) \wedge \neg\,B) \Rightarrow post(T)]$\\
+{\verb"    "}\\
+then 
+\begin{quote}
+{\verb"    "}`${\rm init}\; {\bf seq}\; \whilestmt{b}{c}$'  is correct\\
+\end{quote}
+\end{quote}
+
+
+\vspace{.2in}
+Finding loop invariants automatically  is an active research, good candidates for loop invariants are usually expression
+that involve the loop counter.
+\end{frame}
+\end{document}
+

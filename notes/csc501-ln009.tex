@@ -1,0 +1,691 @@
+%template1.tex
+%The following LaTeX source file represents the simplest kind of slide presentation; no overlays, no included graphics. Substitute your favorite style for ``pascal''. To create the PDF file template1.pdf, (1) be sure to use the prosper class, then (2) execute the command latex template1.tex, and (3) the command dvipdf template1.dvi.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% template1.tex %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass{beamer}
+\include{defs}
+\begin{document}
+
+\begin{frame}{Executable Specifications}
+\small
+Given the similarity between natural deduction,
+
+
+\begin{quote}
+\begin{minipage}{2in}
+\begin{description}
+
+\item[Inference Step]\hspace{.1in}\\
+\begin{prooftree}
+\AxiomC{premise$_1$}
+\AxiomC{$\cdots$}
+\AxiomC{premise$_n$}
+\RightLabel{\hspace{.1in}(condition)}
+\TrinaryInfC{conclusion}
+ \end{prooftree}
+
+\item[Assumption]\hspace{1in}\\  
+\begin{prooftree}
+\AxiomC{}
+\UnaryInfC{conclusion}
+\end{prooftree}
+
+\end{description}
+\end{minipage}
+\end{quote}
+
+and Horn clause logic, 
+
+\begin{quote}
+\begin{minipage}{2in}
+\begin{description}
+
+\item[Inference Step] $P_0 \;\mbox{:-}\; P_1,\ldots,P_n.$
+
+\item[Fact] $P_0 \;\mbox{:-}\; {\bf true}.$
+
+\end{description}
+\end{minipage}
+\end{quote}
+
+it is natural to assume that we can implement our operational semantics in Prolog.
+\end{frame}
+
+\begin{frame}{New Syntax}
+\scriptsize
+In order to do this we have to rewrite our syntax specification in terms of Prolog terms.
+
+\vspace{.1in}
+
+Arithmetic expressions:
+\[
+A ::= n \orbar x \orbar {\bf add}(A, A) \orbar {\bf sub}(A, A) \orbar {\bf mult}(A, A)
+\]
+where $n$ is any valid Prolog integer value and $x$ any valid Prolog object name.
+
+\noindent
+Boolean expressions:
+\[
+B ::= \mbox{\bf true} \orbar \mbox{\bf false} \orbar {\bf eq}(A,A) \orbar
+	{\bf le}(A, A) \orbar {\bf not}(B) \orbar {\bf and}(B, B) \orbar {\bf or}(B, B)
+\]
+Commands:
+\[
+C ::={\bf skip} \orbar {\bf assign}(x,A) \orbar {\bf seq}(C,C) \orbar
+	{\bf if}(B, C,  C) \orbar
+	{\bf whiledo}(B, C)
+\]
+{\bf Note:} the $\bf seq$ operator is made infix for convenience - just remember that it is left-associative - under certain
+circumstances you will need to help the Prolog parser out with parentheses around the appropriate terms.
+\end{frame}
+
+\begin{frame}{Programs}
+\tiny
+{\bf Example 1:}
+\[
+\begin{array}{l}
+v := 1; \ifstmt{v \le 0}{v := (-1)*v}{{\bf skip}}\\
+\\
+{\bf assign}(v, 1)\; {\bf seq}\; {\bf if}({\bf le}(v , 0), {\bf assign}(v, {\bf mult}(-1,v)),{\bf skip})
+\end{array}
+\]
+{\bf Example 2:}
+\[
+\begin{array}{l}
+n := 5 ; y := 1 ; \whilestmt{2 \le n}{(y := n*y ; n := n - 1)}\\
+\\
+{\bf assign}(n,5) \; {\bf seq}\; {\bf assign}(y,1) \; {\bf seq}\; {\bf whiledo}({\bf le}(2,n),{\bf assign}(y,{\bf mult}(n,y)) \; {\bf seq}\; {\bf assign}(n,{\bf sub}(n,1)))
+\end{array}
+\]
+
+
+\end{frame}
+
+\begin{frame}{State}
+\small
+Prolog does not allow us to pass functions around (it is a first-order language), therefore, we cannot
+use the definition of state from our natural deduction operational semantics.
+
+\vspace{.1in}
+
+However, consider the following,
+\[
+\sigma[m/x][n/y][k/z],
+\]
+This could be interpreted as a list of variable bindings applied to the state $\sigma$ if
+we interpret the $[\ldots ]$ as list constructors and juxtaposition as a list append operation,
+\[
+{\color{red}\sigma}[m/x,n/y,k/z].
+\]
+In Prolog we can model this as the term structure
+\[
+{\bf state}([{\bf bind}(k,z),{\bf bind}(n,y),{\bf bind}(m,x)],{\color{red}{\bf s}})
+\]
+where $k,n,m\in \mathbb{I}$ and $x,y,z\in\syntaxset{Loc}$ and $s$ represents an arbitrary state.
+\end{frame}
+
+\begin{frame}{State}
+\small
+If the state is the initial state, where
+\[
+\sigma_0[m/x,n/y,k/z]
+\]
+then
+\[
+{\bf state}([{\bf bind}(k,z),{\bf bind}(n,y),{\bf bind}(m,x)],{\bf s}0)
+\]
+where ${\bf s}0$ is a reserved symbol for the initial state in our representation.
+
+\vspace{.1in}
+
+Given our representation we have an interesting equivalence, given a state $s$, then
+\[
+s \equiv {\bf state}([\; ],s)
+\]
+We will make use of this equivalence when encoding our semantic predicates.
+\end{frame}
+
+\begin{frame}[fragile]{State}
+\small
+Since we turned the state representation from a function into a list, we now have to adjust
+the variable lookup mechanism.  We do this via the predicate {\em lookup},
+
+{\scriptsize
+\begin{verbatim}
+% the predicate 'lookup(+Variable,+State,-Value)' looks up
+% the variable in the state and returns its bound value.
+:- dynamic lookup/3.                % modifiable predicate
+
+lookup(_,s0,0).
+
+lookup(X,state([],S),Val) :-
+    lookup(X,S,Val).
+
+lookup(X,state([bind(Val,X)|_],_),Val).
+
+lookup(X,state([_|Rest],S),Val) :-
+    lookup(X,state(Rest,S),Val).
+\end{verbatim}
+}
+
+\end{frame}
+
+\begin{frame}{Arithmetic Expression Summary}
+
+\small
+Recall our natural deduction definition for arithmetic expressions:
+
+\vspace{.1in}
+
+%\begin{prooftree}
+\AxiomC{}
+\RightLabel{\hspace{.1in}for $n\in \syntaxset{D}$ and $\sigma \in \Sigma$}
+\UnaryInfC{$( n, \sigma ) \mapsto \mbox{eval}(n)$}
+\DisplayProof\\
+\vspace{.2in}
+%\end{prooftree}
+%\begin{prooftree}
+\AxiomC{}
+\RightLabel{\hspace{.1in}for $x\in \syntaxset{Loc}$  and $\sigma \in \Sigma$}
+\UnaryInfC{$( x, \sigma ) \mapsto \sigma(x)$}
+\DisplayProof\\
+\vspace{.2in}
+%\end{prooftree}
+%\begin{prooftree}
+\AxiomC{$( a_0,\sigma) \mapsto k_0$}
+\AxiomC{$( a_1,\sigma) \mapsto k_1$}
+\RightLabel{\hspace{.1in}\small where $k= k_0 + k_1$}
+\BinaryInfC{$( a_0 + a_1, \sigma) \mapsto k$}
+\DisplayProof\\
+\vspace{.2in}
+% \end{prooftree}
+%\begin{prooftree}
+\AxiomC{$( a_0,\sigma) \mapsto k_0$} 
+ \AxiomC{$( a_1,\sigma) \mapsto k_1$}
+ \RightLabel{\hspace{.1in}\small where $k = k_0 - k_1$}
+ \BinaryInfC{$( a_0 - a_1, \sigma) \mapsto k$}
+\DisplayProof\\
+\vspace{.2in}
+% \end{prooftree}
+%\begin{prooftree}
+\AxiomC{$( a_0,\sigma) \mapsto k_0$} 
+\AxiomC{$( a_1,\sigma) \mapsto k_1$}
+\RightLabel{\hspace{.1in}\small where $k = k_0 \times k_1$}
+\BinaryInfC{$( a_0 * a_1, \sigma) \mapsto k$}
+\DisplayProof\\
+\vspace{.2in}
+%\end{prooftree}
+{\bf NOTE:} $k$, $k_0$, $k_1  \in \mathbb{I}$, $a_0$, $a_1 \in \syntaxset{Aexp}$, and 
+$\sigma \in \Sigma$.
+\end{frame}
+
+
+\begin{frame}[fragile]{Prolog Aexp Semantics}
+\tiny
+\begin{verbatim}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% semantics of arithmetic expressions
+
+(C,_) -->> C :-                    % constants
+    int(C),!.
+
+(X,State) -->> Val :-              % variables
+    atom(X),
+    lookup(X,State,Val),!.
+
+(add(A,B),State) -->> Val :-       % addition
+    (A,State) -->> ValA,
+    (B,State) -->> ValB,
+    Val xis ValA + ValB,!.
+
+(sub(A,B),State) -->> Val :-       % subtraction
+    (A,State) -->> ValA,
+    (B,State) -->> ValB,
+    Val xis ValA - ValB,!.
+
+(mult(A,B),State) -->> Val :-     % multiplication
+    (A,State) -->> ValA,
+    (B,State) -->> ValB,
+    Val xis ValA * ValB,!.
+\end{verbatim}
+
+\vspace{.1in}
+
+{\bf Note:} The cut predicate is necessary to make sure that these
+rules are interpreted as {\em state transitions}, i.e., once a state
+transition has occurred in an abstract machine it cannot be undone.
+\end{frame}
+
+
+\begin{frame}[fragile]{The {\tt -->>} Predicate}
+
+\tiny
+\begin{verbatim}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% the predicate '(+Syntax,+State) -->> -SemanticValue' computes
+% the semantic value for each syntactic structure
+
+:- op(700,xfx,-->>).
+:- dynamic (-->>)/2.                % modifiable predicate
+:- multifile (-->>)/2.
+\end{verbatim}
+
+\end{frame}
+
+\begin{frame}[fragile]{The `xis' Predicate}
+
+\tiny
+\begin{verbatim}
+bash-3.2$ prolog -f prolog-semantics/preamble.pl
+%  xis.pl compiled 0.00 sec, 6,960 bytes
+% /Users/lutz/Documents/csc501/prolog-semantics/preamble.pl compiled 0.00 sec, 9,532 bytes
+Welcome to SWI-Prolog (Multi-threaded, 32 bits, Version 5.10.1)
+Copyright (c) 1990-2010 University of Amsterdam, VU Amsterdam
+SWI-Prolog comes with ABSOLUTELY NO WARRANTY. This is free software,
+and you are welcome to redistribute it under certain conditions.
+Please visit http://www.swi-prolog.org for details.
+
+For help, use ?- help(Topic). or ?- apropos(Word).
+
+?- X is 1 + 2.
+X = 3.
+
+?- X xis 1 + 2.
+X = 3.
+
+?- X is y + 2.
+ERROR: is/2: Arithmetic: `y/0' is not a function
+
+?- X xis y + 2.
+X = y+2.
+
+?- 
+\end{verbatim}
+\scriptsize
+{\bf Note:} both the {\tt -->>} and the xis predicate are defined in the preamble.pl file.  Suggestion: put the preamble.pl file
+in a known place such as the super-directory of all your projects, then you can load it as 'prolog -f ../preamble.pl'.
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Evaluation of Arithmetic Expressions}
+\small
+Let $ae \equiv (2 * 3) + 5$, prove that the semantic value of this expression in some state $s$ is equal  to $11$ using the Prolog semantics (assume that the semantics is given in the file 'sem.pl').
+
+\begin{verbatim}
+?- ['sem.pl'].
+%  preamble.pl compiled 0.00 sec, 900 bytes
+%  xis.pl compiled 0.00 sec, 6,788 bytes
+% sem.pl compiled 0.00 sec, 14,164 bytes
+true.
+
+?- (add(mult(2,3),5),s) -->> V, V = 11.
+V = 11.
+
+?- 
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]{Evaluation of Arithmetic Expressions}
+\small
+Now, let $ae \equiv x + 1$, where $x \in \syntaxset{Loc}$, prove that the semantic value of this expression in some
+state $s$ is equal to $vx +1$ where {\tt lookup(x,s,vx)}.
+
+\begin{verbatim}
+?- ['sem.pl'].
+%  preamble.pl compiled 0.00 sec, 900 bytes
+%  xis.pl compiled 0.00 sec, 6,788 bytes
+% sem.pl compiled 0.00 sec, 14,164 bytes
+true.
+
+?- asserta(lookup(x,s,vx)).
+true.
+
+?- (add(x,1),s) -->> vx+1. 
+true.
+
+?- 
+\end{verbatim}
+
+{\bf Note:} the predicate 'asserta' is preferable because it inserts the clause at the {\em top} of the rule database.
+\end{frame}
+
+\begin{frame}[fragile]{Evaluation of Arithmetic Expressions}
+\small
+Now, let $ae \equiv x + 1$, where $x \in \syntaxset{Loc}$, prove that the semantic value of this expression in the initial state
+$s0$ equal to $1$.
+
+\begin{verbatim}
+?- ['sem.pl'].
+%  preamble.pl compiled 0.00 sec, 900 bytes
+%  xis.pl compiled 0.00 sec, 6,788 bytes
+% sem.pl compiled 0.00 sec, 14,164 bytes
+true.
+
+?- (add(x,1),s0) -->> 1.
+true.
+
+?- 
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]{Evaluation of Arithmetic Expressions}
+\scriptsize
+Consider the following proof:
+Let $ae \equiv x + 3*5$, where $x \in \syntaxset{Loc}$, prove that the semantic value of this expression in some
+state $s$ is equal to $vx + 15$ where {\tt lookup(x,s,vx)}.
+
+
+\begin{verbatim}
+?- ['sem.pl'].
+%  preamble.pl compiled 0.00 sec, 900 bytes
+%  xis.pl compiled 0.00 sec, 6,788 bytes
+% sem.pl compiled 0.00 sec, 14,164 bytes
+true.
+
+?- asserta(lookup(x,s,vx)).
+true.
+
+?- (add(x,mult(3,5)),s) -->> vx+15.
+true.
+
+?- 
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]{Theorem Proving with Prolog}
+\scriptsize
+Using Prolog as a theorem prover:
+\begin{enumerate}
+
+\item
+{\em The Prolog Meta-Language} -- we can {\bf consult} programs, {\bf assert} assumptions,
+{\bf retract} assumptions, and {\bf query} a program in order to prove a theorem.
+
+\item
+{\em Universally Quantified Variables in Queries} -- consider the proof,
+{\scriptsize
+\begin{alltt}
+?- (mult(3,5),s) -->> V, V = 15.
+\end{alltt}
+}
+ can be interpreted in standard FOL
+as,
+\[
+{\color{red}\forall s} \exists V[(\sem{{\bf mult}(3,5),s)} {V} \wedge {\bf =}(V,15)].
+\]
+$\Rightarrow$ We use symbolic {\bf constants} in queries to express universally quantified variables.
+
+\item
+{\em Proof Scores} -- we can write a proof as a Prolog meta-language program.
+
+\item
+{\em Soundness} -- under certain circumstances the default resolution rule can be unsound, to avoid
+this insert the following code into your proof scores:
+\begin{verbatim}
+:- set_prolog_flag(occurs_check,true).
+\end{verbatim}
+If you use the 'preamble.pl' file this is done automatically for you.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}[fragile]{Theorem Proving with Prolog}
+
+\small
+The second point on the previous slide deserves some additional attention.  Consider for the moment that
+we would like to prove
+\[
+\forall s [\sem{({\bf mult}(3,5),s)}{15}].
+\]
+If we write this blindly as a query using standard Prolog variables, then
+{\scriptsize
+\begin{alltt}
+?- (mult(3,5),{\color{red}S}) -->> 15.
+\end{alltt}
+}
+Now interpreting this query according to Prolog, then
+\[
+{\color{red}\exists s} [\sem{({\bf mult}(3,5),s)}{15}].
+\]
+That means, this query does {\em not} prove our intended proof goal.
+\end{frame}
+
+\begin{frame}[fragile]{Theorem Proving with Prolog}
+
+\scriptsize
+
+From FOL quantification theory we have the following axiom (Universal Generalization).  Let $p$ be a predicate and let
+$y\in U$ be some arbitrarily chosen element of some universe $U$, then
+\[
+\frac{p(y)}{\therefore \forall x[p(x)]}
+\]
+with $x\in U$.  In plain English,
+\begin{quote}
+If I can show that a predicate holds for an arbitrarily chosen element of some universe, then I can infer 
+that this predicate holds for all elements of that universe.
+\end{quote}
+With this we can rewrite our query as
+{\scriptsize
+\begin{alltt}
+?- (mult(3,5),{\color{red}y}) --> 15.
+\end{alltt}
+}
+Here the lowercase $y$ is an element of some universe, in this case the States, and therefore, if Prolog can prove this
+goal, we can conclude that
+\[
+\forall x [\sem{({\bf mult}(3,5),x)}{15}].
+\]
+with $x\in \mbox{States}$.
+\end{frame}
+
+\begin{frame}[fragile]{Theorem Proving with Prolog}
+
+\scriptsize
+
+We have to be careful with universal generalization; the statement  ``{\em some arbitrarily chosen element of some 
+universe}'' has a
+specific meaning:  
+\begin{quote}
+The element is not allowed to reveal its structure or internal state.
+\end{quote}
+Consequently, the predicate we want to generalize {\em is not allowed to investigate the structure or state of the
+element}.
+
+
+
+\end{frame}
+
+\begin{frame}[fragile]{Theorem Proving with Prolog}
+
+\scriptsize
+{\bf Example:} Let $\Sigma$ be the set of all states and let $\sigma'\in\Sigma$ be some arbitrarily chosen element
+of that set.  Let $p(\sigma') \equiv \sigma'(x) = 20$. Now, applying universal generalization we have,
+\[
+\frac{p(\sigma')}{\therefore \forall \sigma[p(\sigma)]}
+\]
+with $\sigma\in\Sigma$.  This is clearly a fallacious argument, there will be many states in which $\sigma(x) \ne 20$.
+This argument failed because the predicate $p$ investigated the internal structure of $\sigma'$.
+
+\vspace{.3in}
+{\bf Example:} Let $\Sigma$ be the set of all states and let $\sigma'\in\Sigma$ be some arbitrarily chosen element
+of that set.  Let $p(\sigma') \equiv \sigma'[20/x](x) = 20$. Now, applying universal generalization we have,
+\[
+\frac{p(\sigma')}{\therefore \forall \sigma[p(\sigma)]}
+\]
+with $\sigma\in\Sigma$.  This argument clearly holds because we did not look at the internal structure of the
+element.
+
+\end{frame}
+
+\begin{frame}[fragile]{Theorem Proving with Prolog}
+
+\scriptsize
+
+{\bf Example:} Let $\mathbb{N}$ be the set of all natural numbers and let $7\in\mathbb{N}$ be some arbitrarily chosen
+element of that set.  Let $p(7)\equiv 7 \le 100$.  Now, applying universal generalization we have, 
+\[
+\frac{p(7)}{\therefore \forall k[p(k)]}
+\]
+with $k\in\mathbb{N}$.  Again, this argument fails because we allowed the predicate to investigate the structure of
+the element (the value $7$).
+
+\vspace{.3in}
+{\bf Example:} Let $\mathbb{N}$ be the set of all natural numbers and let $n\in\mathbb{N}$ be some arbitrarily chosen
+element of that set.  Let $p(n)\equiv n \le n+100$.  Now, applying universal generalization we have, 
+\[
+\frac{p(n)}{\therefore \forall k[p(k)]}
+\]
+with $k\in\mathbb{N}$.  This argument succeeds because we did not look at the structure (specific value) of the element.
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Theorem Proving with Prolog}
+
+\scriptsize
+\begin{center}
+    \includegraphics[height=30mm]{images/swans}
+\end{center}
+
+\vspace{.1in}
+The {\em black swan problem} is a classic problem from machine learning theory set forward by mathematician and logician Karl Popper at the beginning of the past century: looking at all the swans in Europe and
+North America one would conclude that {\em all swans are white} (set D).  However, if you look at the worldwide population of swans (set X) you will also find black swans (in Australia) and therefore the conclusion based on set D is not valid.
+To avoid these invalid inferences, in machine learning theory this often framed as a probabilistic statement:
+\begin{quote}
+Based on set D it is {\bf most likely} that all swans are white.
+\end{quote}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Theorem Proving with Prolog}
+
+\scriptsize
+Coming back to our universal generalization problem.
+
+\vspace{.1in}
+{\bf Example:} Let $X$ be the set of all swans worldwide, let $x'\in X$ be some arbitrarily selected element
+of that set.  Let,
+\[
+p(x') \equiv x' \mbox{ is a white swan.}
+\] 
+ Now, applying universal generalization we have, 
+\[
+\frac{p(x')}{\therefore \forall x[p(x)]}
+\]
+with $x\in X$.  Again, this argument fails because we allowed the predicate to investigate the structure of
+the element  $x'$ directly by looking at its color.
+\end{frame}
+
+
+\begin{frame}[fragile]{\large Proof Scores}
+\tiny
+\begin{verbatim}
+% load preamble
+:- ['preamble.pl'].
+
+% proof1.pl
+% Proof score:
+%
+:- >>> 'Show that'.
+:- >>> '(forall x)(forall s)(forall vx)(exists V)[(add(x,mult(3,5)),s)-->>V ^ =(V,vx+15)]'.
+:- >>> ' assuming lookup(x,s,vx)'.
+
+% load semantics
+:- ['sem.pl'].
+
+% state our assumption
+:- asserta(lookup(x,s,vx)).                                                                 
+                                                                                            
+% run the proof                                                                             
+:- (add(x,mult(3,5)),s)-->>V, V = vx + 15.
+\end{verbatim}
+\end{frame}
+
+\begin{frame}{Expression Equivalence}
+\small
+In our Prolog framework semantic equivalence between arithmetic expression
+can be formulated as follows:
+\[
+a_0 \sim a_1 \mbox{ iff } \forall s,\exists V_0,V_1\left[ \sem{(a_0,s)}{V_0}\wedge \sem{(a_1,s)}{V_1} \wedge \mbox{=}(V_0,V_1) \right ],
+\]
+for $a_0, a_1 \in \syntaxset{Aexp}$.
+
+\end{frame}
+
+\begin{frame}[fragile]{Expression Equivalence}
+\small
+\begin{verbatim}
+% load preamble
+:- ['preamble.pl'].
+
+% proof-equiv.pl
+:- >>> ' prove that mult(2,3) ~ add(3,3)'.
+%
+% show that
+% (forall s)(exists V0,V1)
+%         [(mult(2,3),s)-->>V0 ^ (add(3,3),s)-->>V1 ^ =(V0,V1)]
+
+% load semantics
+:- ['sem.pl'].
+
+% proof
+:- (mult(2,3),s)-->>V0 , (add(3,3),s)-->>V1 , V0 = V1.
+\end{verbatim}
+\end{frame}
+
+
+\begin{frame}[fragile]{Expression Equivalence}
+\scriptsize
+\begin{verbatim}
+?- ['proof-equiv.pl'].
+%  preamble.pl compiled 0.00 sec, 924 bytes
+>>>  prove that mult(2,3) ~ add(3,3)
+%   preamble.pl compiled 0.00 sec, 128 bytes
+%   xis.pl compiled 0.00 sec, 6,788 bytes
+%  sem.pl compiled 0.00 sec, 12,548 bytes
+% proof-equiv.pl compiled 0.01 sec, 14,876 bytes
+true.
+
+?- 
+\end{verbatim}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Expression Equivalence}
+\scriptsize
+\begin{verbatim}
+% proof-comm.pl
+:- ['preamble.pl'].
+
+:- >>> 'prove that add(a0,a1) ~ add(a1,a0)'.
+%
+% show that
+% (forall s,a0,a1)(exists V0,V1)
+%         [sem(add(a0,a1),s,V0)^sem(add(a1,a0),s,V1)^=(V0,V1)]                              
+% assuming                                                                                  
+% (a0,s) -->> va0.                                                                          
+% (a1,s) -->> va1.                                                                          
+                                                                                            
+% load semantics                                                                            
+:- ['sem.pl'].                                                                              
+                                                                                            
+% assumptions on semantic values of expressions                                             
+:- asserta((a0,s)-->>va0).                                                                  
+:- asserta((a1,s)-->>va1).                                                                  
+                                                                                            
+% assumption on integer addition commutativity                                              
+:- asserta(comm(A + B, B + A)).                                                             
+                                                                                            
+% proof                                                                                     
+:- (add(a0,a1),s)-->>V0, (add(a1,a0),s)-->>V1,comm(V0,VC0),VC0=V1.
+\end{verbatim}
+\end{frame}
+
+
+
+\end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%% end of template1.tex %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

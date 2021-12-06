@@ -1,0 +1,50 @@
+% definitions for slides for the semantics course - CSC501
+% Lutz Hamel, (c) 2006
+
+\usetheme{Warsaw}
+\usepackage{bussproofs}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{latexsym}
+\usepackage{xypic}
+\usepackage{alltt}
+\usepackage{rotating}
+\usepackage{graphicx}
+
+\newcommand{\ul}[1]{\underline{#1}}
+\newcommand{\orbar}{\,|\,}
+\newcommand{\co}{\,\colon\;}
+\newcommand{\syntaxset}[1]{\ensuremath{\mbox{\bf #1}}}
+\newcommand{\nonterm}[1]{\ensuremath{\mbox{#1}}}
+\newcommand{\term}[1]{\ensuremath{\mbox{\bf #1}}}
+\newcommand{\ifstmt}[3]{\ensuremath{{\bf if}\; {#1}\;{\bf then}\;{#2}\;{\bf else}\;{#3}\;\term{end}}}
+\newcommand{\whilestmt}[2]{\ensuremath{{\bf while}\; {#1}\;{\bf do}\;{#2}\; \term{end}}}
+\newcommand{\funcstmt}[3]{\ensuremath{{\bf fun}\; {#1}\; {\bf is}\; {#2} \; {\bf return}\; {#3}}}
+\newcommand{\localstmt}[1]{\ensuremath{{\bf local}\; {#1}}}
+\newcommand{\pairmap}[3]{\ensuremath{( {#1}, {#2} ) \mapsto {#3}}}
+\newcommand{\single}[1]{\ensuremath{\langle {#1}\rangle}}
+\newcommand{\pair}[2]{\ensuremath{({#1}, {#2} )}}
+\newcommand{\triple}[3]{\ensuremath{\langle {#1}, {#2}, {#3} \rangle}}
+\newcommand{\cond}[3]{\ensuremath{({#1}?\,{#2} : {#3})}}
+\newcommand{\condbar}[3]{\ensuremath{({#1}\rightarrow{#2} \mid {#3})}}
+\newcommand{\sem}[2]{\ensuremath{{#1}-\!\!-\!\!\!\!\gg{#2}}}
+\newcommand{\liftfunc}[1]{\ensuremath{\lfloor{#1}\rfloor}}
+\newcommand{\bcode}{\begin{alltt}\scriptsize}
+\newcommand{\ecode}{\end{alltt}}
+\newcommand{\comment}[1]{}
+
+\newcommand{\fframe}[1]{
+\begin{center}
+\fbox{
+\begin{minipage}{3.6in}
+{#1}
+\end{minipage}
+}
+\end{center}
+}
+
+
+
+
+
+

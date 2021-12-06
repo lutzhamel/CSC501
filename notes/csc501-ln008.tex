@@ -1,0 +1,437 @@
+%template1.tex
+%The following LaTeX source file represents the simplest kind of slide presentation; no overlays, no included graphics. Substitute your favorite style for ``pascal''. To create the PDF file template1.pdf, (1) be sure to use the prosper class, then (2) execute the command latex template1.tex, and (3) the command dvipdf template1.dvi.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% template1.tex %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass{beamer}
+\include{defs}
+\begin{document}
+
+\begin{frame}{Trouble in Induction Paradise}
+
+\scriptsize
+Consider the grammar rule for commands in our IMP language
+\[
+\nonterm{C} ::= \mbox{\bf skip} \orbar \nonterm{V} := \nonterm{A} \orbar\nonterm{C}\; ; \nonterm{C} \orbar
+	\mbox{\bf if} \; \nonterm{B}\; \mbox{\bf then}\;\nonterm{C}\; \mbox{\bf else}\; \nonterm{C} \; \term{end}\orbar
+	\mbox{\bf while}\; \nonterm{B}\; \mbox{\bf  do}\; \nonterm{C}\; \term{end}
+\]
+Then the set \syntaxset{Com} contains all possible programs we can write in this language.  We can give an
+inductive definition for this set,
+\begin{enumerate}
+\item $\term{skip}\in \syntaxset{Com}$
+\item $x := a \in \syntaxset{Com} \mbox{ if } x\in \syntaxset{Loc}, a\in\syntaxset{Aexp}$
+\item $c_0\; ; c_1 \in \syntaxset{Com} \mbox{ if } c_0, c_1 \in \syntaxset{Com}$
+\item $\mbox{\bf if} \; b\; \term{then}\;c_0\; \term{else}\; c_1\; \term{end} \in\syntaxset{Com} \mbox{ if } b\in\syntaxset{Bexp}, c_0, c_1\in 
+\syntaxset{Com}$
+\item $\term{while}\; b\; \term{do}\; c\; \term{end} \in\syntaxset{Com} \mbox{ if } b\in\syntaxset{Bexp}, c\in 
+\syntaxset{Com}$
+\end{enumerate}
+
+The first two rules are the least elements in \syntaxset{Com} and the remaining rules define terms inductively.
+As in the case with the arithmetic expressions there is a clear ordering of the terms.
+\end{frame}
+
+\begin{frame}{Trouble in Induction Paradise}
+
+\scriptsize
+{\bf Proposition:} All programs terminate.  Formally,\footnote{\tiny This is of course silly, since we know that not all programs terminate, e.g., $\whilestmt{\term{true}}{\term{skip}}$, but
+it is interesting to see where exactly the proof fails.}
+
+\[
+\forall c \in\syntaxset{Com}, \forall \sigma\in\Sigma,\exists \sigma' \in\Sigma.\; (c,\sigma)\mapsto \sigma'.
+\]
+
+\vspace{.1in}
+{\bf Proof:} By induction on the structure of \syntaxset{Com}.
+
+\vspace{.1in}
+Case $\term{skip}$. Let $\sigma\in\Sigma$, then $(\term{skip}, \sigma)\mapsto \sigma$. Clearly terminates.
+
+\vspace{.1in}
+Case $x := a$. We have already established that arithmetic expressions terminate with $(a,\sigma)\mapsto k$
+where $\sigma\in\Sigma$ and $k \in \mathbb{I}$.  It follows from the semantic rules for assignment,
+\[
+(x := a,\sigma)\mapsto \sigma[k/x].
+\]
+This also terminates.
+
+\end{frame}
+
+\begin{frame}{Trouble in Induction Paradise}
+
+\scriptsize
+Case $c_0\; ; c_1$.  As our induction hypothesis we assume that commands $c_0$ and $c_1$ terminate in all states.
+This means that they will also terminate for the following state configuration:
+\begin{eqnarray*}
+(c_0,\sigma) &\mapsto& \sigma'\\
+(c_1,\sigma') &\mapsto&\sigma''
+\end{eqnarray*}
+Our inductive step then is,
+
+\[
+\AxiomC{$(c_0,\sigma) \mapsto \sigma'$}
+\AxiomC{$(c_1,\sigma') \mapsto\sigma''$}
+\BinaryInfC{$(c_0\; ; c_1,\sigma)\mapsto \sigma''$}
+\DisplayProof
+\]
+Statement composition clearly terminates.
+\end{frame}
+
+\begin{frame}{Trouble in Induction Paradise}
+
+\scriptsize
+Case $\term{if} \; b \; \term{then}\; c_0\; \term{else}\; c_1\; \term{end}$.  It can be shown that all boolean expressions terminate (similar  proof as for the arithmetic expressions). As our induction hypothesis we assume that commands $c_0$ and $c_1$ terminate in all states,
+\begin{eqnarray*}
+(c_0,\sigma) &\mapsto& \sigma'\\
+(c_1,\sigma) &\mapsto&\sigma'
+\end{eqnarray*}
+Our inductive step then is, (a) for the case that the boolean evaluates to true,
+\[
+\AxiomC{$(b,\sigma) \mapsto{true}$}
+\AxiomC{$(c_0,\sigma) \mapsto \sigma'$}
+\BinaryInfC{$(\term{if} \; b \; \term{then}\; c_0\; \term{else}\; c_1\; \term{end},\sigma)\mapsto \sigma'$}
+\DisplayProof
+\]
+and (b) for the case that the boolean evaluates to false,
+\[
+\AxiomC{$(b,\sigma) \mapsto{false}$}
+\AxiomC{$(c_1,\sigma) \mapsto \sigma'$}
+\BinaryInfC{$(\term{if} \; b \; \term{then}\; c_0\; \term{else}\; c_1\; \term{end},\sigma)\mapsto \sigma'$}
+\DisplayProof
+\]
+Conditional statements terminate.
+\end{frame}
+
+\begin{frame}{Trouble in Induction Paradise}
+
+\scriptsize
+Case $\term{while} \; b \; \term{do}\; c\; \term{end}$.  It can be shown that all boolean expressions terminate. As our induction hypothesis we assume that command $c$ terminates in all states,
+\[
+(c,\sigma) \mapsto \sigma'
+\]
+Our inductive step then is, (a) for the case that the boolean evaluates to false,
+\[
+\AxiomC{$(b,\sigma) \mapsto\term{false}$}
+\UnaryInfC{$(\term{while} \; b \; \term{do}\; c\; \term{end},\sigma)\mapsto \sigma$}
+\DisplayProof
+\]
+and (b) for the case that the boolean evaluates to true,
+\[
+\AxiomC{$( b,\sigma) \mapsto  \bf true$}
+\AxiomC{$( c, \sigma) \mapsto \sigma'$}
+\AxiomC{${\color{red}( \term{while}\; b\; \term{do}\; c\;\term{end}, \sigma') \mapsto \sigma''}$}
+\TrinaryInfC{$( \term{while}\; b\; \term{do}\; c\;\term{end}, \sigma) \mapsto \sigma''$}
+\DisplayProof
+\]
+THE PROOF DOES NOT WORK!  There are two different ways at looking at why it does not work:
+\begin{itemize}
+\item If we were to assume that the premise given in red is true, then there is nothing to prove: the loop terminates
+because the loop terminates.
+\item From a structural induction point of view this argument does not work because the premise given in red is 
+not a strict subterm of the while loop.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Trouble in Induction Paradise}
+
+Another way of interpreting the results from our proof; since the proof only failed for loops and was successful
+for the rest of the commands we can say that the language of commands without loops would terminate for
+every state. 
+\end{frame}
+
+
+\begin{frame}[fragile]{Trouble in Induction Paradise}
+
+\scriptsize
+All this points to the observation that termination of loops {\em cannot} be determined by simply looking at
+the syntax.  Consider the following two loops,
+\[
+\whilestmt{x \ge 1}{x := x -1}
+\]
+and
+\[
+\whilestmt{x \ge 1}{x := x +1}
+\] 
+The first loop terminates for all possible states and the second loop only terminates for states $\sigma$ such
+that $\sigma(x) < 1$.  It is clear that we can determine loop termination only by looking at the computation/states more
+carefully.
+\end{frame}
+
+\begin{frame}[fragile]{Trouble in Induction Paradise}
+
+\scriptsize
+The good news is that structural induction on commands only fails when we consider {\em semantic issues}, we
+can still use structural induction on commands when considering {\em syntactic issues}.  Consider the following.
+
+\vspace{.1in}
+{\bf Proposition:}  All terms in \syntaxset{Com} have the same number of $\term{if}$/$\term{while}$ and $\term{end}$
+keywords.
+
+\vspace{.1in}
+{\bf Proof:} Proof by induction over the structure of \syntaxset{Com}.  We let $K(c)$ be the number of
+occurrences of keywords $\term{if}$ and $\term{while}$ and we let $E(c)$
+be number of occurrences of the keyword $\term{end}$ in $c\in\syntaxset{Com}$.  We need to show that
+$K(c) = E(c)$ for all $c\in\syntaxset{Com}$.
+
+\vspace{.1in}
+Case $\term{skip}$.  Clearly, $K(\term{skip}) = E(\term{skip}) = 0$.
+
+\vspace{.1in}
+Case $x := a$. Arithmetic expressions cannot have keywords, therefore it is easy to see that  $K(x := a) = E(x := a) = 0$.
+
+\vspace{.1in}
+Case $c_0 \; ; \; c_1$.  As our inductive hypothesis we assume that $K(c_0) = E(c_0)$ and $K(c_1) = E(c_1) $.  Observe that the following identities hold,
+\begin{eqnarray*}
+K(c_0 \; ; \; c_1) &=& K(c_0) + K(c_1)\\
+E(c_0 \; ; \; c_1) &=& E(c_0) + E(c_1)
+\end{eqnarray*}
+We now show that
+$
+K(c_0 \; ; \; c_1) = E(c_0 \; ; \; c_1)
+$
+holds,
+\begin{eqnarray*}
+K(c_0 \; ; \; c_1) &=& K(c_0) + K(c_1)\\ 
+	&=& E(c_0) + E(c_1)\\
+	&=&E(c_0 \; ; \; c_1)
+\end{eqnarray*}
+\end{frame}
+
+
+\begin{frame}[fragile]{Trouble in Induction Paradise}
+
+\small
+Case $\ifstmt{b}{c_0}{c_1}$.  Boolean expressions do not contain keywords.  As our inductive hypothesis we assume that $K(c_0) = E(c_0)$ and $K(c_1) = E(c_1)$.  Observe that the following identities hold,
+\begin{eqnarray*}
+K(\ifstmt{b}{c_0}{c_1}) &=& K(c_0) + K(c_1) + 1\\
+E(\ifstmt{b}{c_0}{c_1}) &=& E(c_0) + E(c_1) + 1
+\end{eqnarray*}
+We now show that
+\[
+K(\ifstmt{b}{c_0}{c_1}) = E(\ifstmt{b}{c_0}{c_1})
+\]
+holds,
+\begin{eqnarray*}
+K(\ifstmt{b}{c_0}{c_1}) &=& K(c_0) + K(c_1) + 1\\ 
+	&=& E(c_0) + E(c_1) + 1\\
+	&=&E(\ifstmt{b}{c_0}{c_1})
+\end{eqnarray*}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Trouble in Induction Paradise}
+
+\small
+Case $\whilestmt{b}{c}$.  Boolean expressions do not contain keywords.  As our inductive hypothesis we assume that $K(c) = E(c)$.  Observe that the following identities hold,
+\begin{eqnarray*}
+K(\whilestmt{b}{c}) &=& K(c) + 1\\
+E(\whilestmt{b}{c}) &=& E(c) + 1
+\end{eqnarray*}
+We now show that
+\[
+K(\whilestmt{b}{c}) = E(\whilestmt{b}{c})
+\]
+holds,
+\begin{eqnarray*}
+K(\whilestmt{b}{c}) &=& K(c) + 1\\ 
+	&=& E(c) + 1\\
+	&=&E(\whilestmt{b}{c}) 
+\end{eqnarray*}
+
+This concludes the proof. $\Box$
+\end{frame}
+
+
+\begin{frame}[fragile]{Assignment}
+
+HW\#3 -- see webpage.
+
+\end{frame}
+
+
+\begin{frame}{Well-Founded Relations}
+
+\small
+
+The essential feature of sets that allows for induction is that the ordering relation between elements in
+these sets do not give rise to infinite descending chains -- there has to be a minimal element!
+
+\vspace{.1in}
+Clearly, inductively defined sets satisfy this requirement.  
+
+\vspace{.1in}
+
+{\bf Definition:} A {\em well-founded relation} is a binary relation $\prec$ on a set $A$
+such that there are no infinite descending chains $\cdots \prec a_i \prec \cdots a_1 \prec a_0$.
+Here, $a \prec b$ means $a$ is the {\em predecessor} of $b$.
+\end{frame}
+
+\begin{frame}{Well-Founded Relations}
+
+\small
+
+We can express well-founded relations in terms of {\em minimal elements}.
+
+\vspace{.1in}
+
+{\bf Proposition:} Let $\prec$ be a binary relation on a set $A$.
+The relation $\prec$ is well-founded iff any nonempty subset 
+$Q$ of $A$ has a minimal element, i.e., an element $m$ such that
+\[
+m\in Q \wedge \forall b \prec m.b \not\in Q.
+\]
+
+\vspace{.5in}
+
+
+\end{frame}
+
+\begin{frame}{Well-Founded Relations}
+
+\small
+
+{\bf Proof:} ``only-if'' direction: Assume that $\prec$ is well-founded. Let $Q$ be a nonempty subset of $A$.  We
+can construct a chain of elements in $Q$ where $a_0$ is any element in $Q$ and
+$a_n \prec \cdots \prec a_0$ is a chain where $a_i \in Q$ with $i = 0,\ldots,n$.
+Observe that there is some $b \in Q$ such that $b \prec a_n$ or there is not.
+If not, then $a_n \prec \cdots \prec a_0$ is the largest chain in $Q$ and we stop the construction. Otherwise,
+take $a_{n+1} = b$ where $a_{n+1} \prec a_n \prec \cdots \prec a_0$.
+Since $\prec$ is well-founded, the chain cannot be infinite and will be of the form
+$a_m \prec \cdots \prec a_0$ where $a_m$ is the minimal element as required. 
+
+\vspace{.1in}
+
+``if'' direction:  By contradiction.\footnote{\tiny {\bf Note}: In proofs by contradiction we want to prove {\em if} $A$ {\em then} $B$.In order to do so we assume $A$ and $\neg B$ and show that this leads to a contradiction. Therefore, we conclude $B$.}
+Assume that every nonempty subset $Q$ of $A$ has a minimal element.
+Now assume that $\prec$ is not well-founded, that is, $\cdots \prec a_i \prec \cdots \prec a_1 \prec a_0$ is an infinite descending chain in $Q$.
+This implies the set $Q = \{ a_i \:|\; i \in \mathbb{N}\}$ would be nonempty without a minimal element.
+A contradiction, therefore $\prec$ is well-founded.
+$\Box$
+\end{frame}
+
+\begin{frame}{Well-Founded Induction}
+
+{\bf Proposition: (Well-Founded Induction Principle)} Let $\prec$ be a well-founded relation on a set $A$, let $P$ be a predicate over
+the elements of $A$, then
+\[
+\forall a.\; P(a) \mbox{ iff } \forall a,\forall b.\; b\prec a \wedge P(b) \Rightarrow P(a),
+\]
+with $a,b\in A$.
+\end{frame}
+
+\begin{frame}{Well-Founded Induction}
+\small
+In this formulation the condition 
+\[
+\forall a,\forall b.\; b\prec a \wedge P(b) \Rightarrow P(a)
+\]
+is always false for minimal elements in $A$ which makes the base case proof vacuously true for these elements (Why?).  It is therefore
+customary to write the well-founded induction principle in two steps:
+
+\vspace{.1in}
+
+{\bf Proposition:} Let $\prec$ be a well-founded relation on a set $A$, let $P$ be a predicate over elements of $A$, then
+\[
+\forall e.\; P(e) \mbox{ iff }\forall m.\; P(m) \wedge  \forall a,\forall b.\; b\prec a \wedge P(b) \Rightarrow P(a),
+\]
+here $e \in A$, $m\in A$ denotes the $\prec$-minimal elements in $A$, and $a,b\in A$ are non-minimal elements of $A$.
+\end{frame}
+
+\begin{frame}{Well-Founded Induction}
+\small
+
+{\bf Proof:} ``only-if'' direction: Assume that $P(e), \forall e \in A$, this clearly implies
+that $\forall m.\; P(m) \wedge  \forall a,\forall b.\; b\prec a \wedge P(b) \Rightarrow P(a)$ holds.
+
+\vspace{.1in}
+
+``if'' direction: By contradiction.  Assume that $\forall m.\; P(m) \wedge  \forall a,\forall b.\; b\prec a \wedge P(b) \Rightarrow P(a)$ holds.
+Suppose $P$ is not true for every $ a\in A$.  Since $ \prec$ is a well-founded relation, the set $Q = \{a\in A \orbar \neg P(a)\}$ 
+has a $ \prec$-minimal element $ n$ with $\neg P(n)$. If this element is an $ \prec$-minimal element of $ A$ itself, 
+then the condition $\forall m \in A. P(m)$ gives rise to $P(n)$, a contradiction.
+If the element $n$ has $ \prec$-predecessors say $b \prec n$ and $b\not\in Q$,
+then by assumption we have $ P(b)$ for every $ b$  and by condition $\forall a,\forall b.\; b\prec a \wedge P(b) \Rightarrow P(a)$ we have $ P(n)$, a contradiction. Therefore, $P(a)$ has to hold for all $a\in A$.\footnote{Reference: PlanetMath.org}  $\Box$
+
+\vspace{.2in}
+This shows that the ``domino principle" has to hold for {\em all} elements in an ordered set.
+
+\end{frame}
+
+
+\begin{frame}{Well-Founded Induction on States}
+
+\small
+
+{\bf Proposition:} Prove that $p \equiv \whilestmt{x \ge 1}{x := x -1}$ terminates, i.e.,
+\[
+\forall \sigma \in \Sigma, \; \exists \sigma' \in \Sigma. \pairmap{p}{\sigma}{\sigma'}.
+\]
+{\bf Proof Idea:}  The key to loop termination is the loop condition.  The proof approach here is to 
+group the states into two sets: (a) The set of states where the loop terminates trivially, that is, all states $\sigma$
+where $\sigma(x) \le -1$. (b) The set of states where we need to explicitly show that the loop terminates, all states
+$\sigma$ where $\sigma(x) \ge 0$.  In the latter set we create an ordering based on the loop index $x$ and then
+perform well-founded induction on the states using states with the loop index of $0$ as the basis and any state with loop index value $k$ for the inductive step.
+\end{frame}
+
+
+\begin{frame}{Well-Founded Induction on States}
+
+\small
+{\bf Proof:} It is easy to see that for all states $\sigma \in \Sigma$ where $\sigma(x) \le -1$ we have
+\pairmap{p}{\sigma}{\sigma}.  It remains to show that $p$ terminates for states $\sigma$ where
+$\sigma(x) \ge 0$.  Let $S = \{ \sigma \in \Sigma \orbar \sigma(x) \ge 0 \}$.  Define the predicate $P$ over
+$S$ as
+\[
+P(\sigma) \equiv \exists\sigma'. \pairmap{p}{\sigma}{\sigma'}.
+\]
+Define the relation $\prec$ over $S$ as $\sigma' \prec \sigma$ iff $\sigma(x) = \sigma'(x) + 1$.
+Clearly, the relation $\prec$ is well-founded because no infinite chains $\cdots\prec\sigma_n\prec\cdots\prec\sigma_k$
+such that $\sigma_i(x) \ge 0$ can exists.  We also observe that $\sigma_m \in S$ such that $\sigma_m(x) = 0$ are minimal elements in $S$.
+We apply the principle of well-founded induction
+\[
+\forall \sigma.\;P(\sigma)
+\mbox{ if } 
+\forall \sigma_m.\;P(\sigma_m) \wedge
+	\forall\sigma,\forall \sigma_b.\; \sigma_b \prec \sigma \wedge P(\sigma_b) \Rightarrow P(\sigma).
+\]
+\end{frame}
+
+\begin{frame}{Well-Founded Induction on States}
+\scriptsize
+\begin{description}
+\item[Base case:] For minimal elements in $S$ we have $\sigma_m(x) = 0$, it follows that \pairmap{p}{\sigma_m}{\sigma_m}.  Clearly, $P(\sigma_m)$ holds.
+\item[Inductive step:] Assume that we have some state $\sigma$ such that $\sigma(x) = k$ with $k \ge 1$. As the inductive
+hypothesis we assume that $P(\sigma)$ holds. Now let $\sigma \prec \sigma_{++}$, such that
+$\sigma_{++}(x) = \sigma(x) + 1$ and $\sigma_{++}(y) = \sigma(y)$ with $y \ne x$, then we have
+{\tiny
+\begin{prooftree}
+\AxiomC{$\vdots$}
+\UnaryInfC{\pairmap{x \ge 1}{\sigma_{++}}{\bf true}}
+\AxiomC{$\vdots$}
+\UnaryInfC{\pairmap{x := x -1}{\sigma_{++}}{\sigma}}
+\AxiomC{{\color{red}\pairmap{p}{\sigma}{\sigma'}}}
+\TrinaryInfC{\pairmap{p}{\sigma_{++}}{\sigma'}}
+\end{prooftree}
+}
+The rightmost premise holds due to our inductive hypothesis.
+To complete the proof we need to show that the states $\sigma_{++}$ and $\sigma$ are related to each other
+via the assignment $x := x - 1$, specifically,
+{\tiny
+\[
+\sigma_{++}[(\sigma_{++}(x)-1)/x] = \sigma_{++}[(\sigma(x)+ 1-1)/x] = \sigma_{++}[\sigma(x)/x] = \sigma
+\]
+}
+The rightmost identity follows from the extensionality property of functions and the identities above.
+\end{description}
+Therefore, the program $p$ terminates for all $\sigma \in \Sigma$. $\Box$
+\end{frame}
+
+\begin{frame}{Structural Induction}
+Read David Schmidt, Section 1.2
+
+\end{frame}
+
+\end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%% end of template1.tex %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

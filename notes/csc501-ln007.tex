@@ -1,0 +1,496 @@
+%template1.tex
+%The following LaTeX source file represents the simplest kind of slide presentation; no overlays, no included graphics. Substitute your favorite style for ``pascal''. To create the PDF file template1.pdf, (1) be sure to use the prosper class, then (2) execute the command latex template1.tex, and (3) the command dvipdf template1.dvi.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% template1.tex %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass{beamer}
+\include{defs}
+\begin{document}
+
+\begin{frame}{Induction}
+
+\small
+Up to this point we have considered proofs of the following type:
+\begin{quote}
+Given  a {\color{red}selected expression} $a \in \syntaxset{Aexp}$ and some state $\sigma \in \Sigma$ compute the semantic value $k$,
+\[
+	(a,\sigma)\mapsto k.
+\]
+\end{quote}
+Or we have considered equivalence proofs of the form,
+\begin{quote}
+Given two {\color{red}selected programs} $c,c'\in \syntaxset{Com}$, show that they are semantically equivalent,
+\[
+c \sim c' \mbox{ \rm iff } \forall \sigma\in\Sigma, \exists \sigma' \in \Sigma.\; \pairmap{c}{\sigma}{\sigma'} \wedge \pairmap{c'}{\sigma}{\sigma'}
+\]
+\end{quote}
+
+{\bf Question:} How would we prove that a certain property holds {\color{red} for all expressions} or {\color{red}for all
+commands}?   The syntax sets \syntaxset{Aexp}, \syntaxset{Bexp}, and \syntaxset{Com} are infinite and therefore
+we need a proof technique that can deal with the infinite nature of these sets $\Rightarrow$ Induction.
+\end{frame}
+
+\begin{frame}{Induction}
+Induction is a proof principle that allows us to prove properties of possibly infinite sets.\footnote{\tiny Sidebar:  It is interesting to note that there is evidence that inductive proofs were already
+in use in Aristotle and Plato's time.}
+
+\vspace{.1in}
+
+The power of this technique derives from the fact that we can test a particular property on a few
+select elements of the set and,
+if the tests hold, we can conclude that the property holds over the whole set.
+
+\vspace{.1in}
+
+In order for this to work the set has to have a certain structure and the tests have to be 
+selected in a manner to provide us with maximum information.
+\end{frame}
+
+
+\begin{frame}{Mathematical Induction}
+
+\small
+We start with mathematical induction over the natural numbers $\mathbb{N}$.
+Consider the {\em inductive definition} of the natural numbers,
+\begin{itemize}
+\item $0\in \mathbb{N}$,
+\item If $m\in \mathbb{N}$, then $m + 1 \in \mathbb{N}$.
+\end{itemize}
+The {\em inductive structure} of the natural numbers allows us to position the values along the
+number line without conflict,
+\[
+0\;1\;2\;3\;4\;5\ldots\infty
+\]
+a precise ordering,
+\[
+0 < 1 < 2 < 3 < 4 < 5 < \ldots < \infty
+\]
+\end{frame}
+
+\begin{frame}{Mathematical Induction}
+
+\small
+Now, if we want to show that a predicate $P$ holds for all $n\in\mathbb{N}$, then
+we can structure this as an {\em inductive proof} in two parts:
+\begin{enumerate}
+\item {\bf Base Case} -- show that $P(0)$ holds, that is, show that the property of interest holds for the {\em least} element of the natural numbers.
+\item {\bf Inductive Step} -- show that if $P(m)$ holds for any $m\in\mathbb{N}$,
+then $P(m+1)$ also holds.
+\end{enumerate}
+If both parts can be shown to be true then we can conclude that the statement holds for all $n\in\mathbb{N}$.
+
+\vspace{.1in}
+
+This is sometimes also called the {\em domino effect};  here step 2 above implies $P(0) \Rightarrow P(1)$
+and $P(1) \Rightarrow P(2)$ and $P(2) \Rightarrow P(3)$, etc.
+
+\vspace{.1in}
+Later on we will prove that this domino effect has to hold for inductively defined structures and therefore
+the proof principle is sound.
+
+\end{frame}
+
+
+\begin{frame}{Mathematical Induction}
+
+
+{\bf Proposition:} (Mathematical Induction) Let $P$ be a predicate over the
+natural numbers $\mathbb{N}$, then
+\fframe{
+\[
+\forall n \in \mathbb{N}. P(n) \mbox{ iff } P(0) \wedge  \forall n\in \mathbb{N}.P(n) \Rightarrow P(n+1).
+\]
+}
+
+Here, $P(0)$ is called the {\em basis}, $P(n)$ is the {\em induction hypothesis}, and $P(n) \Rightarrow P(n+1)$ is called the {\em inductive step}.
+\vspace{.2in}
+\end{frame}
+
+\begin{frame}{Mathematical Induction}
+
+Inductive proofs usually follow this pattern: 
+
+\begin{itemize}
+\item Let $P$ be a predicate over the natural numbers $\mathbb{N}$,
+
+\item Since the `only-if' direction of our proposition is trivial, we make use of solely the `if' direction:
+\[
+\forall n \in \mathbb{N}. P(n) \mbox{ if } P(0) \wedge  \forall n\in \mathbb{N}.P(n) \Rightarrow P(n+1),
+\]
+\item Show that the basis holds,
+\item Show that the inductive step holds
+{\em under the induction hypothesis},
+\item Conclude that $\forall n \in \mathbb{N}. P(n). \Box$
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Mathematical Induction}
+
+\small
+{\bf Example:} Show that 
+\[
+0+1+2+\ldots+n = \frac{n(n+1)}{2}
+\]
+for all $n\in \mathbb{N}$.
+
+\vspace{.1in}
+
+{\bf Proof:} by induction,
+\begin{enumerate}
+\item Base case, $0 = 0(0+1)/2$.
+\item Inductive step, assume that the formula holds for any $n$, with this assumption show that
+it holds for $n+1$,
+{\tiny
+\begin{eqnarray*}
+{\color{red}(0+1+2+\ldots+n)}+(n+1) &=& \frac{(n+1)\left((n+1) + 1\right)}{2}\\
+{\color{red}\frac{n(n+1)}{2}}+(n+1) &=& \frac{(n+1)\left((n+1) + 1\right)}{2}\\
+\frac{n(n+1)+2(n+1)}{2} &=& \frac{(n+1)\left((n+1) + 1\right)}{2}\\
+\end{eqnarray*}
+}
+It clearly does. (I let you finish the algebra.)$\Box$
+\end{enumerate}
+
+\end{frame}
+
+\begin{frame}{Structural Induction}
+
+\scriptsize
+Let us consider a special kind of induction which is done over {\em terms} rather than the natural numbers.
+Because terms tend to be highly structured objects we call this {\em structural induction}.
+
+\vspace{.1in}
+Consider the following grammar $G$ for a simple expression language,
+\[
+E ::= ( E \; @\; a ) \orbar a 
+\]
+with
+\[
+L(G) = \{ a , (a\; @\; a), ((a\; @ \; a)\; @ \; a), (((a\; @ \; a)\; @ \; a)\; @ \; a),((((a\; @ \; a)\; @ \; a)\; @ \; a)\; @ \; a), \dots\}
+\]
+The inductive definition of the set $L(G)$ is
+\begin{itemize}
+\item $a\in L(G)$,
+\item $(e\; @ \; a) \in L(G) \mbox{ if } e \in L(G)$.
+\end{itemize}
+This inductive definition is very similar to the inductive definition of the natural numbers and hints at an ordering 
+where $a$ is the {\em least element} and
+\[
+e < (e \;@\; a)
+\]
+with $e \in L(G)$.
+\end{frame}
+
+\begin{frame}{Structural Induction}
+
+\scriptsize
+The insight that $e < (e\; @ \; a)$  for any $e\in L(G)$ allows us to order all the terms in $L(G)$ in an unambiguous way,
+\[
+a <(a \;@ \;a)< ((a\; @ \; a)\; @ \; a)< (((a\; @ \; a)\; @ \; a)\; @ \; a)<((((a\; @ \; a)\; @ \; a)\; @ \; a)\; @ \; a)< \dots
+\]
+This structural ordering of the terms allows us to formulate our {\em structural induction principle}:  Let $P$
+be a predicate over the terms in $L(G)$, then
+\fframe{
+\[
+\forall e \in L(G). P(e) \mbox{ iff } P(a) \wedge  \forall e\in L(G).P(e) \Rightarrow P(\; (e \; @\; a) \;).
+\]
+}
+\end{frame}
+
+\begin{frame}{Structural Induction}
+
+\scriptsize
+{\bf Example:} Let $V(e)$ be the number of $a$'s and let $O(e)$ be the number of $@$'s in $e\in L(G)$, show that
+\[
+V(e) = O(e) + 1
+\]
+for all $e \in L(G)$.
+
+\vspace{.1in}
+{\bf Proof:} Proof by induction over the elements in $L(G)$,
+\begin{description}
+\item[Base Case:] $V(a) = O(a) + 1$ with $V(a) = 1$ and $O(a)=0$.  Clearly, the identity holds.
+\item[Inductive Step:] Let $e \in L(G)$ and assume that our inductive hypothesis
+\[
+V(e) = O(e) + 1
+\]
+holds. Observe that the following two identities also hold,
+\begin{eqnarray*}
+V(\;(e\; @ \; a)\;) &=& V(e) + 1\\
+O(\;(e\; @ \; a)\;) &=& O(e) + 1
+\end{eqnarray*}
+Then,
+\[
+\begin{array}{rcl}
+V(\;(e\; @ \; a)\;) &=& {\color{red}V(e)} + 1\\
+	&=&  {\color{red}O(e) + 1} + 1\\
+	&=& O(\;(e\; @ \; a)\;) + 1 \;\Box
+\end{array}
+\]
+\end{description}
+
+\end{frame}
+
+\begin{frame}{Structural Induction}
+
+\scriptsize
+We can apply structural induction to any inductively defined set. Recall
+the inductive definition of the arithmetic expressions:
+
+\begin{minipage}[t]{2in}
+\begin{itemize}
+\item $n \in  \syntaxset{Aexp}$ if $n \in \syntaxset{I}$,
+\item $x \in \syntaxset{Aexp}$ if $x\in \syntaxset{Loc}$,
+\end{itemize}
+\end{minipage}
+\begin{minipage}[t]{2in}
+\begin{itemize}
+\item $a_0 + a_1 \in \syntaxset{Aexp}$ if $a_0, a_1 \in \syntaxset{Aexp}$,
+\item $a_0 - a_1 \in \syntaxset{Aexp}$ if $a_0, a_1 \in \syntaxset{Aexp}$,
+\item $a_0 * a_1 \in \syntaxset{Aexp}$ if $a_0, a_1 \in \syntaxset{Aexp}$,
+\item $( a ) \in \syntaxset{Aexp}$ if $a \in \syntaxset{Aexp}$.
+\end{itemize}
+\end{minipage}
+
+\vspace{.1in}
+
+
+Observe that we have two base or minimal elements of \syntaxset{Aexp} on the left and we have the
+inductively defined elements of \syntaxset{Aexp} on the right.  More precisely, we can formulate a structural
+ordering based on the inductive definition,
+\begin{itemize}
+\item $n$ and $x$ are the least elements and form the basis,
+\item for the remaining terms we have the following ordering
+\begin{itemize}\scriptsize
+\item $a_0 < a_0 + a_1$ and $a_1 < a_0 + a_1$
+\item $a_0 < a_0 - a_1$ and $a_1 < a_0 - a_1$
+\item $a_0 < a_0 * a_1$ and $a_1 < a_0 * a_1$
+\item $a < (\; a\;)$
+\end{itemize}
+\end{itemize}
+Now, it is not possible to create a linear order for the elements of \syntaxset{Aexp}, but we can sort them into
+a {\em partially ordered lattice structure}.  It turns out that that is enough to be able to perform structural
+induction as long as there are no ambiguities (which there are none).  The only consequence of this
+lattice structure is that our induction principle will be more complicated $\dots$
+
+
+\end{frame}
+
+\begin{frame}{Structural Induction}
+
+\scriptsize
+Given the ordering of the terms 
+we can now state our {\em structural induction principle} to show that some predicate $P$ holds for
+all arithmetic expressions:
+\fframe{
+\[
+\begin{array}{rcl}
+\forall a \in \syntaxset{Aexp}. P(a) &\mbox{iff} & (\forall n \in \syntaxset{I}. P(n))\wedge \\
+		&& (\forall x \in \syntaxset{Loc}.  P(x)) \wedge \\
+		&& (\forall a_0, a_1 \in \syntaxset{Aexp}. P(a_0) \wedge\; P(a_1) \Rightarrow P(a_0 + a_1)) \wedge \\
+		&& (\forall a_0, a_1 \in \syntaxset{Aexp}. P(a_0) \wedge\; P(a_1) \Rightarrow P(a_0 - a_1)) \wedge \\
+		&& (\forall a_0, a_1 \in \syntaxset{Aexp}. P(a_0) \wedge\; P(a_1) \Rightarrow P(a_0 * a_1)) \wedge \\
+		&& (\forall a \in \syntaxset{Aexp}. P(a) \Rightarrow P( \; ( a )\; )) 
+\end{array}
+\]
+}
+As expected, here we also take advantage of the precise ordering of terms and their sub terms and
+therefore the domino effect also works here.
+
+\end{frame}
+
+
+
+
+\begin{frame}{Structural Induction}
+
+{\bf Observation:} As many cases as there are expression forms 
+\begin{itemize}
+\item Atomic expressions (with no subexpressions) are all base 
+cases 
+\item Composite expressions are the inductive cases 
+\end{itemize}
+
+\vspace{.2in}
+{\bf Exercise:} State the structural induction principle for the remaining syntax sets.
+\end{frame}
+
+\begin{frame}{Structural Induction}
+
+\small
+{\bf Example:} Let $a\in\syntaxset{Aexp}$, let $L(a)$ be the number of literals and variable occurrences in $a$, let 
+$O(a)$ be the number of operators in $a$, and define the predicate $P$ as
+\[
+P(a) \equiv L(a)  \le O(a) + 1.
+\]
+Show that $\forall a \in \syntaxset{Aexp}. P(a)$. 
+
+\vspace{.2in}
+
+{\bf Proof:} By induction over the structure of $\syntaxset{Aexp}$.  We make use of the structural induction principle
+for \syntaxset{Aexp},
+\[
+\begin{array}{rcl}
+\forall a \in \syntaxset{Aexp}. P(a) &{\color{red}\mbox{if}} & (\forall n \in \syntaxset{I}. P(n))\wedge \\
+		&& (\forall x \in \syntaxset{Loc}.  P(x)) \wedge \\
+		&& (\forall a_0, a_1 \in \syntaxset{Aexp}. P(a_0) \wedge\; P(a_1) \Rightarrow P(a_0 + a_1)) \wedge \\
+		&& (\forall a_0, a_1 \in \syntaxset{Aexp}. P(a_0) \wedge\; P(a_1) \Rightarrow P(a_0 - a_1)) \wedge \\
+		&& (\forall a_0, a_1 \in \syntaxset{Aexp}. P(a_0) \wedge\; P(a_1) \Rightarrow P(a_0 * a_1)) \wedge \\
+		&& (\forall a \in \syntaxset{Aexp}. P(a) \Rightarrow P( \; ( a )\; )) 
+\end{array}
+\]
+
+
+\end{frame}
+
+\begin{frame}{Structural Induction}
+
+\small
+\begin{description}
+\item[Case $n$.] \hspace{.1in}\\ 
+$ L(n) = 1$ and $O(n) = 0$, clearly $P(n)$ holds. 
+\item[Case  $x$.] \hspace{.1in}\\ 
+$ L(x) = 1$ and $O(x) = 0$, clearly $P(x)$ holds. 
+\end{description}
+\end{frame}
+
+\begin{frame}{Structural Induction}
+\scriptsize
+\begin{description}
+\item[Case $( a )$.]\hspace{.1in}\\ 
+As the induction hypothesis we assume that $P(a) \equiv L(a) \le O(a) + 1$ holds. 
+We need to show that 
+\[
+\forall a \in \syntaxset{Aexp}. P(a) \Rightarrow P(\; ( a ) \;).
+\]
+We now show that $P( \;( a ) \;)\equiv L( \;( a ) \;) \le  O( \;( a ) \;) + 1$ holds.
+It is easy to see that 
+\[
+L( \;( a ) \;) = L(a)
+\]
+and
+\[
+O( \;( a ) \;) = O(a),
+\]
+then 
+\begin{eqnarray*}
+L( \;( a ) \;) &\le& L(a) \\
+	&\le& O(a) + 1\\
+	&\le& O( \;( a ) \;) + 1.
+\end{eqnarray*}
+\end{description} 
+\end{frame}
+
+\begin{frame}{Structural Induction}
+\scriptsize
+\begin{description}
+\item[Case $a_0 + a_1$.]\hspace{.1in}\\ 
+As the induction hypothesis we assume that $P(a_0) \equiv L(a_0) \le O(a_0) + 1$ and 
+$P(a_1) \equiv L(a_1) \le O(a_1) + 1$ are true. 
+We need to show that 
+\[
+\forall a_0, a_1 \in \syntaxset{Aexp}. P(a_0) \wedge\; P(a_1) \Rightarrow P(a_0 + a_1).
+\]
+We now show that $P(a_0 + a_1)\equiv L(a_0 + a_1) \le  O(a_0 + a_1) + 1$ holds.
+It is easy to see that 
+\[
+L(a_0 + a_1) = L(a_0) + L(a_1)
+\]
+and
+\[
+O(a_0 + a_1) = O(a_0) + O(a_1) + 1,
+\]
+then 
+\begin{eqnarray*}
+L(a_0 + a_1) &\le& L(a_0) + L(a_1) \\
+	&\le& (O(a_0) + 1) + (O(a_1) + 1)\\
+	&\le& (O(a_0) + O(a_1)+ 1) + 1\\
+	& \le& O(a_0 + a_1) + 1.
+\end{eqnarray*}
+\item The remaining cases can be shown to hold in a similar fashion. 
+This concludes the proof.$\Box$
+\end{description} 
+\end{frame}
+
+\begin{frame}{Structural Induction}
+
+\scriptsize
+
+{\bf Example:} Prove that every computation with arithmetic expressions terminates. Formally,
+
+\[
+\forall a \in \syntaxset{Aexp},\forall \sigma\in\Sigma, \exists k\in\mathbb{I}.\pairmap{a}{\sigma}{k}.
+\]
+
+\vspace{.1in}
+
+{\bf Proof:} By structural induction over $\syntaxset{Aexp}$, let
+\[
+P(a)\equiv \forall \sigma\in\Sigma,\exists k\in \mathbb{I}.\pairmap{a}{\sigma}{k}.
+\]
+\begin{description}
+\item[Case $n$.]\hspace{.1in}\\
+$\forall \sigma \in \Sigma$, we have \pairmap{n}{\sigma}{\mbox{eval}(n)}.  Clearly, $P(n)$ holds.
+\item[Case $x$.]\hspace{.1in}\\
+$\forall \sigma \in \Sigma$, we have \pairmap{x}{\sigma}{\sigma(x)}.  Clearly, $P(x)$ holds.
+\end{description}
+\end{frame}
+
+\begin{frame}{Structural Induction}
+
+\scriptsize
+
+\begin{description}
+\item[Case $(a)$.]\hspace{.1in}\\ 
+As the inductive hypothesis assume that $P(a)$ holds, then $\forall \sigma \in \Sigma$ we have,
+\begin{prooftree}
+\AxiomC{{\color{red}\pairmap{a}{\sigma}{k}}}
+\UnaryInfC{\pairmap{\; (a)\;}{\sigma}{k}}
+\end{prooftree}
+The premise holds by assumption.  Therefore, $P(\;(a)\;)$ holds.
+\end{description} 
+\end{frame}
+
+\begin{frame}{Structural Induction}
+
+\scriptsize
+
+\begin{description}
+\item[Case $a_0 + a_1$.]\hspace{.1in}\\ 
+As the inductive hypothesis assume that $P(a_0)$ and $P(a_1)$ hold, then $\forall \sigma \in \Sigma$ we have,
+\begin{prooftree}
+\AxiomC{{\color{red}\pairmap{a_0}{\sigma}{k_0}}}
+\AxiomC{{\color{red}\pairmap{a_1}{\sigma}{k_1}}}
+\RightLabel{, where $k = k_0 + k_1$.}
+\BinaryInfC{\pairmap{a_0 + a_1}{\sigma}{k}}
+\end{prooftree}
+The premises hold by assumption.  Therefore, $P(a_0 + a_1)$ holds.
+\end{description} 
+The remaining cases can be shown to hold in a similar fashion. 
+This proves that all arithmetic expressions terminate. $\Box$
+\end{frame}
+
+\begin{frame}{Limits of Structural Induction}
+
+\small
+Structural induction can only be applied where syntax directs the computation such that only subexpressions appear in the premisses of inductive proof steps.
+Consider the {\bf while} loop; its evaluation does not depend 
+only on the evaluation of its strict subexpressions:
+
+\begin{prooftree}
+\AxiomC{$( b,\sigma) \mapsto  \bf true$}
+\AxiomC{$( c, \sigma) \mapsto \sigma''$}
+\AxiomC{{\color{red}$( {\bf while}\; b\; {\bf do}\; c, \sigma'') \mapsto \sigma'$}}
+\TrinaryInfC{$( {\bf while}\; b\; {\bf do}\; c, \sigma) \mapsto \sigma'$}
+\end{prooftree}
+This means we {\em cannot} use structural induction on while loops.
+
+\vspace{.1in}
+
+To get around this problem we can resort to well-founded induction on states, mathematical induction on
+loop invariants  (in the case of {\bf while} loops), or induction on derivations.
+\end{frame}
+
+
+\end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%% end of template1.tex %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

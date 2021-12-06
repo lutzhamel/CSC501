@@ -1,0 +1,305 @@
+\documentclass{beamer}
+\include{defs}
+\begin{document}
+
+\begin{frame}[fragile]{Loop Invariants}
+
+\scriptsize
+
+Let us  prove the following program correct for all possible 
+values of $n$ and $n \ge 0$:
+
+\begin{verbatim}
+assign(i,0) seq
+assign(p,0) seq
+while not(eq(i,n)) do 
+    assign(i,add(i,1)) seq
+    assign(p,add(p,i)) 
+\end{verbatim}
+
+\vspace{.1in}
+With the pre- and postconditions:
+\begin{eqnarray*}
+{\rm pre}(s) &\equiv & {\rm lookup}(n,s,vn) \wedge vn \ge 0\\
+{\rm post}(s) &\equiv& {\rm lookup}(p,s,vp) \wedge vp = \sum_{j=0}^{vn} j\\
+\end{eqnarray*}
+It becomes clear that the postcondition is an appropriate model for the program when
+we try various values for $v$, i.e., $vn =3$.  It is easy to see that in this case
+$vp = 6$.
+\end{frame}
+
+
+\begin{frame}[fragile]{Loop Invariants}
+
+\scriptsize
+
+Let us use loop invariants to prove the following program correct:
+
+\vspace{.1in}
+{
+{\color{red}\{$pre$\}}\\
+{\tt assign(i,0) seq}\\
+{\tt assign(p,0) seq}\\
+{\color{red}\{$inv$\}  }\\                                  
+{\tt while not(eq(i,n)) do }\\
+{\tt\verb"   "} {\color{red}\{$inv$ $\wedge$  $B$\}  }\\
+
+{\tt\verb"   "}{\tt assign(i,add(i,1)) seq }  \\
+{\tt\verb"   "}{\tt assign(p,add(p,i))}  \\
+{\tt\verb"   "}{\color{red}\{$inv$\} } \\                            
+{\color{red}\{$inv$ $\wedge$ $\neg B$\}}\\
+{\color{red}\{$post$\} } 
+}
+
+\vspace{.1in}
+
+where $B$ is computed as $\sem{({\rm le}(i,n),s)}{B}$.
+\begin{eqnarray*}
+{\rm pre}(s) &\equiv & {\rm lookup}(n,s,vn)\wedge vn \ge 0\\
+{\rm post}(s) &\equiv& {\rm lookup}(p,s,vp) \wedge vp = \sum_{j=0}^{vn} j\\
+{\rm inv}(s) &\equiv& {\rm lookup}(p,s,vp) \wedge \sem{(i,s)}{vi} \wedge vp = \sum_{j=0}^{vi} j
+\end{eqnarray*}
+
+{\bf NOTE:} the loop invariants can often be derived from the post condition.
+\end{frame}
+
+\begin{frame}[fragile]{Loop Invariants}
+
+\small
+Our three proof obligations are:
+
+
+\vspace{.1in}
+
+$\sem{({\rm init},S)}{Q} \wedge [{\rm pre}(S)\Rightarrow {\rm inv}(Q)]$
+
+\vspace{.05in}
+
+$\sem{({\rm body},S)}{Q} \wedge \sem{({\rm guard},S)}{B} \wedge [({\rm inv}(s) \wedge B)\Rightarrow {\rm inv}(Q)]$
+
+
+\vspace{.05in}
+
+$\sem{({\rm guard},T)}{B} \wedge [(inv(T) \wedge \neg\,B) \Rightarrow post(T)]$
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Loop Invariants}
+
+{\scriptsize
+\begin{verbatim}
+% sum.pl
+:-['sem.pl'].
+
+:- >>> 'define the parts of our program'.
+init(assign(i,0) seq assign(p,0)).
+guard(not(eq(i,n))).
+body(assign(i,add(i,1)) seq assign(p,add(p,i))).
+
+:- >>> 'define our sum operation'.
+:- dynamic sum/2.
+
+sum(0,0).
+
+sum(X,Y) :-
+    T1 is X-1,
+    sum(T1,T2),
+    Y is X+T2.
+
+:- >>> 'first proof obligation'.
+:- >>> 'assume precondition'.
+:- asserta(lookup(n,s,vn)).                                                                        
+:- >>> 'proof the invariant'.                                                                      
+:- init(I),(I,s) -->> Q,lookup(p,Q,VP),lookup(i,Q,VI), sum(VI,VP).
+:- retract(lookup(n,s,vn)).                                                                        
+\end{verbatim}
+}
+\end{frame}
+
+\begin{frame}[fragile]{Loop Invariants}
+
+{\scriptsize
+\begin{verbatim}
+:- >>> 'second  proof obligation'.                                                                 
+:- >>> 'assume invariant on s'.                                                                    
+:- asserta(lookup(p,s,vp)).
+:- asserta(lookup(i,s,vi)).                                                                        
+:- asserta(sum(vi,vp)).                                                                            
+% implies                                                                                          
+:- asserta(sum(vi+1,vp+(vi+1))).                                                                   
+:- >>> 'assume guard on s'.                                                                        
+:- asserta((not(eq(i,n)),s) -->> true).
+:- >>> 'proof the invariant on Q'.
+:- body(Bd),(Bd,s) -->> Q,lookup(p,Q,VP),lookup(i,Q,VI), sum(VI,VP).
+:- retract(lookup(p,s,vp)).                                                                        
+:- retract(lookup(i,s,vi)).
+:- retract(sum(vi,vp)).
+:- retract(sum(vi+1,vp+(vi+1))).
+:- retract((not(eq(i,n)),s) -->> true).
+\end{verbatim}
+}
+\end{frame}
+
+\begin{frame}[fragile]{Loop Invariants}
+
+{\scriptsize
+\begin{verbatim}
+:- >>> 'third  proof obligation'.
+:- >>> 'assume the invariant on s'.
+:- asserta(lookup(p,s,vp)).                                                                        
+:- asserta(lookup(i,s,vi)).
+:- asserta(sum(vi,vp)).
+:- >>> 'assume NOT guard on s'.
+:- asserta((not(eq(i,n)),s) -->> not(true)).
+% implies
+:- asserta((eq(i,n),s) -->> true).
+% implies
+:- asserta(sum(vn,vp)).
+:- >>> 'prove postcondition on s'.
+:- lookup(p,s,VP),sum(vn,VP).
+:- retract(lookup(p,s,vp)).                                                                        
+:- retract(lookup(i,s,vi)).
+:- retract(sum(vi,vp)).
+:- retract((not(eq(i,n)),s) -->> not(true)).
+:- retract((eq(i,n),s) -->> true).
+:- retract(sum(vn,vp)).
+\end{verbatim}
+}
+\end{frame}
+
+
+\begin{frame}[fragile]{Factorial}
+
+\small
+Let us consider the factorial program:
+
+\vspace{.1in}
+
+\begin{verbatim}
+assign(i,1) seq
+assign(z,1) seq
+while not(eq(i,n)) do
+     assign(i,add(i,1)) seq
+     assign(z,mult(z,i))
+\end{verbatim}
+
+\vspace{.1in}
+
+With pre- and postconditions:
+\begin{eqnarray*}
+{\rm pre}(S) &\equiv& {\rm lookup}(n,S,vn) \wedge vn \ge 1\\
+{\rm post}(Q) &\equiv& {\rm lookup}(z,Q,vn!)\\
+{\rm inv}(T) &\equiv& {\rm lookup}(z,T,vz)\wedge{\rm lookup}(i,T,vi)\wedge vz=vi!\\
+\end{eqnarray*}
+
+\end{frame}
+
+\begin{frame}[fragile]{Factorial}
+
+\small
+Our three proof obligations are:
+
+
+\vspace{.1in}
+
+$\sem{({\rm init},S)}{Q} \wedge [{\rm pre}(S)\Rightarrow {\rm inv}(Q)]$
+
+\vspace{.05in}
+
+$\sem{({\rm body},S)}{Q} \wedge \sem{({\rm guard},S)}{B} \wedge [({\rm inv}(s) \wedge B)\Rightarrow {\rm inv}(Q)]$
+
+
+\vspace{.05in}
+
+$\sem{({\rm guard},T)}{B} \wedge [(inv(T) \wedge \neg\,B) \Rightarrow post(T)]$
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Factorial}
+
+\scriptsize
+\begin{verbatim}
+% fact.pl
+:-['sem.pl'].
+
+:- >>> 'define the parts of our program'.
+init(assign(i,1) seq assign(z,1)).
+guard(not(eq(i,n))).
+body(assign(i,add(i,1)) seq assign(z,mult(z,i))).
+
+:- >>> 'define our fact operation'.
+:- dynamic fact/2.
+
+fact(1,1).
+
+fact(X,Y) :-
+    T1 is X-1,
+    fact(T1,T2),
+    Y is X*T2.
+
+:- >>> 'first proof obligation'.
+:- >>> 'assume precondition'.
+:- asserta(lookup(n,s,vn)).                                                                        
+:- >>> 'prove the invariant'.                                                                      
+:- init(I),(I,s) -->> Q,lookup(z,Q,VZ),lookup(i,Q,VI), fact(VI,VZ).
+:- retract(lookup(n,s,vn)).                                                                        
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]{Factorial}
+
+\scriptsize
+\begin{verbatim}
+:- >>> 'second  proof obligation'.                                                                 
+:- >>> 'assume invariant on s'.                                                                    
+:- asserta(lookup(z,s,vz)).
+:- asserta(lookup(i,s,vi)).                                                                        
+:- asserta(fact(vi,vz)).                                                                           
+% implies                                                                                          
+:- asserta(fact(vi+1,vz*(vi+1))).                                                                  
+:- >>> 'assume guard on s'.                                                                        
+:- asserta((not(eq(i,n)),s) -->> true).
+:- >>> 'prove the invariant on Q'.
+:- body(Bd),(Bd,s) -->> Q,lookup(z,Q,VZ),lookup(i,Q,VI), fact(VI,VZ).
+:- retract(lookup(z,s,vz)).                                                                        
+:- retract(lookup(i,s,vi)).
+:- retract(fact(vi,vz)).
+:- retract(fact(vi+1,vz*(vi+1))).
+:- retract((not(eq(i,n)),s) -->> true).
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]{Factorial}
+
+\scriptsize
+\begin{verbatim}
+:- >>> 'third  proof obligation'.
+:- >>> 'assume the invariant on s'.
+:- asserta(lookup(z,s,vz)).                                                                        
+:- asserta(lookup(i,s,vi)).
+:- asserta(fact(vi,vz)).
+:- >>> 'assume NOT guard on s'.
+:- asserta((not(eq(i,n)),s) -->> not(true)).
+% implies
+:- asserta((eq(i,n),s) -->> true).
+% implies
+:- asserta(fact(vn,vz)).
+:- >>> 'prove postcondition on s'.
+:- lookup(z,s,VZ),fact(vn,VZ).
+:- retract(lookup(z,s,vz)).                                                                        
+:- retract(lookup(i,s,vi)).
+:- retract(fact(vi,vz)).
+:- retract((not(eq(i,n)),s) -->> not(true)).
+:- retract((eq(i,n),s) -->> true).
+:- retract(fact(vn,vz)).
+\end{verbatim}
+\end{frame}
+
+
+\end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%% end of template1.tex %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

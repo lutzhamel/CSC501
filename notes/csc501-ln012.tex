@@ -1,0 +1,290 @@
+\documentclass{beamer}
+\include{defs}
+\begin{document}
+
+\begin{frame} [fragile] {Simple I/O}
+
+Here we extend our language with  a simple I/O mechanism that allows
+us to initialize variables and examine variables in the executing program:
+\begin{quote}
+\begin{alltt}
+C ::=  put(A)  |  get(x)
+\end{alltt}
+\end{quote}
+The informal semantics is that 'put' allows us to write an expression to the terminal and 
+'get' allows us to initialize a declared variable with an integer value read from the terminal.
+\end{frame}
+
+\begin{frame} [fragile] {Simple I/O}
+
+The formal semantics is as follows:
+
+\vspace{.1in}
+
+{\scriptsize
+\begin{alltt}
+(put(A),State) -->> State :-           %io%  writing
+    (A,State) -->> ValA,
+    write(A),
+    write(' is '),
+    writeln(ValA),!.
+
+(get(X),State) -->> OState :-          %io% reading
+    lookup(X,State,_),
+    write('Enter integer value for '),
+    write(X),
+    write(': '),
+    read(Val),
+    int(Val),
+    bindval(X,Val,State,OState),!.
+\end{alltt}
+}
+\end{frame}
+
+\begin{frame} [fragile] {Simple I/O}
+Now we can write programs such as these:
+\scriptsize
+\begin{alltt}
+?- ['sem-block.pl'].
+%   xis.pl compiled 0.01 sec, 7,792 bytes
+%  preamble.pl compiled 0.01 sec, 8,956 bytes
+%  xis.pl compiled 0.00 sec, 148 bytes
+% sem-block.pl compiled 0.01 sec, 18,284 bytes
+true.
+
+?- ((var(x) seq get(x) seq put(x)),s) -->> V. 
+Enter integer value for x: 3.
+x is 3
+V = push([bind(3, x)], s).
+
+?- ((var(x) seq get(x) seq put(add(x,1))),s) -->> V.
+Enter integer value for x: 5.
+add(x,1) is 6
+V = push([bind(5, x)], s).
+
+?- 
+\end{alltt}
+\end{frame}
+
+\begin{frame}[fragile]{Block Structured Languages}
+
+\scriptsize
+\begin{itemize}
+\item
+In most languages a block introduces a new scope allowing for {\em local variable declarations}.
+In C blocks are introduced with the curly braces,
+{\tiny
+\begin{verbatim}
+{
+   int x;
+}
+\end{verbatim}
+}
+\item
+We can access the values
+of variables in non-local scope.  Consider the following code,
+{\tiny
+\begin{verbatim}
+{
+   int x = 2;
+   {
+      int y = 3;
+      x = y + x;  /* accessing the surrounding scope via 'x' */
+   }
+}
+\end{verbatim}
+}
+
+\item
+In most languages blocks can be nested $\Rightarrow$ {\em variable shadowing}.
+{\tiny
+\begin{verbatim}
+{
+   int x = 1;
+   {
+      int x = 2;  /* the original 'x' is no longer visible in this scope */
+   }
+}
+\end{verbatim}
+}
+ 
+\end{itemize}
+
+
+\end{frame}
+
+
+
+\begin{frame}{Block Structured Languages}
+Recall that in our simple language we have variable declarations and now we introduce
+blocks:
+\begin{quote}
+\begin{alltt}
+C ::=  var(x)  |  block(C)
+\end{alltt}
+\end{quote}
+Think of 'block' as 'begin C end' where C could be any command including sequential composition.
+\end{frame}
+
+\begin{frame}{Block Structured Languages}
+Going back to our observations on block structured languages
+\begin{itemize}
+\item
+Local variable declarations.  When we leave a scope with local variables those 
+variables should become undeclared:
+\begin{alltt}
+\scriptsize
+  var(x) seq block( var(y) seq assign(y,1) ) seq assign(y,x)
+\end{alltt}
+\item
+Non-local side effects. When assigning a value to a variable declared in a surrounding scope
+we need to update the value of that variable, the value printed out for x should be 2:  
+\begin{alltt}
+\scriptsize
+  var(x) seq assign(x,1) seq block( assign(x,2) ) seq put(x)
+\end{alltt}
+
+\item
+Variable shadowing.  Redeclaring a variable in a nested scope with the same name as
+a variable in the outer scope makes the variable in the outer scope unavailable,
+the value printed out for x should be 1:
+\begin{alltt}
+\scriptsize
+  var(x) seq assign(x,1) seq block( var(x) seq assign(x,2) ) seq put(x)
+\end{alltt}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]{Block Structured Languages}
+
+\small
+Formal Semantics:
+\begin{alltt}\scriptsize
+(var(X),State) -->> OState :-          % decl,
+    {\color{red}declarevar}(X,State,OState),!.
+
+(assign(X,A),State) -->> OState :-     % assignment
+    lookup(X,State,_),                 % only allowed to assign to variables
+    (A,State) -->> ValA,               % that have been declared
+    {\color{red}bindval}(X,ValA,State,OState),!.
+
+(block(C),State) -->> OState :-        %block%     block statement
+    {\color{red}pushenv}(State,LocalState),
+    (C,LocalState) -->> S,
+    {\color{red}popenv}(S,OState),!.
+\end{alltt}
+
+\vspace{.1in}
+
+{\bf Note:} Each block now pushes its own binding environment on an environment stack.
+
+\vspace{.1in}
+
+{\bf Note:} The new semantic procedures 'declarevar' and 'bindval' are necessary because
+declaring and binding is done differently with nested scopes.
+\end{frame}
+
+\begin{frame}[fragile]{Block Structured Languages}
+Semantic procedures 'pushenv' and 'popenv':
+\begin{alltt}
+\scriptsize
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% the predicate 'pushenv(+State,-FinalState)' pushes
+% a new binding term list on the stack
+:- dynamic pushenv/2.
+
+pushenv(S,env([],S)) :- !.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% the predicate 'popenv(+State,-FinalState)' pops
+% a  binding term list off the stack
+:- dynamic popenv/2.
+
+popenv(env(_,S),S) :- !.
+\end{alltt}
+\end{frame}
+
+\begin{frame}[fragile]{Block Structured Languages}
+Looking up variable bindings in a stack of binding environments:
+\begin{alltt}\scriptsize
+% the predicate 'lookup(+Variable,+State,-Value)' looks up
+% the variable in the state and returns its bound value.
+:- dynamic lookup/3.                % modifiable predicate
+
+lookup(_,s0,_) :- fail.
+
+lookup(X,env([],S),Val) :-
+    lookup(X,S,Val),!.
+
+lookup(X,env([bind(Val,X)|_],_),Val).
+
+lookup(X,env([_|Rest],S),Val) :- 
+    lookup(X,env(Rest,S),Val),!.
+\end{alltt}
+\end{frame}
+
+
+\begin{frame}[fragile]{Block Structured Languages}
+Semantic procedure 'declarevar':
+\begin{alltt}\scriptsize
+% the predicate 'declarevar(+Variable,+State,-FinalState)' declares
+% a variable by inserting a new binding term into the current
+% environment.
+:- dynamic declarevar/3.                   % modifiable predicate
+
+declarevar(X,S,env([bind(0,X)],S)) :-
+    atom(S),!.
+
+declarevar(X,env(L,S),env([bind(0,X)|L],S)) :- !.
+\end{alltt}
+\end{frame}
+
+\begin{frame}[fragile]{Block Structured Languages}
+Semantic procedure 'bindval':
+\begin{alltt}\scriptsize
+% the predicate 'bindval(+Variable,+Value,+State,-FinalState)' updates
+% a binding term in the state.  this update is done "in place"
+% in order to support global variables.  the predicate has to
+% search both the binding list and the stack of binding
+% lists.
+:- dynamic bindval/4.                   % modifiable predicate
+
+bindval(_,_,s0,_) :- 
+    fail.
+
+bindval(X,Val,env([],S),env([],NewS)) :-
+    bindval(X,Val,S,NewS),!.
+
+bindval(X,Val,env([bind(_,X)|L],S),env([bind(Val,X)|L],S)),!.
+
+bindval(X,Val,env([bind(V,Y)|L],S),env([bind(V,Y)|NewL],NewS)) :-
+    bindval(X,Val,env(L,S),env(NewL,NewS)),!.
+\end{alltt}
+\end{frame}
+
+\begin{frame}[fragile]{Block Structured Languages}
+\begin{alltt}\tiny
+?- ['sem-block.pl'].
+%   xis.pl compiled 0.00 sec, 7,792 bytes
+%  preamble.pl compiled 0.00 sec, 8,956 bytes
+%  xis.pl compiled 0.00 sec, 148 bytes
+% sem-block.pl compiled 0.00 sec, 18,192 bytes
+true.
+
+?- ((var(x) seq block( var(y) seq assign(y,1) ) seq assign(y,x)),s) -->> V. 
+false.
+
+?- ((var(x) seq assign(x,1) seq block( assign(x,2) ) seq put(x)),s) -->> V.
+x is 2
+V = env([bind(2, x)], s).
+
+?- (( var(x) seq assign(x,1) seq block( var(x) seq assign(x,2) ) seq put(x)),s) -->> V. 
+x is 1
+V = env([bind(1, x)], s).
+
+?- 
+\end{alltt}
+\end{frame}
+\end{document}
+

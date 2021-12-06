@@ -1,0 +1,362 @@
+%template1.tex
+%The following LaTeX source file represents the simplest kind of slide presentation; no overlays, no included graphics. Substitute your favorite style for ``pascal''. To create the PDF file template1.pdf, (1) be sure to use the prosper class, then (2) execute the command latex template1.tex, and (3) the command dvipdf template1.dvi.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% template1.tex %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass{beamer}
+\include{defs}
+\begin{document}
+
+
+\begin{frame}[fragile]{Function Calls}
+A function is a parameterized portion of code within a larger program which performs a specific task. 
+\vspace{.1in}
+
+A function in a programming language is  in many ways similar to a mathematical function, but can have side-effects outside of the simple "function return value" .
+\end{frame}
+
+\begin{frame}[fragile]{Function Calls}
+
+\small
+What exactly happens at function calls?  Consider this simple example in a C like language:
+
+\vspace{.1in}
+
+\begin{minipage}{1.3in}
+\begin{alltt}\scriptsize
+fun f (x) \{
+    var t = x + 1;
+    return t;
+\}
+
+...
+
+var i = f(3);
+print(i);
+
+...
+
+\end{alltt}
+\end{minipage}
+\begin{minipage}{2.9in}
+%\scriptsize
+{\bf Observations:} 
+\begin{itemize}
+\item In many programming languages communication to a function is via {\em formal} and {\em actual} parameters {\em by value}.  
+\item Communication from a function is via {\em return values}.
+\item Functions have local scope -- locally defined variables.
+\item The formal parameter are declared as local variables.
+\end{itemize}
+\end{minipage}
+\end{frame}
+
+\begin{frame}[fragile]{Function Calls}
+
+\scriptsize
+How do we interpret function definitions and calls?
+
+\vspace{.1in}
+
+\begin{minipage}{2.2in}
+\begin{alltt}\scriptsize
+fun f (x) \{
+    var t = x + 1;
+    return t;
+\}
+
+...
+
+var i = f(3);
+print(i);
+
+...
+
+\end{alltt}
+\end{minipage}
+\begin{minipage}{1.4in}
+\begin{alltt}\scriptsize
+var f = fun (x) \{
+    var t = x + 1;
+    return t;
+\}
+
+...
+
+var i = f (x = 3);
+print(i);
+
+...
+
+\end{alltt}
+\end{minipage}
+{\bf Observations:}
+\begin{itemize}
+\item Function names act like variables that have been initialized with a {\em function value}!
+\item During a function call we simply look up the function stored in the variable, activate it,
+and pass it the actual parameters.
+\item The actual parameters act like initial values for the formal parameters during a
+function call.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Function Parameters}
+
+\small
+
+There are two different ways to associate actual with formal parameters:
+\begin{description}
+\item[Positional Correspondence] -- Here the actual parameters are associated with the formal parameters  via their position in the actual and formal parameter lists.\\
+\begin{alltt}
+fun foo(a,b) ...
+... call foo(1,2)...
+\end{alltt}
+Here actual parameter 1 will be associated with the formal parameter {\tt a} and actual parameter 2 will be associated with formal parameter {\tt b}.
+\item[Keyword Correspondence] -- Here the actual arguments are associated with the formal parameters by an explicit assignment.
+\begin{alltt}
+fun foo(a,b) ...
+... call foo(a=1,b=2)...
+\end{alltt}
+\end{description}
+\end{frame}
+
+\begin{frame}[fragile]{Function Parameters}
+Our implementation:
+\begin{itemize}
+\item
+We implement function parameters by call-by-value using keyword correspondence.
+\item
+The biggest problem we will be facing are {\em side effects}; function calls can modify 
+global variables and functions can appear in both arithmetic and boolean expressions!
+We need to be able to model both of these aspects of functions in imperative languages.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Function Calls}
+\scriptsize
+In our language we introduce  new syntactic structures to deal with  functions.
+The first one is the {\em function call}:
+\begin{quote}
+\begin{alltt}
+A ::= call(f,[ PL ])  |  call(f, [ ])
+\end{alltt}
+\end{quote}
+here {\tt f} represents function names and {\tt PL} is the non-terminal for actual parameter lists,
+\begin{quote}
+\begin{alltt}
+PL ::= P , PL  |  P
+P  ::= assign(x,A) 
+\end{alltt}
+\end{quote}
+The second structure is the {\em function definition}:
+\begin{quote}
+\begin{alltt}
+C  ::= fun(f,[ FL ],C,A)  |  fun(f,[ ],C,A)
+FL ::= x , FL  |  x
+\end{alltt}
+\end{quote}
+Here {\tt FL} is the formal argument list. 
+This is a highly stylized version of a function definition, think of it as
+\begin{quote}
+\begin{alltt}
+fun f(x) is C returns A
+\end{alltt}
+\end{quote}
+\end{frame}
+
+\begin{frame}[fragile]{Function Calls}
+\scriptsize
+This will enable us to write programs such as
+\begin{quote}
+\begin{alltt}
+fun inc(x) is skip returns add(x,1) seq
+var(q) seq 
+assign(q,call(inc,[assign(x,q)]))
+\end{alltt}
+\end{quote}
+Or consider the factorial program
+\begin{quote}
+\begin{alltt}
+fun fact(i) is 
+        var(result) seq 
+        if(eq(i,1), 
+            assign(result,1),
+            assign(result,mult(i,call(fact,[assign(i,sub(i,1))]))
+    returns result seq
+var(x) seq
+assign(x,call(fact,[assign(i,3)]))
+\end{alltt}
+\end{quote}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Function Calls}
+\scriptsize
+
+The semantics of a function declaration is binding a {\em funval} to a {\em function variable},
+{\tiny
+\begin{quote}
+\begin{alltt}
+(fun(F,L,C,A),State) -->> OState :-        % function declaration
+    declarevar(F,{\color{red}funval(L,C,A)},State,OState).
+\end{alltt}
+\end{quote}
+}
+The semantics of a function call is returning a value from the execution of the function,
+{\tiny
+\begin{quote}
+\begin{alltt}
+(call(F,[ ]),State) -->> Val :-        % function call
+    lookup(F,State,{\color{red}funval([ ],C,A))},
+    pushenv(State,LocalState),
+    ({\color{red}C},LocalState) -->> S1,
+    ({\color{red}A},S1) -->> Val,
+    popenv(S1,_),!.      % TROUBLE!!!
+\end{alltt}
+\end{quote}
+\begin{quote}
+\begin{alltt}
+(call(F,PList),State) -->> Val :-        % function call
+    lookup(F,State,{\color{red}funval(FList,C,A))},
+    pushenv(State,LocalState),
+    declareparams(FList,LocalState,S1),
+    initparams(PList,S1,S2),    
+    ({\color{red}C},S2) -->> S3,
+    ({\color{red}A},S3) -->> Val,
+    popenv(S3,_),!.      % TROUBLE!!!
+\end{alltt}
+\end{quote}
+}
+{\bf Note:} We are only dealing with side effect free functions. Why?
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Function Calls}
+\scriptsize
+In order to include side effects we need to create a new semantic function
+that interprets arithmetic expressions, including function calls, and carries side effect information
+with it.
+
+{\tiny
+\begin{quote}
+\begin{alltt}
+(call(F,[ ]),State) -->> {\color{red}(Val,OState)} :-        % function call
+    lookup(F,State,funval([ ],C,A)),
+    pushenv(State,LocalState),
+    (C,LocalState) -->> S1,
+   (A,S1) -->> {\color{red}(Val,S2)},
+    popenv(S2,{\color{red}OState}),!.     
+\end{alltt}
+\end{quote}
+\begin{quote}
+\begin{alltt}
+(call(F,PList),State) -->> {\color{red}(Val,OState)} :-        % function call
+    lookup(F,State,funval(FList,C,A)),
+    pushenv(State,LocalState),
+    declareparams(FList,LocalState,S1),
+    initparams(PList,S1,S2),    
+    (C,S2) -->> S3,
+    (A,S3) -->> {\color{red}(Val,S4)},
+    popenv(S4,{\color{red}OState}),!.
+\end{alltt}
+\end{quote}
+}
+\end{frame}
+
+\begin{frame}[fragile]{Function Calls}
+\scriptsize
+
+Side effects impose an ordering on the evaluation of operands in an expression:
+\begin{quote}
+\begin{alltt}\tiny
+(add(A,B),State) -->> (Val,OState) :-      % addition
+     (A,State) -->> (ValA,S),
+     (B,S) -->> (ValB,OState),
+     Val xis ValA + ValB,!.
+\end{alltt}
+\end{quote}
+compare this to our side effect free semantics:
+\begin{quote}
+\begin{alltt}\tiny
+(add(A,B),State) -->> Val :-       % addition
+     (A,State) -->> ValA,
+     (B,State) -->> ValB,
+     Val xis ValA + ValB,!.
+\end{alltt}
+\end{quote}
+\end{frame}
+
+\begin{frame}[fragile]{Function Calls}
+\scriptsize
+In optimizing programming languages function calls with side effects together with boolean expressions are a notorious
+source of bugs.  Consider this C program:
+\begin{quote}\tiny
+\begin{verbatim}
+#include <stdio.h>
+
+int cnt = 0;
+int x = 0;
+
+int f(void) {
+  cnt++;
+  return x;
+}
+
+void main(void) {
+
+  if (f() && f())
+    printf("condition is true\n");
+  else
+    printf("condition is false\n");
+
+  printf("function f was called %d time(s)\n",cnt);
+}
+\end{verbatim}
+\end{quote}
+What kind of output would you expect with {\tt x == 0}?  What kind of output would you expect
+with {\tt x == 1}?
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Function Calls}
+\scriptsize
+
+Side effects ripple through the whole language definition. Consider the boolean expressions:
+\begin{quote}
+\begin{alltt}\tiny
+(not(A),State) -->> (Val,OState) :-      % not
+    (A,State) -->> (ValA,OState),
+    Val xis (not ValA),!.
+
+(and(A,B),State) -->> (Val,OState) :-     % and
+    (A,State) -->> (ValA,S),
+    (B,S) -->> (ValB,OState),
+    Val xis (ValA and ValB),!.
+\end{alltt}
+\end{quote}
+Consider the statements:
+\begin{quote}
+\begin{alltt}\tiny
+(assign(X,A),State) -->> OState :-     % assignment
+    lookup(X,State,_),
+    (A,State) -->> (ValA,S),               
+    bindval(X,ValA,S,OState),!.    
+
+(put(A),State) -->> OState :-           % writing
+    (A,State) -->> (ValA,OState),
+    write(A),
+    write(' is '),
+    writeln(ValA),!.  
+\end{alltt}
+\end{quote}
+
+\end{frame}
+
+
+
+
+\end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%% end of template1.tex %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

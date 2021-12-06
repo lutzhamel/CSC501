@@ -1,0 +1,138 @@
+\documentclass{beamer}
+\include{defs}
+\begin{document}
+
+\begin{frame}[fragile]{Proofs: Program Correctness}
+One of the great advantages of formal semantics is that we can actually prove that
+a program will behave correctly for {\em all} expected input values.
+
+\vspace{.1in}
+
+In order for this to work we need the notion of a {\em program specification}.
+
+
+\vspace{.1in}
+
+The program specification act as the {\em yard stick} for the expected program behavior
+for any set of input values.
+
+\end{frame}
+
+\begin{frame}[fragile]{Program Specifications}
+$\Rightarrow$ A program specification is a universally quantified sentence over states in first order logic.
+
+\vspace{.1in}
+
+Consider the following program specification for some program $p$ and variables $x$ and $y$:
+\[
+\begin{array}{rl}
+\forall s,\exists Q,VX,VY& [\sem{(p,s)}{Q} \wedge \\
+   		& {\rm lookup}(y,s,VY) \wedge {\rm lookup}(x,Q,VY)\wedge \\
+	           & {\rm lookup}(x,s,VX) \wedge{\rm lookup}(y,Q,VX) ]
+\end{array}
+\]
+This specification states that running the program $p$ in state $s$ will give rise to some state $Q$.
+Furthermore, looking up the variable $y$ in state $s$ is the same as looking up the variable $x$ in
+state $Q$ and {\em vice versa}.
+
+\vspace{.1in}
+
+This is a program specification for a {\em swap} program that swaps the values of $x$ and $y$.
+\end{frame}
+
+\begin{frame}[fragile]{Program Specifications}
+
+Now, consider the  program $p$ written in our simple language IMP defined in `sem.pl':
+\[
+p \equiv {\bf assign}(t, x)\; {\bf  seq}\; {\bf assign}(x,y) \; {\bf seq}\; {\bf assign}(y, t)
+\]
+Without formal semantics and a program specification we would  simply try ``a bunch'' of values, and if the results
+look good we would infer that the program works.  But there will always be a doubt that it will work for all states
+since trying a bunch of values does not constitute a proof.
+
+\vspace{.1in}
+
+However, given our formal semantics we can prove that this program {\em satisfies} the specification
+and therefore we can prove that the program works for all possible states.
+\end{frame}
+
+\begin{frame}[fragile]{Program Specifications}
+
+{\tiny
+\begin{verbatim}
+% swap.pl
+:-['sem.pl'].
+
+:- >>> 'show that program P="assign(t,x) seq assign(x,y) seq assign(y,t))"'.
+:- >>> 'satisfies the program specification:'.
+:- >>> ' (P,s)-->>Q,lookup(y,s,VY),lookup(x,Q,VY),lookup(x,s,VX),lookup(y,Q,VX)'.
+
+program(assign(t,x) seq assign(x,y) seq assign(y,t)).                                              
+                                                                                                   
+:- asserta(lookup(x,s,vx)).
+:- asserta(lookup(y,s,vy)).                                                                        
+                                                                                                   
+:- program(P),
+     (P,s) -->> Q,
+     lookup(y,s,VY),
+     lookup(x,Q,VY),
+     lookup(x,s,VX),                                                                               
+     lookup(y,Q,VX).
+\end{verbatim}
+}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]{Program Specifications}
+Now consider the program specification
+{\scriptsize
+\[
+\begin{array}{rl}
+\forall s,\exists Q,V1,V2& [\sem{(p,s)}{Q} \wedge \\
+   		& {\rm lookup}(z,s,V1) \wedge {\rm lookup}(z,Q,V2) \wedge\\
+		& V2 =  2 * V1 ]
+\end{array}
+\]
+
+}
+It is easy to see that the program $p \equiv {\bf assign}(z,{\bf mult}(2,z))$ satisfies the specification.
+
+\vspace{.1in}
+
+But so does this program $p \equiv {\bf assign}(z,{\bf add}(z,z))$.
+
+\vspace{.3in}
+
+$\Rightarrow$ Program specifications are {\em implementation independent}!
+\end{frame}
+
+\begin{frame}[fragile]{Program Specifications}
+
+{\scriptsize
+\begin{verbatim}
+% double.pl
+:-['sem.pl'].
+
+:- >>> 'show that program P="assign(z,add(z,z)))"'.
+:- >>> 'satisfies the program specification:'.
+:- >>> ' (p,s) -->> Q,lookup(z,s,V1),lookup(z,Q,V2),V2 = 2*V1'.
+
+program(assign(z,add(z,z))).
+
+:- asserta(lookup(z,s,vz)).                                                                        
+:- asserta(2*I xis I+I). % property of integers                                               
+                                                                                                   
+:- program(P),
+      (P,s) -->> Q,
+      lookup(z,s,V1),                                                                              
+      lookup(z,Q,V2),
+      V2 = 2 * V1.
+\end{verbatim}
+}
+\end{frame}
+
+
+\end{document}
+

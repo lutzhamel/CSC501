@@ -1,0 +1,329 @@
+\documentclass{beamer}
+\include{defs}
+\begin{document}
+
+\begin{frame}[fragile]{Translational Semantics}
+
+\small 
+What if we define the semantics of some language in terms of another language by translating our source
+language syntax into the syntax of some target language?
+
+\vspace{.1in}
+
+In this case we obtain the following diagram,
+
+\vspace{.1in}
+\[
+\xymatrix{
+{\rm Model}_{\rm Source} & \approx &{\rm Model}_{\rm Target}\\
+{\rm Syntax}_{\rm Source}\ar[u]^{\rm interpretation}\ar[rr]_{\rm translation}& &{\rm Syntax}_{\rm Target}\ar[u]_{\rm interpretation}
+}
+\]
+\end{frame}
+
+\begin{frame}[fragile]{Translational Semantics}
+
+\small 
+
+Two Observations:
+\begin{enumerate}
+\item This means we have now two ways to interpret a sentence in the source language: 
+\begin{enumerate}
+\item we can interpret the
+sentence in the source language model 
+\item we can first translate the sentence and then interpret it in the 
+model of the target language
+\end{enumerate}
+\item We say that the translation is {\em correct} if we can establish a correspondence between the source and
+target models for each source language syntax structure.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}[fragile]{Translational Semantics}
+\tiny
+\begin{minipage}[t]{1.9in}
+Source Language:
+\begin{verbatim}
+  A ::= n
+     |  x
+     |  add(A,A)
+     |  sub(A,A)
+     |  mult(A,A)
+
+  B ::= true
+     |  false
+     |  eq(A,A)
+     |  le(A,A)
+     |  not(B)
+     |  and(B,B)
+     |  or(B,B)
+
+  C ::= skip
+     |  assign(x,A)
+     |  seq(C,C)
+     |  if(B,C,C)
+     |  whiledo(B,C)
+\end{verbatim}
+\end{minipage}
+\begin{minipage}[t]{1.9in}
+Target Language:
+\begin{verbatim}
+ prog ::= [ cmseq ]   |  [ ]
+
+ cmseq ::=  cm  |  cm , cmseq
+
+ cm ::= push(V)
+     |  add
+     |  sub
+     |  mult
+     |  and
+     |  or
+     |  neg
+     |  eq
+     |  le
+     |  pop(x)
+     |  label(L)
+     |  jmp(L)
+     |  jmpt(L)
+     |  jmpf(L)
+     |  stop
+
+ V ::=  x  |  n  | true | false
+
+ L ::=  <alpha string>
+\end{verbatim}
+\end{minipage}
+\end{frame}
+
+\begin{frame}[fragile]{Translational Semantics}
+
+\small
+We can define a semantics for our source language by defining equivalent sentences
+in the target language for each syntactic construct in the source language.
+Consider the arithmetic expressions:
+\tiny
+\begin{alltt}
+translate(N,[push(N)]) :- int(N),!.
+
+translate(X,[push(X)]) :- atom(X),!.
+
+translate(add(A,B),Target) :-
+    translate(A,TargetA),
+    translate(B,TargetB),
+    TargetOP = [add],
+    flatten([TargetA,TargetB,TargetOP],Target),!.
+ 
+translate(sub(A,B),Target) :-
+    translate(A,TargetA),
+    translate(B,TargetB),
+    TargetOP = [sub],
+    flatten([TargetA,TargetB,TargetOP],Target),!.
+     
+translate(mult(A,B),Target) :-
+    translate(A,TargetA),
+    translate(B,TargetB),
+    TargetOP = [mult],
+    flatten([TargetA,TargetB,TargetOP],Target),!.
+\end{alltt}
+\end{frame}
+
+\begin{frame}[fragile]{Translational Semantics}
+
+\scriptsize
+\begin{alltt}
+?- translate(add(3,2),C),ppc(C).
+    push(3)
+    push(2)
+    add
+C = [push(3), push(2), add].
+\end{alltt}
+
+\begin{alltt}
+?- translate(add(3,mult(2,x)),C),ppc(C).
+    push(3)
+    push(2)
+    push(x)
+    mult
+    add
+C = [push(3), push(2), push(x), mult, add].
+\end{alltt}
+
+\end{frame}
+
+\begin{frame}[fragile]{Translational Semantics}
+
+\small
+The boolean expressions can be defined in a similar manner:
+\tiny
+\begin{alltt}
+translate(true,Target) :-
+    Target = [push(true)],!.
+
+translate(false,Target) :-
+    Target = [push(false)],!.
+
+translate(and(A,B),Target) :-
+    translate(A,T1),
+    translate(B,T2),
+    T3 = [and],
+    flatten([T1,T2,T3],Target),!.
+
+translate(or(A,B),Target) :-
+    translate(A,T1),
+    translate(B,T2),
+    T3 = [or],
+    flatten([T1,T2,T3],Target),!.
+
+translate(not(A),Target) :-
+    translate(A,T1),
+    T2 = [neg],
+    flatten([T1,T2],Target),!.
+\end{alltt}
+
+\small
+
+\end{frame}
+
+\begin{frame}[fragile]{Translational Semantics}
+
+\small
+Translational semantics of statements:
+\tiny
+\begin{alltt}
+translate(skip,[]) :- !.
+
+translate(seq(C1,C2),Target) :-
+    translate(C1,T1),
+    translate(C2,T2),
+    flatten([T1,T2],Target),!.
+
+translate(assign(X,A),Target) :-
+    translate(A,T1),
+    T2 = [pop(X)],
+    flatten([T1,T2],Target),!.
+
+translate(if(B,C0,C1),Target) :-
+    translate(B,T1),
+    T2 = [jmpf(iflabel1)],
+    translate(C0,T3),
+    T4 = [jmp(iflabel2),label(iflabel1)],
+    translate(C1,T5),
+    T6 = [label(iflabel2)],
+    flatten([T1,T2,T3,T4,T5,T6],Target),!.
+
+translate(whiledo(B,C),Target) :-
+    T1 = [label(whilelabel1)],
+    translate(B,T2),
+    T3 = [jmpf(whilelabel2)],
+    translate(C,T4),
+    T5 = [jmp(whilelabel1),label(whilelabel2)],
+    flatten([T1,T2,T3,T4,T5],Target),!.
+\end{alltt}
+
+\end{frame}
+
+\begin{frame}[fragile]{Translational Semantics}
+
+\scriptsize
+\begin{alltt}
+?- translate(assign(x,1) seq assign(y,mult(2,x)),C),ppc(C).
+    push(1)
+    pop(x)
+    push(2)
+    push(x)
+    mult
+    pop(y)
+C = [push(1), pop(x), push(2), push(x), mult, pop(y)].
+\end{alltt}
+
+{\bf Note:} the predicate {\tt ppc} simply prints out the list of assembly code instructions in a nice
+formatted way.
+\end{frame}
+
+\begin{frame}[fragile]{Translational Semantics}
+
+\scriptsize
+
+\begin{alltt}
+?- translate(if(le(2,3),assign(i,3),assign(i,4)),C),ppc(C).
+    push(2)
+    push(3)
+    le
+    jmpf(iflabel1)
+    push(3)
+    pop(i)
+    jmp(iflabel2)
+label(iflabel1)
+    push(4)
+    pop(i)
+label(iflabel2)
+C = [push(2), push(3), le, jmpf(iflabel1), ...]
+\end{alltt}
+
+
+\end{frame}
+
+\begin{frame}[fragile]{Translational Semantics}
+
+\scriptsize
+
+\begin{alltt}
+?- translate(whiledo(le(x,3),assign(x,add(x,1))),C),ppc(C).
+label(whilelabel1)
+    push(x)
+    push(3)
+    le
+    jmpf(whilelabel2)
+    push(x)
+    push(1)
+    add
+    pop(x)
+    jmp(whilelabel1)
+label(whilelabel2)
+C = [label(whilelabel1), push(x), push(3), le, jmpf(whilelabel2), ...]
+\end{alltt}
+
+\end{frame}
+
+\begin{frame}[fragile]{Translational Semantics}
+
+\scriptsize
+The reason why we have compilers:
+
+\tiny
+\begin{minipage}[t]{1.9in}
+\begin{verbatim}
+assign(i,1) seq
+assign(z,1) seq
+whiledo(not(eq(i,n)),
+   assign(i,add(i,1)) seq
+   assign(z,mult(z,i)))
+\end{verbatim}
+\end{minipage}
+\begin{minipage}[t]{1.9in}
+\begin{verbatim}
+    push(1)
+    pop(i)
+    push(1)
+    pop(z)
+label(whilelabel1)
+    push(i)
+    push(n)
+    eq
+    neg
+    jmpf(whilelabel2)
+    push(i)
+    push(1)
+    add
+    pop(i)
+    push(z)
+    push(i)
+    mult
+    pop(z)
+    jmp(whilelabel1)
+label(whilelabel2)
+\end{verbatim}
+\end{minipage}
+\end{frame}
+\end{document}
+
