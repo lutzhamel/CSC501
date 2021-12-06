@@ -1,5 +1,8 @@
 # CSC501
 
+<img source="https://raw.githubusercontent.com/lutzhamel/CSC501//main/notes/images/legoknot.jpg"
+  width="600" height="500">
+  
 ### Basics
 
 [Introduction](https://github.com/lutzhamel/CSC501/blob/main/notes/csc501-ln001.pdf)<br>
@@ -23,7 +26,7 @@
 [I/O, block structured languages](https://github.com/lutzhamel/CSC501/blob/main/notes/csc501-ln012.pdf)<br>
 [functions](https://github.com/lutzhamel/CSC501/blob/main/notes/csc501-ln013.pdf)<br>
 [program correctness](https://github.com/lutzhamel/CSC501/blob/main/notes/csc501-ln014.pdf)<br>
-[pre- and postconditions](https://github.com/lutzhamel/CSC501/blob/main/notes/csc501-ln015.pdf)<br>
+[pre- and post-conditions](https://github.com/lutzhamel/CSC501/blob/main/notes/csc501-ln015.pdf)<br>
 [program correctness and iteration](https://github.com/lutzhamel/CSC501/blob/main/notes/csc501-ln016.pdf)<br>
 [loop invariants](https://github.com/lutzhamel/CSC501/blob/main/notes/csc501-ln017.pdf)<br>
 [program correctness and recursive functions](https://github.com/lutzhamel/CSC501/blob/main/notes/csc501-ln018.pdf)<br>
