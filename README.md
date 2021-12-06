@@ -2,7 +2,7 @@
 
 <center>
 <img src="https://raw.githubusercontent.com/lutzhamel/CSC501/main/notes/images/legoknot.jpg"
-  width="400" height="300">
+  width="150" height="100">
 </center>
 
 ### Basics
