@@ -1,6 +1,6 @@
 # CSC501
 
-<img source="https://raw.githubusercontent.com/lutzhamel/CSC501/main/notes/images/legoknot.jpg"
+<img src="https://raw.githubusercontent.com/lutzhamel/CSC501/main/notes/images/legoknot.jpg"
   width="600" height="500">
 
 ### Basics
