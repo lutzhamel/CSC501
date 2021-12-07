@@ -46,4 +46,4 @@
 
 [Semester Review](https://lutzhamel.github.io/CSC501/notes/semester-review.pdf)<br>
 
-[Back to the Repository](https://github.com/lutzhamel/CSC501)
+Back to the [Repository](https://github.com/lutzhamel/CSC501)
