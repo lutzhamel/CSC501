@@ -1,13 +1,16 @@
-# CSC501
+# CSC501 - Semantics of Programming Languages
 
 <center>
 <img src="https://raw.githubusercontent.com/lutzhamel/CSC501/main/notes/images/hokusai.jpeg"
   width="100" height="100">
 </center>
 
+[Repo](https://github.com/lutzhamel/CSC501)
+
 ### Basics
 
 [Introduction](https://lutzhamel.github.io/CSC501/notes/csc501-ln001.pdf)<br>
+[Mathematical Foundations](https://lutzhamel.github.io/CSC501/notes/csc501-ln001a.pdf)<br>
 [String Rewriting Systems](https://lutzhamel.github.io/CSC501/notes/csc501-ln002.pdf)<br>
 [Grammars](https://lutzhamel.github.io/CSC501/notes/csc501-ln003.pdf)<br>
 

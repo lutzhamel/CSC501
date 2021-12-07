@@ -1,0 +1,378 @@
+\documentclass{beamer}
+\include{defs}
+\begin{document}
+
+\begin{frame}{\large Mathematical  Preliminaries: Logical Notation}
+
+We\footnote{\tiny The material presented here is based on ``Naive Set Theory'' by P. Halmos and ``The Formal Semantics of Programming Languages'' by G. Winskel.}
+will use first order logic as the basis for our reasoning.  Without going into the formal details
+of first order logic terminology and sentence construction we have the following statements:
+\begin{itemize}
+\item $A \wedge B$ denotes the conjunction $A$ and $B$,
+\item $A \vee B$ denotes the disjunction $A$ or $B$,
+\item $\neg A$ denotes the negation not $A$,
+\item $A \Rightarrow B$ denotes the implication, if $A$ then $B$,
+\item $A \Leftrightarrow B$ denotes the logical equivalence, $A$ if and only if $B$ (often
+written as $A$ iff $B$),
+\end{itemize}
+where $A$ and $B$ are statements or assertions.
+\vspace{.1in}
+ \end{frame}
+
+\begin{frame}{\large Mathematical  Preliminaries: Logical Notation}
+Observe the precedences of the logical operators, ordered from high to low:
+\begin{itemize}
+\item $\neg$
+\item $\wedge,\vee$
+\item $\Rightarrow, \Leftrightarrow$
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{A Word or Two about Implication}
+The truth table for the implication operator `$\Rightarrow$' can be given as
+{\scriptsize
+\[
+\begin{array}{lcc|c}
+&A & B & A \Rightarrow B\\ \hline
+(1)& 1 & 0 & 0\\
+(2) & 1 & 1 & 1\\
+(3) & 0 & 0 & 1\\
+(4) & 0 & 1 & 1
+\end{array}
+\]
+}
+Entries $(1)$ and $(2)$ are intuitive: When the antecedent $A$ is true but the consequent $B$ is false then
+the implication itself is false.  If both the antecedent and the consequent are true then the implication is true.
+
+\vspace{.1in}
+
+However, entries $(3)$ and $(4)$ are somewhat counter intuitive.  They state that if the antecedent $A$ is false
+then the implication is true regardless of the value of the consequent.  In other words, we can conclude ``anything''
+from an antecedent that is false.  In mathematical jargon we say that $(3)$ and $(4)$  {\bf hold trivially}.
+\end{frame}
+
+\begin{frame}{A Word or Two about Implication -- An Example}
+
+{\scriptsize
+\[
+\begin{array}{l}
+\mbox{If Bob is a bachelor, then he is single.}\\
+\mbox{Bob is a bachelor.}\\ \hline
+\therefore\mbox{Bob is single.}
+\end{array}
+\]
+}
+Now consider an antecedent that is not true,
+{\scriptsize
+\[
+\begin{array}{l}
+\mbox{If Bob is a bachelor, then he is single.}\\
+\mbox{Bob is not a bachelor.}\\ \hline
+\therefore\mbox{Bob is not single (by rule $(3)$).}
+\end{array}
+\]
+}
+Since the antecedent is not true rule $(3)$ allows us to conclude the
+opposite of what the implication dictates.  However, the following is also
+valid reasoning,
+{\scriptsize
+\[
+\begin{array}{l}
+\mbox{If Bob is a bachelor, then he is single.}\\
+\mbox{Bob is not a bachelor.}\\ \hline
+\therefore\mbox{Bob is  single (by rule $(4)$).}
+\end{array}
+\]
+}
+Not being a bachelor does not necessarily imply that Bob is not single.  For example,
+Bob could be a widower or a divorcee.
+\end{frame}
+
+\begin{frame}{A Word or Two about Implication}
+
+Given the truth table for implication,
+\[
+\begin{array}{lcc|c}
+&A & B & A \Rightarrow B\\ \hline
+(1)& 1 & 0 & 0\\
+(2) & 1 & 1 & 1\\
+(3) & 0 & 0 & 1\\
+(4) & 0 & 1 & 1
+\end{array}
+\]
+this means that in order to show that an implication holds we only have to show that rule $(2)$
+holds.  Rule $(1)$ states that the implication is false and rules $(3)$ and $(4)$ are trivially true and
+therefore not interesting.
+\end{frame}
+
+\begin{frame}{Closely Related: Equivalence}
+
+We write $A \Leftrightarrow B$ if $A$ and $B$ are equivalent.
+
+Given the truth table for the equivalence operator is given as,
+\[
+\begin{array}{lcc|c}
+&A & B & A \Leftrightarrow B\\ \hline
+(1)& 1 & 0 & 0\\
+(2) & 1 & 1 & 1\\
+(3) & 0 & 0 & 1\\
+(4) & 0 & 1 & 0
+\end{array}
+\]
+That is, the operator only produces a true value if $A$ and $B$ have the same truth assignment.
+
+Another, and very useful, way to look at the equivalence operator is as follows:
+\[
+A \Leftrightarrow B \equiv A \Rightarrow B \wedge B \Rightarrow A
+\]
+{\bf Exercise:} Construct  the above truth table using this definition of the equivalence operator.
+\end{frame}
+
+\begin{frame}{\large Mathematical  Preliminaries: Logical Notation}
+We also allow predicates (properties) as part of our notation,
+\[
+P(x)
+\]
+where the predicate $P$ is true if it holds for $x$ otherwise it is false.  We view our
+standard relational operators as binary predicates.  For example, the predicate
+$P(x)$ that expresses the fact that $x$ is less or equal to 3 is written as,
+\[
+P(x) \equiv x \le 3.
+\]
+{\bf Note:} Predicates can have arities larger than 1, e.g. $P(x,y)$ with $P(x,y)\equiv x \le y$.
+\end{frame}
+
+\begin{frame}{\large Mathematical  Preliminaries: Logical Notation}
+We also allow for the quantifiers $\exists$ (there exists) and $\forall$ (for all) in our logical
+statements,
+\begin{itemize}
+\item $\exists x.\,P(x)$ -- ``there exists an $x$ such that $P(x)$''
+\item $\forall x.\,P(x)$ -- ''for all $x$ such that $P(x)$''
+\end{itemize}
+Some examples,
+\begin{itemize}
+\item $\forall x,\exists y.\, y = x^2$
+\item $\forall x, \forall y.\, \mbox{female}(x) \wedge \mbox{child}(x,y) \Rightarrow \mbox{mother}(x,y)$
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{\large Mathematical  Preliminaries: Sets}
+Sets\footnote{\tiny Read Sections 2.1 and 2.2 in the book by David Schmidt.}
+ are unordered collections of objects and are usually denoted by capital letters.  For example,
+let $a,b,c$ denote some objects then the set $A$ of these objects is written as,
+\[
+A = \{a,b,c\}.
+\]
+There are a number of standard sets which come in handy,
+\begin{itemize}
+\item $\emptyset$ denotes the empty set, i. e. $\emptyset = \{ \}$,
+\item $\mathbb N$ denotes the set of all natural numbers including 0, e. g. ${\mathbb N} = \{0,1,2,3,\cdots\}$,
+\item $\mathbb I$ denotes the set of all integers, ${\mathbb I}= \{\cdots,-2,-1,0,1,2,\cdots\}$,
+\item $\mathbb R$ denotes the set of all reals,
+\item $\mathbb B$ denotes the set of boolean values, ${\mathbb B} = \{\mathit{true}, \mathit{false} \}$.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{\large Mathematical  Preliminaries: Sets}
+The most fundamental property in set theory is the notion of {\em belonging},
+\[
+a \in A \mbox{ iff  $a$ is an element of the set $A$}.
+\]
+The notion of belonging allows us
+to define {\em subsets},
+\[
+Z \subseteq A \mbox{ iff } \forall e\in Z.\, e\in A.
+\]
+We define set {\em equivalence} as,
+\[
+A = B \mbox{ iff } A \subseteq B \wedge B \subseteq A
+\]
+\end{frame}
+
+
+\begin{frame}{\large Mathematical  Preliminaries: Sets}
+We can construct new sets from given sets using {\em union},
+\[
+A \cup B = \{ e \mid e\in A \vee e \in B\},
+\]
+ and {\em intersection},
+\[
+A \cap B = \{ e \mid  e\in A \wedge e \in B\}.
+\]
+There is another important set construction called the {\em cross product},
+\[
+A\times B = \{ (a,b) \mid  a\in A \wedge b\in B\},
+\]
+$A\times B$ is the set of all ordered pairs where the first component of the pair is drawn from
+the set $A$ and the second component of the pair is drawn from $B$. (
+
+{\bf Exercise:} Let $A=\{a,b\}$ and $B=\{c,d\}$, construct the set $A\times B$.
+
+\end{frame}
+
+\begin{frame}{\large Mathematical  Preliminaries: Sets}
+A construction using subsets is the {\em powerset} of some set $X$,
+\[
+{\mathcal P}(X),
+\]
+The {\em powerset} of set $X$ is set of all subsets of $X$.  For example,
+let $X = \{a,b\}$, then
+\[
+{\mathcal P}(X) = \{ \emptyset, \{a\}, \{b\}, \{a,b\} \}.
+\]
+{\bf Note:} $\emptyset \subset X$
+
+\vspace{.1in}
+
+{\bf Exercise:} What would ${\mathcal P}(X\times X)$ look like?
+
+\end{frame}
+
+\begin{frame}{\large Mathematical  Preliminaries: Sets}
+\scriptsize
+The fact that $\emptyset \subset X$ for any set $X$ is interesting in its own right.  Let's see if we can prove it.
+
+\vspace{.1in}
+
+{\bf Proof:} Proof by contradiction. Assume $X$ is any set. Assume that $\emptyset$ is not a subset of $X$.
+Then the definition of subsets,
+\[
+A \subseteq B \Leftrightarrow \forall e \in A. e \in B,
+\]
+implies that there exist at least one element in $\emptyset$ that is not also in $X$.  But that is not possible
+because $\emptyset$ has no elements -- a contradiction.  Therefore, our assumption the
+that $\emptyset$ is not a subset of $X$ must be wrong and we can conclude that $\emptyset \subset X$.
+
+\end{frame}
+
+
+\begin{frame}{\large Mathematical  Preliminaries: Relations}
+A (binary) relation is a set of ordered pairs.  If $R$ is a relation that relates the elements of
+set $A$ to the elements $B$, then
+\[
+R \subseteq A\times B.
+\]
+This means if $a\in A$ is related to $b\in B$ via the relation $R$, then $(a,b)\in R$.  We often
+write
+\[
+a\, R\, b.
+\]
+Consider the relational operator $\le$ applied to the set ${\mathbb N}\times {\mathbb N}$.
+This induces a relation, call it $\le \subseteq {\mathbb N}\times {\mathbb N}$, with
+$(a,b) \in \le$ (or $a \le b$ in our relational notation) if $a\in{\mathbb N}$ is less or equal to $b\in{\mathbb N}$.
+\end{frame}
+
+\begin{frame}{\large Mathematical  Preliminaries: Relations}
+The first and second components of each pair in some relation $R$ are drawn from different sets called
+the {\em projections} of $R$ onto the first and second {\em coordinate}, respectively.  We introduce
+the operators {\em domain} and {\em range} to accomplish these projections.  Let $R\subseteq A\times B$,
+then,
+\[
+\mbox{dom}(R) = A,
+\]
+and
+\[
+\mbox{ran}(R) = B.
+\]
+In this case we talk about a relation {\em from} $A$ {\em to} $B$.  The range is often
+called the co-domain. If $R\subseteq X\times X$, then
+\[
+\mbox{dom}(R) = \mbox{ran}(R) = X.
+\]
+Here we talk about a relation {\em in} $X$.
+\end{frame}
+
+\begin{frame}{\large Mathematical  Preliminaries: Relations}
+Let $R \subseteq X\times X$ such that $(a,b)\in R$ iff $a=b$.  That is, $R$ is the {\em equality relation}
+in  $X$. (What do the elements of the equality relation look like for $\mathbb{N}\times\mathbb{N}$?)
+
+\vspace{.1in}
+
+A relation $R\subseteq X\times X$ is an {\em equivalence relation} if the following conditions hold,
+\begin{itemize}
+\item $R$ is {\em reflexive}\footnote{Recall that $x\, R\, x \equiv (x,x)\in R$} -- $x\, R\, x$,
+\item $R$ is {\em symmetric} -- $x\, R\, y \Rightarrow y\, R\, x$,
+\item $R$ is {\em transitive} -- $x\, R\, y \wedge y\, R\, z \Rightarrow x\, R\, z$,
+\end{itemize}
+where $x,y,z \in X$.
+
+\vspace{.1in}
+
+The {\em smallest} equivalence relation in some set $X$ is the equality relation defined above.
+The {\em largest} equivalence relation is some set is the cross product $X\times X$. (Consider the
+smallest/largest equiv. relation in $\mathbb I$)
+\end{frame}
+
+\begin{frame}{\large Mathematical  Preliminaries: Functions}
+A {\em function} $f$ from $X$ to $Y$ is a relation $f \subseteq X\times Y$ such that
+\[
+\forall x\in X, \exists y,z\in Y.\, (x,y)\in f \wedge (x,z)\in f \Rightarrow y = z.
+\]
+In other words, each $x\in X$ has a unique value $y\in Y$ with $(x,y)\in f$ or functions are constrained relations.
+
+\vspace{.1in}
+
+We let $X \rightarrow Y$ denote the {\em set of all functions} from $X$ to $Y$
+(i. e. $X \rightarrow Y \subset {\mathcal P}(X\times Y)$, why is the subset strict? Hint: it is not a relation), then the customary notation
+for specifying functions can be defined as follows,
+\[
+f\co X \rightarrow Y \mbox{ iff } f\in X\rightarrow Y.
+\]
+\end{frame}
+
+\begin{frame}{\large Mathematical  Preliminaries: Functions}
+For {\em function application} it is customary to write
+\[
+f(x) = y
+\]
+for $(x,y)\in f$.  In this case we say that the function is {\em defined} at point $x$.
+Otherwise we say that the function is {\em undefined} at point $x$ and we write $f(x)=\perp$.
+
+\vspace{.1in}
+
+Note that $f(\perp) = \perp$  and we say the $f$ is {\em strict}.
+\vspace{.1in}
+
+We say that $f\co X \rightarrow Y$ is a {\em total} function if $f$ is defined for all $x\in X$.
+Otherwise we say that $f$ is a {\em partial} function.
+\end{frame}
+
+\begin{frame}{\large Mathematical  Preliminaries: Functions}
+We can now make the notion of a predicate formal -- a predicate is a function whose range (co-domain) is restricted to the
+boolean values:
+\[
+P: X \rightarrow {\mathbb B}
+\]
+where $P$ is a predicate that returns true or false for the objects in set $X$.
+
+\vspace{.1in}
+
+{\bf Example:} Let $U$ be the set of all possible objects -- a universe if you like, and let,
+\[
+\mathit{human}: U \rightarrow {\mathbb B}
+\]
+be the predicate that returns true if the object is a human and will return false otherwise, then
+\begin{eqnarray*}
+\mathit{human}(\mbox{socrates}) = \mathit{true}\\
+\mathit{human}(\mbox{car}) = \mathit{false}
+\end{eqnarray*}
+\end{frame}
+
+
+\begin{frame}{\large Mathematical  Preliminaries: Exercises}
+\begin{enumerate}
+\item In your own words explain what the function $m\co X\times Y \rightarrow Z$ does.
+\item How would you describe the function $c \co X \rightarrow (Y \rightarrow Z)$?
+\item In your own words explain what the relation $R \subseteq (X\times Y)\times (Z\times W)$ does.
+\end{enumerate}
+\end{frame}
+
+
+
+
+
+\end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%% end of template1.tex %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
