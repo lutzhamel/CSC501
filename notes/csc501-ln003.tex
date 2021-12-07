@@ -5,15 +5,6 @@
 \begin{frame}[fragile]{Grammars}
 
 \small
-{\bf Observations:}
-\begin{itemize}
-\item We have seen in the case of the palindrome generator that SRSs are well suited for generating strings with 
-structure.
-\item By modifying the standard SRS just slightly we obtain a convenient framework for generating strings
-with desirable structure -- {\em Grammars}
-\end{itemize}
-
-\vspace{.2in}
 
 {\bf Definition:} [Grammar] A {\em grammar} is a triple $(\Gamma,\rightarrow,\gamma)$ such that,
 \begin{itemize}
@@ -79,7 +70,7 @@ L(G) = \{ q \mid \gamma \Rightarrow^* q \wedge q\in T^*\}.
 \]
 
 \vspace{.3in}
-{\bf Example:} Let $J = (\Gamma,\rightarrow,\gamma)$ be the grammar of Java, then $L(J)$ is the set of all possible Java 
+{\bf Example:} Let $J = (\Gamma,\rightarrow,\gamma)$ be the grammar of Java, then $L(J)$ is the set of all possible Java
 programs.  The Java language is defined as the set of all possible Java programs.
 \end{frame}
 
@@ -87,14 +78,14 @@ programs.  The Java language is defined as the set of all possible Java programs
 \begin{frame}[fragile]{Grammars}
 
 \small
-{\bf Observations:}  
+{\bf Observations:}
 \begin{itemize}
 \item With the concept of a language we can now ask interesting questions.  For example,
 given a grammar $G$ and some sentence $p\in T^*$, does $p$ belong to $L(G)$?
 \item If we let $J$ be the grammar of Java, then asking whether some string $p\in T^*$ is in $L(J)$
 is equivalent to asking whether $p$ is a {\em syntactically correct program}.
 \item We can prove language membership by showing that the start symbol is equivalent to the
-sentence in question, 
+sentence in question,
 {\scriptsize
 \[
 \xymatrix{
@@ -111,7 +102,7 @@ s \ar@{=>}[rd]^{*} &\equiv &p\ar@{=>}[ld]_{*}  \\
 
 \begin{frame}[fragile]{Grammars}
 
-{\bf Observations:} 
+{\bf Observations:}
 \begin{itemize}
 \item By restricting the shape of the rewrite rules in a grammar we obtain different language {\em classes}.
 \item  The most famous set of language classes is the {\em Chomsky Hierarchy}.
@@ -176,11 +167,11 @@ N = \{A,B,C,D,L,V\}.
 {\tiny
 \[
 \begin{array}{rcl}
-\nonterm{A} &\rightarrow& D \orbar V \orbar \nonterm{A} +\nonterm{A} \orbar \nonterm{A} - \nonterm{A} \orbar 
+\nonterm{A} &\rightarrow& D \orbar V \orbar \nonterm{A} +\nonterm{A} \orbar \nonterm{A} - \nonterm{A} \orbar
 	\nonterm{A} * \nonterm{A}\orbar ( \nonterm{A} )\\
 
 \nonterm{B} &\rightarrow& \mbox{\bf true} \orbar \mbox{\bf false} \orbar \nonterm{A} = \nonterm{A} \orbar
-	\nonterm{A} \le \nonterm{A} \orbar ! \nonterm{B} \orbar \nonterm{B} \&\& \nonterm{B} \orbar 
+	\nonterm{A} \le \nonterm{A} \orbar ! \nonterm{B} \orbar \nonterm{B} \&\& \nonterm{B} \orbar
 	\nonterm{B} || \nonterm{B} \orbar (\nonterm{B})\\
 
 \nonterm{C} &\rightarrow& \mbox{\bf skip} \orbar \nonterm{V} := \nonterm{A} \orbar\nonterm{C}\; ; \nonterm{C} \orbar
@@ -205,7 +196,7 @@ Observe that this is a context-free grammar!
 Here are some elements in $L(G)$,
 \[
 \begin{array}{l}
-x := 1 ; y := x\\ 
+x := 1 ; y := x\\
 v := 1; \ifstmt{v \le 0}{v := (-1)*v}{\term{skip}}\\
 n := 5 ; f := 1 ; \whilestmt{2 \le n}{f := n*f ; n := n - 1}
 \end{array}
