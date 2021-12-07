@@ -23,19 +23,19 @@
 ### Executable Specifications
 
 [Prolog Tutorial](https://lutzhamel.github.io/CSC501/notes/prolog-tutorial.pdf)<br>
-[state, arithmetic expressions](https://lutzhamel.github.io/CSC501/notes/csc501-ln009.pdf)<br>
-[boolean expressions, commands](https://lutzhamel.github.io/CSC501/notes/csc501-ln010.pdf)<br>
-[declarations, type systems](https://lutzhamel.github.io/CSC501/notes/csc501-ln011.pdf)<br>
-[I/O, block structured languages](https://lutzhamel.github.io/CSC501/notes/csc501-ln012.pdf)<br>
-[functions](https://lutzhamel.github.io/CSC501/notes/csc501-ln013.pdf)<br>
-[program correctness](https://lutzhamel.github.io/CSC501/notes/csc501-ln014.pdf)<br>
-[pre- and post-conditions](https://lutzhamel.github.io/CSC501/notes/csc501-ln015.pdf)<br>
-[program correctness and iteration](https://lutzhamel.github.io/CSC501/notes/csc501-ln016.pdf)<br>
-[loop invariants](https://lutzhamel.github.io/CSC501/notes/csc501-ln017.pdf)<br>
-[program correctness and recursive functions](https://lutzhamel.github.io/CSC501/notes/csc501-ln018.pdf)<br>
-[translational semantics](https://lutzhamel.github.io/CSC501/notes/csc501-ln019.pdf)<br>
-[translation, source and target semantics](https://lutzhamel.github.io/CSC501/notes/csc501-ln020.pdf)<br>
-[compiler correctness](https://lutzhamel.github.io/CSC501/notes/csc501-ln021.pdf)<br>
+[State, Arithmetic Expressions](https://lutzhamel.github.io/CSC501/notes/csc501-ln009.pdf)<br>
+[Boolean Expressions, Commands](https://lutzhamel.github.io/CSC501/notes/csc501-ln010.pdf)<br>
+[Declarations, Type Systems](https://lutzhamel.github.io/CSC501/notes/csc501-ln011.pdf)<br>
+[I/O, Block Structured Languages](https://lutzhamel.github.io/CSC501/notes/csc501-ln012.pdf)<br>
+[Functions](https://lutzhamel.github.io/CSC501/notes/csc501-ln013.pdf)<br>
+[Program Correctness](https://lutzhamel.github.io/CSC501/notes/csc501-ln014.pdf)<br>
+[Pre- and Post-Conditions](https://lutzhamel.github.io/CSC501/notes/csc501-ln015.pdf)<br>
+[Program Correctness and Iteration](https://lutzhamel.github.io/CSC501/notes/csc501-ln016.pdf)<br>
+[Loop Invariants](https://lutzhamel.github.io/CSC501/notes/csc501-ln017.pdf)<br>
+[Program Correctness and Recursive Functions](https://lutzhamel.github.io/CSC501/notes/csc501-ln018.pdf)<br>
+[Translational Semantics](https://lutzhamel.github.io/CSC501/notes/csc501-ln019.pdf)<br>
+[Translation, Source and Target Semantics](https://lutzhamel.github.io/CSC501/notes/csc501-ln020.pdf)<br>
+[Compiler Correctness](https://lutzhamel.github.io/CSC501/notes/csc501-ln021.pdf)<br>
 
 ### Model Theory
 
