@@ -1,8 +1,8 @@
 # CSC501
 
 <center>
-<img src="https://raw.githubusercontent.com/lutzhamel/CSC501/main/notes/images/legoknot.jpg"
-  width="150" height="100">
+<img src="https://raw.githubusercontent.com/lutzhamel/CSC501/main/notes/images/hokusai.jpg"
+  width="100" height="100">
 </center>
 
 ### Basics
