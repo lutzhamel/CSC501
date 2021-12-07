@@ -1,4 +1,4 @@
-# CSC501 - Programming Language Semantics
+# CSC501 - The Semantics of Programming Language
 
 <center>
 <img src="https://raw.githubusercontent.com/lutzhamel/CSC501/main/notes/images/hokusai.jpeg"
