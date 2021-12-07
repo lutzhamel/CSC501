@@ -1,11 +1,10 @@
-# The Semantics of Programming Languages
+## The Semantics of Programming Languages
 
 <center>
 <img src="https://raw.githubusercontent.com/lutzhamel/CSC501/main/notes/images/hokusai.jpeg"
   width="100" height="100">
 </center>
 
-[Repo](https://github.com/lutzhamel/CSC501)
 
 ### Basics
 
@@ -46,3 +45,5 @@
 ### Review
 
 [Semester Review](https://lutzhamel.github.io/CSC501/notes/semester-review.pdf)<br>
+
+[Back to the Repository](https://github.com/lutzhamel/CSC501)
