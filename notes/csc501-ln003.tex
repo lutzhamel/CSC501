@@ -4,15 +4,98 @@
 
 \begin{frame}[fragile]{Grammars}
 
+\begin{itemize}
+\item
+Grammars play a crucial role in programming languages because they precisely capture the
+syntactic nature of programming languages.
+
+\item
+We start our discussion of grammars by looking at the nature of sequences of symbols,
+where sequences of symbols form the foundation of any language, both natural and
+artificial.
+
+\item
+We will call sequences of symbols {\em strings}.
+
+\end{itemize}
+
+
+\end{frame}
+
+\begin{frame}[fragile]{Strings}
+
 \small
 
-{\bf Definition:} [Grammar] A {\em grammar} is a triple $(\Gamma,\rightarrow,\gamma)$ such that,
+{\bf Definition:} [Strings over an Alphabet]\footnote{\tiny Based on material from the book ``An Introduction to the Theory of Computation,'' Eitan Gurari, Ohio State University,Computer Science Press, 1989.}
 \begin{itemize}
-\item $\Gamma = T \cup N$ with $T\cap N = \emptyset$, where $T$ is a set of symbols called the {\em terminals} and $N$ is a set of symbols
+\item
+An {\em alphabet} is a finite, nonempty set -- we refer to the elements of an alphabet as {\em symbols}.
+\item
+A finite sequence of symbols from a given alphabet is called a {\em string over the alphabet}.
+\item
+A string that consists of a sequence $a_1, a_2,\ldots, a_n$ of symbols is denoted by the juxtaposition $a_1a_2\ldots a_n$.
+\item
+The length of some string $s$  is denoted by $|s|$ and assumed to equal the number of symbols in the string.
+\item
+Strings that have zero symbols, called {\em empty strings}, are denoted by $\epsilon$ with $|\epsilon|=0$.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Strings}
+
+\small
+
+{\bf Example:}    Let $\Gamma_1 = \{a, \ldots, z\}$ and $\Gamma_2 = \{0,\dots, 9\}$ is alphabets. $abb$ is a string over $\Gamma_1$, and $123$ is a string over $\Gamma_2$. $ba12$ is neither a string over $\Gamma_1$ nor a string over $\Gamma_2$ but it is a string over $\Gamma_1\cup\Gamma_2$.
+The string $314 \ldots$ is not a string over $\Gamma_2$, because it is not a finite sequence.
+
+\vspace{.1in}
+
+Some other observations:
+\begin{itemize}
+\item The empty string  $\epsilon$ is a string over any alphabet.
+\item The empty set $\emptyset$ is not an alphabet because it contains no element.
+\item The set of natural numbers is not an alphabet, because it is not finite.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Strings}
+
+{\bf Definition:} [Kleene Closure] Given some alphabet $\Gamma$ then the set of all possible strings over
+$\Gamma$ including the empty string $\epsilon$ is denoted by $\Gamma^*$ and is called the {\em Kleene
+Closure of $\Gamma$}.  (Similar to the power set construction with the exception that the constructed set is always infinite.)
+
+\vspace{.1in}
+{\bf Example:} Let $\Gamma = \{ a \}$, then $\Gamma^* = \{\epsilon, a, aa, aaa, aaaa,\dots\}$.
+
+\vspace{.1in}
+{\bf Example:} Let $\Gamma = \{a,b\}$, then
+\[
+\Gamma^* = \{\epsilon,a,b,aa,bb,ab,ba,aaa,aab,\ldots\}.
+\]
+\end{frame}
+
+\begin{frame}[fragile]{Strings}
+
+{\bf Definition:} [String Concatenation] Given some alphabet $\Gamma$ with $s_1\in\Gamma^*$ and $s_2\in\Gamma^*$,
+then the {\em concatenation of the strings} written as $s_1s_2$ also belongs to $\Gamma^*$, that is
+the string $s_1s_2\in\Gamma^*$.
+\end{frame}
+
+\begin{frame}[fragile]{Grammars}
+
+\small
+
+{\bf Definition:} [Context-Free Grammar] A {\em context-free grammar} is a triple $(\Gamma,\rightarrow,\gamma)$ such that,
+\begin{itemize}
+\item
+$\Gamma = T \cup N$ with $T\cap N = \emptyset$, where $T$ is a set of symbols called the {\em terminals} and $N$ is a set of symbols
 called the {\em non-terminals},\footnote{The fact that $T$ and $N$ are non-overlapping means
 that there will never be confusion between terminals and non-terminals.}
-\item $\rightarrow$ is a set of rules of the form $u \rightarrow v$ with $u,v\in\Gamma^*$,
-\item $\gamma$ is called the {\em start symbol} and $\gamma\in N$.
+\item
+$\rightarrow\subseteq \Gamma^*\times\Gamma^*$ is a set of rules of
+the form $u \rightarrow v$ with $u\in N$ and $v\in\Gamma^*$,
+\item
+$\gamma$ is called the {\em start symbol} and $\gamma\in N$.
 \end{itemize}
 \end{frame}
 
@@ -37,14 +120,53 @@ E & \rightarrow & c
 }
 \item $\gamma = E$ (clearly this satisfies $\gamma\in N$).
 \end{itemize}
-With grammars, derivations always start with the start symbol. Consider,
+\end{frame}
+
+
+
+
+
+\begin{frame}[fragile]{Rewriting Relation}
+
+\small
+In order for a grammar $(\Gamma,\rightarrow,\gamma)$ to be useful we allow rules
+to be applied to {\em substrings} of given strings;
+let $s = xuy$,$t=xvy$ with $x,y,u,v \in \Gamma^*$, and a rule $u\rightarrow v$ ,
+then we say that {\em $s$ rewrites to $t$} and as before we write,
+\[
+s \Rightarrow t.
+\]
+More formally,
+
+\vspace{.1in}
+{\bf Definition:} [one-step rewriting relation] Let $(\Gamma,\rightarrow)$ be a string rewriting system,
+then the {\em one-step rewriting relation} $\Rightarrow\subseteq \Gamma^*\times\Gamma^*$ is  the set with $(s,t) \in \Rightarrow$ for strings $s,t \in\Gamma^*$
+ if and only if there exist $x, y, u, v \in\Gamma^*$ with $s = xuy, t = xvy$, and $u\rightarrow v $.
+
+\vspace{.1in}
+In plain English: any two string $s,t$ belong to the relation $\Rightarrow$ if and only if they can be related by
+a rewrite rule.
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Rewriting Relation}
+With grammars, derivations always start with the start symbol $\gamma \in \Gamma^*$. Consider,
 \[
 E\Rightarrow E * E \Rightarrow ( E ) * E \Rightarrow ( E + E ) * E \Rightarrow (a + E) * E \Rightarrow (a + b) * E
 \Rightarrow (a + b) * c.
 \]
-Here, $(a+b)*c$ is a normal form often also called a {\em terminal} or {\em derived string}.
+Here, $(a+b)*c$ is a {\em normal form} often also called a {\em terminal-} or {\em derived-string}.
 
+We often write,
+\[
+E \Rightarrow^* (a + b) * c
+\]
+stating that the normal form is derivable from the start symbol in zero or more steps.
 \end{frame}
+
+
+
 
 \begin{frame}[fragile]{Grammars}
 
@@ -52,7 +174,7 @@ Here, $(a+b)*c$ is a normal form often also called a {\em terminal} or {\em deri
 
 {\bf Exercise:} Derive the string $((a))$.
 
-{\bf Exercise:} Derive the string $a + b * c$.  Is the derivation unique?  Why? Why not?
+{\bf Exercise:} Derive the string $a + b * c$.
 
 \end{frame}
 
@@ -80,70 +202,17 @@ programs.  The Java language is defined as the set of all possible Java programs
 \small
 {\bf Observations:}
 \begin{itemize}
-\item With the concept of a language we can now ask interesting questions.  For example,
+\item
+With the concept of a language we can now ask interesting questions.  For example,
 given a grammar $G$ and some sentence $p\in T^*$, does $p$ belong to $L(G)$?
-\item If we let $J$ be the grammar of Java, then asking whether some string $p\in T^*$ is in $L(J)$
+\item
+If we let $J$ be the grammar of Java, then asking whether some string $p\in T^*$ is in $L(J)$
 is equivalent to asking whether $p$ is a {\em syntactically correct program}.
-\item We can prove language membership by showing that the start symbol is equivalent to the
-sentence in question,
-{\scriptsize
-\[
-\xymatrix{
-s \ar@{=>}[rd]^{*} &\equiv &p\ar@{=>}[ld]_{*}  \\
-&p&
-}
-\]
-}
-
 \end{itemize}
 
 \end{frame}
 
 
-\begin{frame}[fragile]{Grammars}
-
-{\bf Observations:}
-\begin{itemize}
-\item By restricting the shape of the rewrite rules in a grammar we obtain different language {\em classes}.
-\item  The most famous set of language classes is the {\em Chomsky Hierarchy}.
-\end{itemize}
-\end{frame}
-
-\begin{frame}[fragile]{Grammars}
-
-\scriptsize
-%{\bf The Chomsky Hierarchy:}
-
-\begin{table}[htdp]
-\caption{The Chomsky Hierarchy}
-\begin{center}
-{\tiny
-\begin{tabular}{|c|c|c|c|}
-Rules & Grammar & Language & Machine \\ \hline
-$\alpha \rightarrow \beta$ & Type-0 & Recursively Enumerable & Turing machine \\
-$\alpha A \beta \rightarrow \alpha\gamma\beta$  & Type-1 & Context-sensitive & Linear-bounded Turing machine\\
-$A  \rightarrow \gamma$  & Type-2 & Context-free & Pushdown automaton\\
-$A \rightarrow a$ and $A \rightarrow a B$ & Type-3 & Regular & Finite state automaton
-\end{tabular}
-}
-\end{center}
-\label{default}
-\end{table}%
-where $\alpha,\beta,\gamma\in \Gamma^*, A,B \in N, a\in T$.
-In Type-1 $\gamma$ is not allowed to be the empty string.
-
-\begin{center}
-    \includegraphics[height=30mm,width=35mm]{images/chomsky-hierarchy}
-\end{center}
-
-
-\end{frame}
-
-\begin{frame}[fragile]{Grammars}
-
-{\bf Observation:} The most convenient language class for programming language specification are the context-free
-languages -- they are decidable -- pushdown automata can be efficiently implemented in order to prove language membership.
-\end{frame}
 
 \begin{frame}[fragile]{Grammars}
 
@@ -188,8 +257,6 @@ N = \{A,B,C,D,L,V\}.
 }
 \item $\gamma =\nonterm{C}$.
 \end{itemize}
-
-Observe that this is a context-free grammar!
 \end{frame}
 
 \begin{frame}{Grammars}
@@ -207,7 +274,7 @@ n := 5 ; f := 1 ; \whilestmt{2 \le n}{f := n*f ; n := n - 1}
 
 \begin{frame}{Grammars}
 
-HW\#1 -- see website
+Assignment \#1 -- see BrightSpace
 
 \end{frame}
 

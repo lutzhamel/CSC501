@@ -10,7 +10,6 @@
 
 [Introduction](https://lutzhamel.github.io/CSC501/notes/csc501-ln001.pdf)<br>
 [Mathematical Foundations](https://lutzhamel.github.io/CSC501/notes/csc501-ln001a.pdf)<br>
-[String Rewriting Systems](https://lutzhamel.github.io/CSC501/notes/csc501-ln002.pdf)<br>
 [Grammars](https://lutzhamel.github.io/CSC501/notes/csc501-ln003.pdf)<br>
 
 ### Natural Semantics
