@@ -44,4 +44,8 @@
 
 [Semester Review](https://lutzhamel.github.io/CSC501/notes/semester-review.pdf)<br>
 
+### Additional Resource
+
+[Specs and Proof Scores](specs)
+
 Back to the [Repository](https://github.com/lutzhamel/CSC501)
