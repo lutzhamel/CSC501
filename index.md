@@ -1,8 +1,7 @@
 ## The Semantics of Programming Languages
 
 <center>
-<img src="https://raw.githubusercontent.com/lutzhamel/CSC501/main/notes/images/hokusai.jpeg"
-  width="100" height="100">
+<img src="https://lutzhamel.github.io/CSC501/notes/images/hokusai-fuji.jpeg">
 </center>
 
 
