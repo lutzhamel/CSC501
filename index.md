@@ -48,4 +48,3 @@
 
 [Specs and Proof Scores](specs)
 
-Back to the [Repository](https://github.com/lutzhamel/CSC501)
