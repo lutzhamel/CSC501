@@ -92,7 +92,7 @@ $\Gamma = T \cup N$ with $T\cap N = \emptyset$, where $T$ is a set of symbols ca
 called the {\em non-terminals},\footnote{The fact that $T$ and $N$ are non-overlapping means
 that there will never be confusion between terminals and non-terminals.}
 \item
-$\rightarrow\subseteq \Gamma^*\times\Gamma^*$ is a set of rules of
+$\rightarrow\subseteq N\times\Gamma^*$ is a set of rules of
 the form $u \rightarrow v$ with $u\in N$ and $v\in\Gamma^*$,
 \item
 $\gamma$ is called the {\em start symbol} and $\gamma\in N$.
@@ -131,20 +131,20 @@ E & \rightarrow & c
 \small
 In order for a grammar $(\Gamma,\rightarrow,\gamma)$ to be useful we allow rules
 to be applied to {\em substrings} of given strings;
-let $s = xuy$,$t=xvy$ with $x,y,u,v \in \Gamma^*$, and a rule $u\rightarrow v$ ,
-then we say that {\em $s$ rewrites to $t$} and as before we write,
+let $s = xuy$,$t=xvy$ with $x,y,v \in \Gamma^*$, $u\in N$, and a rule $u\rightarrow v$,
+then we say that {\em $s$ rewrites to $t$} and we write,
 \[
 s \Rightarrow t.
 \]
 More formally,
 
 \vspace{.1in}
-{\bf Definition:} [one-step rewriting relation] Let $(\Gamma,\rightarrow)$ be a string rewriting system,
+{\bf Definition:} [one-step rewriting relation] Let $(\Gamma,\rightarrow,\gamma)$ be a be context-free grammar,
 then the {\em one-step rewriting relation} $\Rightarrow\subseteq \Gamma^*\times\Gamma^*$ is  the set with $(s,t) \in \Rightarrow$ for strings $s,t \in\Gamma^*$
- if and only if there exist $x, y, u, v \in\Gamma^*$ with $s = xuy, t = xvy$, and $u\rightarrow v $.
+ if and only if there exist $x, y, v \in\Gamma^*$ and $u\in N$ with $s = xuy, t = xvy$, and $u\rightarrow v$.
 
 \vspace{.1in}
-In plain English: any two string $s,t$ belong to the relation $\Rightarrow$ if and only if they can be related by
+In plain English: any two strings $s,t$ belong to the relation $\Rightarrow$ if and only if they can be related by
 a rewrite rule.
 \end{frame}
 
@@ -157,12 +157,14 @@ E\Rightarrow E * E \Rightarrow ( E ) * E \Rightarrow ( E + E ) * E \Rightarrow (
 \Rightarrow (a + b) * c.
 \]
 Here, $(a+b)*c$ is a {\em normal form} often also called a {\em terminal-} or {\em derived-string}.
+Normal forms are characterized by the fact that no additional rewriting can be applied to them.
 
 We often write,
 \[
 E \Rightarrow^* (a + b) * c
 \]
 stating that the normal form is derivable from the start symbol in zero or more steps.
+
 \end{frame}
 
 
@@ -184,9 +186,10 @@ stating that the normal form is derivable from the start symbol in zero or more 
 We are now in the position to define exactly what we mean by a {\em language}.
 
 \vspace{.2in}
-{\bf Definition:}[Language] Let $G = (\Gamma,\rightarrow,\gamma)$ be a grammar, then we define the {\em language of
-grammar $G$} as the set of all terminal strings that can be derived from the start symbol $s$ by rewriting
-using the rules in $\rightarrow$.  Formally,
+{\bf Definition:}[Language] Let $G = (\Gamma,\rightarrow,\gamma)$ be a
+context-free grammar, then we define the {\em language of
+grammar $G$} as the set of all terminal strings that can be derived from the start symbol $\gamma$ by rewriting
+using the rules in $\rightarrow$.  Formally\footnote{Observe that $T^*$ is the set of all terminal strings.},
 \[
 L(G) = \{ q \mid \gamma \Rightarrow^* q \wedge q\in T^*\}.
 \]
@@ -274,6 +277,7 @@ n := 5 ; f := 1 ; \whilestmt{2 \le n}{f := n*f ; n := n - 1}
 
 \begin{frame}{Grammars}
 
+Reading: Denotational Semantics/Schmidt -- pages 5 thru 8.
 Assignment \#1 -- see BrightSpace
 
 \end{frame}
