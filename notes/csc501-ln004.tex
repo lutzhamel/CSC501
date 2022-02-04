@@ -1,6 +1,6 @@
 % Notes:
 % introduce semantics as follows:
-% try to explain what 1+1 does to somebody who has no knowledge of the natural numbers or additionÉ
+% try to explain what 1+1 does to somebody who has no knowledge of the natural numbers or additionï¿½
 % one way to proceed is this:
 % first show that 1+1 is an instance of a larger collection of terms I can write -- that is, specify a grammar for these terms
 % next we build a *computational* model of the natural numbers:
@@ -8,7 +8,7 @@
 % \{ \emptyset \}
 % \{ \emptyset, \{ \emptyset \}\}
 % \{ \emptyset, \{ \emptyset \}, \{ \emptyset, \{ \emptyset \}\}\}
-% É.
+% ï¿½.
 % notice that this is a definition of the natural numbers without any reference to the "standard" symbols that we usually employ,
 % also the numbers are ordered via set inclusion as you would expect from the natural numbers.
 % We refer to this set as Nat.
@@ -22,7 +22,7 @@
 % s(\emptyset)
 % s(s(\emptyset))
 % s(s(s(\emptyset)))
-% É..
+% ï¿½..
 % We now have a nice computational model of counting: we simply apply the successor function s as many times to the set representing zero
 % as there are items to be counted.
 % In addition to counting our original problem of 1+1 also dealt with addition, so we need to construct a computational model of
@@ -30,7 +30,7 @@
 %   add(X,0) = X
 %   add(X,s(Y)) = s(add(X,Y))
 %
-% 
+%
 \documentclass{beamer}
 \include{defs}
 \begin{document}
@@ -40,7 +40,7 @@
 Goals:
 \begin{itemize}
 \item Define the syntax of a simple imperative language
-\item Define a semantics using {\em natural deduction}\footnote{Natural deduction is an 
+\item Define a semantics using {\em natural deduction}\footnote{Natural deduction is an
 instance of first-order logic; that is, it is the formal language of first-order logic
 coupled with a ``natural" deductive system based on proof trees.}
 \end{itemize}
@@ -53,11 +53,11 @@ The following is the grammar
 {
 \[
 \begin{array}{rcl}
-\nonterm{A} &\rightarrow& D \orbar V \orbar \nonterm{A} +\nonterm{A} \orbar \nonterm{A} - \nonterm{A} \orbar 
+\nonterm{A} &\rightarrow& D \orbar V \orbar \nonterm{A} +\nonterm{A} \orbar \nonterm{A} - \nonterm{A} \orbar
 	\nonterm{A} * \nonterm{A}\orbar ( \nonterm{A} )\\
 
 \nonterm{B} &\rightarrow& \nonterm{T}  \orbar \nonterm{A} = \nonterm{A} \orbar
-	\nonterm{A} \le \nonterm{A} \orbar ! \nonterm{B} \orbar \nonterm{B} \&\& \nonterm{B} \orbar 
+	\nonterm{A} \le \nonterm{A} \orbar ! \nonterm{B} \orbar \nonterm{B} \&\& \nonterm{B} \orbar
 	\nonterm{B} || \nonterm{B} \orbar (\nonterm{B})\\
 
 \nonterm{C}^* &\rightarrow& \mbox{\bf skip} \orbar \nonterm{V} := \nonterm{A} \orbar\nonterm{C}\; ; \nonterm{C} \orbar
@@ -86,7 +86,7 @@ for each syntactic component of our language so that composing the semantics of 
 will then give us a semantics of programs written in that language.
 
 \vspace{.1in}
-Furthermore, 
+Furthermore,
 we want to construct our models or semantics using predicates, relations, and functions; that means
 we need to describe our syntax using {\em sets}.\footnote{\tiny Read Sections 1.1 and 2.1 and 2.2 in the book by David Schmidt.}
 
@@ -121,11 +121,11 @@ There is not much we can do with this set because we don't see the individual sy
 Grammar:
 \[
 \begin{array}{rcl}
-\nonterm{A} &\rightarrow& D \orbar V \orbar \nonterm{A} +\nonterm{A} \orbar \nonterm{A} - \nonterm{A} \orbar 
+\nonterm{A} &\rightarrow& D \orbar V \orbar \nonterm{A} +\nonterm{A} \orbar \nonterm{A} - \nonterm{A} \orbar
 	\nonterm{A} * \nonterm{A}\orbar ( \nonterm{A} )\\
 
 \nonterm{B} &\rightarrow& \nonterm{T}  \orbar \nonterm{A} = \nonterm{A} \orbar
-	\nonterm{A} \le \nonterm{A} \orbar ! \nonterm{B} \orbar \nonterm{B} \&\& \nonterm{B} \orbar 
+	\nonterm{A} \le \nonterm{A} \orbar ! \nonterm{B} \orbar \nonterm{B} \&\& \nonterm{B} \orbar
 	\nonterm{B} || \nonterm{B} \orbar (\nonterm{B})\\
 
 \nonterm{C}^* &\rightarrow& \mbox{\bf skip} \orbar \nonterm{V} := \nonterm{A} \orbar\nonterm{C}\; ; \nonterm{C} \orbar
@@ -145,11 +145,11 @@ Grammar:
 Syntactic Sets:
 \begin{itemize}
 \item $\syntaxset{T} = \{  \mbox{\bf true} ,\mbox{\bf false} \}$.
-\item $\syntaxset{I} = \{ q \mid \nonterm{D} \Rightarrow^* q \wedge q \in T^*\}$. 
+\item $\syntaxset{I} = \{ q \mid \nonterm{D} \Rightarrow^* q \wedge q \in T^*\}$.
 \item $\syntaxset{Loc} = \{ q \mid \nonterm{V} \Rightarrow^* q \wedge q \in T^*\}$ .
 \item $\syntaxset{Aexp} = \{ q \mid \nonterm{A} \Rightarrow^* q \wedge q \in T^*\}$ .
 \item $\syntaxset{Bexp} = \{ q \mid \nonterm{B} \Rightarrow^* q \wedge q \in T^*\}$ .
-\item $\syntaxset{Com} = L(G) = \{ q \mid \nonterm{C} \Rightarrow^* q \wedge q \in T^*\}$. 
+\item $\syntaxset{Com} = L(G) = \{ q \mid \nonterm{C} \Rightarrow^* q \wedge q \in T^*\}$.
 \end{itemize}
 
 \end{frame}
@@ -157,10 +157,10 @@ Syntactic Sets:
 
 \begin{frame}{IMP - A Simple Imperative Language}
 
-{\bf Syntactic Sets} (syntax only!!! not to be confused with the mathematical notions of integers, booleans, or variables, {\it etc.}):\footnote{This material is based on the book by Glynn Winskel, ``The Formal Semantics 
+{\bf Syntactic Sets} (syntax only!!! not to be confused with the mathematical notions of integers, booleans, or variables, {\it etc.}):\footnote{This material is based on the book by Glynn Winskel, ``The Formal Semantics
 of Programming Languages.''}
 \begin{description}
-\item[\syntaxset{I}] This set consists of all positive and negative integer {\bf digits} including zero 
+\item[\syntaxset{I}] This set consists of all positive and negative integer {\bf digits} including zero
 \item[\syntaxset{T}] Truth constants \term{true} and \term{false}.
 \item[\syntaxset{Loc}] Locations (variable names as strings).
 \item[\syntaxset{Aexp}] Arithmetic expressions
@@ -177,21 +177,22 @@ of Programming Languages.''}
 \begin{frame}{Syntax meets Semantics}
 \scriptsize
 
-The two notes on the previous slide put us squarely in the middle of {\em syntax meets semantics}.  The separation 
+The two notes on the previous slide put us squarely in the middle of {\em syntax meets semantics}.  The separation
 of these two is especially critical for numbers because our use of standard notation has blurred the fact that the number
 symbols we write are indeed only symbols that need some sort of interpretation.  The fact that the notion of a number is
 independent of the symbols we write is highlighted by the fact that we can define the natural numbers without number symbols:
 \[
 \begin{array}{l}
 \emptyset \\
-\{\emptyset \} \\  
+\{\emptyset \} \\
 \{ \emptyset , \{\emptyset \} \}\\
 \{ \emptyset , \{\emptyset \}, \{ \emptyset , \{\emptyset \} \} \}\\
 \{ \emptyset , \{\emptyset \}, \{ \emptyset , \{\emptyset \} \} , \{ \emptyset , \{\emptyset \}, \{ \emptyset , \{\emptyset \} \} \}\}\\
 \vdots
 \end{array}
 \]
-Note that each set has precisely as many elements as the standard notation denotes.\footnote{This can easily be extended to the integers $\mathbb{I}$, see {\tiny http://wiki.math.toronto.edu/TorontoMathWiki/index.php/Definition:\_Set\_of\_Integers}}  
+Note that each set has precisely as many elements as the standard notation denotes.
+\footnote{\tiny\url{https://lutzhamel.github.io/CSC501/docs/number-systems-as-sets.pdf}}  
 The set of all these sets make up the natural numbers $\mathbb{N}$.
 Furthermore, the sets are ordered according to the subset relation,
 \[
@@ -203,18 +204,18 @@ Furthermore, the sets are ordered according to the subset relation,
 \begin{frame}{Syntax meets Semantics}
 \scriptsize
 
-Since our standard notation is nothing but a syntactic representation we can write a grammar and then an interpretation for the symbols, 
+Since our standard notation is nothing but a syntactic representation we can write a grammar and then an interpretation for the symbols,
 \[
 \begin{array}{rcl}
 \nonterm{N} &\rightarrow& \nonterm{D} \orbar \nonterm{D}\nonterm{N}\\
-\nonterm{D} &\rightarrow& 1 \orbar 2 \orbar 3 \orbar 4 \orbar 5 \orbar 6 \orbar 7 \orbar 8 \orbar 9 \orbar 0 
+\nonterm{D} &\rightarrow& 1 \orbar 2 \orbar 3 \orbar 4 \orbar 5 \orbar 6 \orbar 7 \orbar 8 \orbar 9 \orbar 0
 \end{array}
 \]
 with the {\em interpretation} over the set of all derived strings,
 \[
 \begin{array}{rcl}
 0 & \mapsto & \emptyset \\
-1 & \mapsto & \{\emptyset \} \\  
+1 & \mapsto & \{\emptyset \} \\
 2 & \mapsto & \{ \emptyset , \{\emptyset \} \}\\
 3 & \mapsto &\{ \emptyset , \{\emptyset \}, \{ \emptyset , \{\emptyset \} \} \}\\
 4 & \mapsto & \{ \emptyset , \{\emptyset \}, \{ \emptyset , \{\emptyset \} \} , \{ \emptyset , \{\emptyset \}, \{ \emptyset , \{\emptyset \} \} \}\}\\
@@ -232,14 +233,14 @@ In fact, we could come up with a brand new way of writing the natural numbers by
 \[
 \begin{array}{rcl}
 \nonterm{N} &\rightarrow& \nonterm{D} \orbar \nonterm{D}\nonterm{N}\\
-\nonterm{D} &\rightarrow& ! \orbar @ \orbar \# \orbar \$ \orbar \% \orbar \wedge \orbar \& \orbar * \orbar ( \orbar ) 
+\nonterm{D} &\rightarrow& ! \orbar @ \orbar \# \orbar \$ \orbar \% \orbar \wedge \orbar \& \orbar * \orbar ( \orbar )
 \end{array}
 \]
 with the {\em interpretation}, call it $h$, over all derived strings,
 \[
 \begin{array}{rcl}
 ) & \mapsto & \emptyset \\
-! & \mapsto & \{\emptyset \} \\  
+! & \mapsto & \{\emptyset \} \\
 @ & \mapsto & \{ \emptyset , \{\emptyset \} \}\\
 \# & \mapsto &\{ \emptyset , \{\emptyset \}, \{ \emptyset , \{\emptyset \} \} \}\\
 \$ & \mapsto & \{ \emptyset , \{\emptyset \}, \{ \emptyset , \{\emptyset \} \} , \{ \emptyset , \{\emptyset \}, \{ \emptyset , \{\emptyset \} \} \}\}\\
@@ -258,7 +259,7 @@ then $L(G)$ is the set of all the symbols we can write, consider,
 \[
 \begin{array}{rcl}
 \nonterm{N}^* &\rightarrow& \nonterm{D} \orbar \nonterm{D}\nonterm{N}\\
-\nonterm{D} &\rightarrow& ! \orbar @ \orbar \# \orbar \$ \orbar \% \orbar \wedge \orbar \& \orbar * \orbar ( \orbar ) 
+\nonterm{D} &\rightarrow& ! \orbar @ \orbar \# \orbar \$ \orbar \% \orbar \wedge \orbar \& \orbar * \orbar ( \orbar )
 \end{array}
 \]
 }
@@ -281,11 +282,11 @@ Back to our small imperative language, we have the {\em deductively} defined syn
 Syntactic Sets:
 \begin{itemize}
 \item $\syntaxset{T} = \{  \mbox{\bf true} ,\mbox{\bf false} \}$.
-\item $\syntaxset{I} = \{ q \mid \nonterm{D} \Rightarrow^* q \wedge q \in T^*\}$. 
+\item $\syntaxset{I} = \{ q \mid \nonterm{D} \Rightarrow^* q \wedge q \in T^*\}$.
 \item $\syntaxset{Loc} = \{ q \mid \nonterm{V} \Rightarrow^* q \wedge q \in T^*\}$ .
 \item $\syntaxset{Aexp} = \{ q \mid \nonterm{A} \Rightarrow^* q \wedge q \in T^*\}$ .
 \item $\syntaxset{Bexp} = \{ q \mid \nonterm{B} \Rightarrow^* q \wedge q \in T^*\}$ .
-\item $\syntaxset{Com} = L(G) = \{ q \mid \nonterm{C} \Rightarrow^* q \wedge q \in T^*\}$. 
+\item $\syntaxset{Com} = L(G) = \{ q \mid \nonterm{C} \Rightarrow^* q \wedge q \in T^*\}$.
 \end{itemize}
 
 There is another way to form the syntactic sets -- {\em inductively} defined syntactic sets.
@@ -297,7 +298,7 @@ There is another way to form the syntactic sets -- {\em inductively} defined syn
 
 Let us consider the syntactic set \syntaxset{Aexp}.  Our grammar production for arithmetic expressions is
 \[
-\nonterm{A} \rightarrow D \orbar V \orbar \nonterm{A} +\nonterm{A} \orbar \nonterm{A} - \nonterm{A} \orbar 
+\nonterm{A} \rightarrow D \orbar V \orbar \nonterm{A} +\nonterm{A} \orbar \nonterm{A} - \nonterm{A} \orbar
 	\nonterm{A} * \nonterm{A}\orbar ( \nonterm{A} )
 \]
 We already know: $\syntaxset{Aexp} = \{ q \mid A \Rightarrow^* q \wedge q \in T^*\}$.
@@ -348,11 +349,11 @@ Observations for \syntaxset{Aexp}:
 
 \begin{frame}{Formation Rules for Syntactic Sets}
 
-If the deductively defined set and the inductively defined set are equivalent, why bother introducing the inductively defined set? 
+If the deductively defined set and the inductively defined set are equivalent, why bother introducing the inductively defined set?
 
 \vspace{.2in}
 
-Turns out many of our proofs have to establish properties over entire syntactic sets.  The inductive nature of the syntactic sets allows us to use a 
+Turns out many of our proofs have to establish properties over entire syntactic sets.  The inductive nature of the syntactic sets allows us to use a
 proof technique called {\em structural induction} to show that a property holds for the entire syntactic set.
 
 \end{frame}
@@ -361,7 +362,7 @@ proof technique called {\em structural induction} to show that a property holds 
 
 \begin{frame}{\large Evaluation of Arithmetic Expressions}
 %\scriptsize
-Why are we so keen on representing syntax as sets?  
+Why are we so keen on representing syntax as sets?
 
 \vspace{.1in}
 
@@ -382,7 +383,7 @@ a function of the form,
 \sigma\co \syntaxset{Loc} \rightarrow \mathbb{I}
 \]
 where $\mathbb{I}$ represents the integer values.
-A state is a {\em function} such that $\sigma(x)$ will give the value of the {\em contents} 
+A state is a {\em function} such that $\sigma(x)$ will give the value of the {\em contents}
 for any $x \in \syntaxset{Loc}$.
 
 \vspace{.1in}
@@ -400,12 +401,12 @@ call it $\mapsto$ as the function
 \[
 \mapsto \co \syntaxset{Aexp} \times \Sigma \rightarrow \mathbb{I}
 \]
-such that, given an arithmetic expression $a \in \syntaxset{Aexp}$, some state $\sigma \in \Sigma$, and 
+such that, given an arithmetic expression $a \in \syntaxset{Aexp}$, some state $\sigma \in \Sigma$, and
 an appropriate value $k \in \mathbb{I}$, we write
 \[
-\pair{a}{\sigma} \mapsto k 
+\pair{a}{\sigma} \mapsto k
 \]
-We say that the function evaluates an arithmetic expression  $a$ in the context of a state $\sigma$ to 
+We say that the function evaluates an arithmetic expression  $a$ in the context of a state $\sigma$ to
 the outcome $k$.
 
 \vspace{.1in}
@@ -471,7 +472,7 @@ and that has two kinds of rules:
 \TrinaryInfC{conclusion}
  \end{prooftree}
 
-\item[Assumption]\hspace{1in}\\  
+\item[Assumption]\hspace{1in}\\
 \begin{prooftree}
 \AxiomC{}
 \UnaryInfC{conclusion}
@@ -491,7 +492,7 @@ and that has two kinds of rules:
 \begin{frame}{\large Evaluation of Arithmetic Expressions}
 \begin{description}
 
-\item[Evaluation of numbers]\hspace{1in}\\  
+\item[Evaluation of numbers]\hspace{1in}\\
 \begin{prooftree}
 \AxiomC{}
 \UnaryInfC{$( n, \sigma ) \mapsto \mathit{eval}(n)$}
@@ -512,7 +513,7 @@ and that has two kinds of rules:
  \end{prooftree}
 \end{description}
 
-with $k$, $k_0$, $k_1  \in \mathbb{I}$, $a_0$, $a_1 \in \syntaxset{Aexp}$, and 
+with $k$, $k_0$, $k_1  \in \mathbb{I}$, $a_0$, $a_1 \in \syntaxset{Aexp}$, and
 $\sigma \in \Sigma$.
 
 \end{frame}
@@ -542,15 +543,15 @@ the $\mapsto$ function into a predicate.
 \begin{description}
 \item[Evaluation of subtractions]\hspace{1in}\\
 \begin{prooftree}
-\AxiomC{$( a_0,\sigma) \mapsto k_0$} 
+\AxiomC{$( a_0,\sigma) \mapsto k_0$}
  \AxiomC{$( a_1,\sigma) \mapsto k_1$}
  \RightLabel{\hspace{.1in}\small where $k = k_0 - k_1$}
  \BinaryInfC{$( a_0 - a_1, \sigma) \mapsto k$}
  \end{prooftree}
- 
+
  \item[Evaluation of products]\hspace{1in}\\
 \begin{prooftree}
-\AxiomC{$( a_0,\sigma) \mapsto k_0$} 
+\AxiomC{$( a_0,\sigma) \mapsto k_0$}
 \AxiomC{$( a_1,\sigma) \mapsto k_1$}
 \RightLabel{\hspace{.1in}\small where $k = k_0 \times k_1$}
 \BinaryInfC{$( a_0 * a_1, \sigma) \mapsto k$}
@@ -558,12 +559,12 @@ the $\mapsto$ function into a predicate.
 
  \item[Evaluation of parenthesized terms]\hspace{1in}\\
 \begin{prooftree}
-\AxiomC{$( a,\sigma) \mapsto k$} 
+\AxiomC{$( a,\sigma) \mapsto k$}
 \UnaryInfC{$( (a), \sigma) \mapsto k$}
 \end{prooftree}
 \end{description}
 
-with $k$, $k_0$, $k_1  \in \mathbb{I}$, $a$,$a_0$, $a_1 \in \syntaxset{Aexp}$, and 
+with $k$, $k_0$, $k_1  \in \mathbb{I}$, $a$,$a_0$, $a_1 \in \syntaxset{Aexp}$, and
 $\sigma \in \Sigma$.
 \end{frame}
 
@@ -592,7 +593,7 @@ $\sigma \in \Sigma$.
 \vspace{.2in}
 % \end{prooftree}
 %\begin{prooftree}
-\AxiomC{$( a_0,\sigma) \mapsto k_0$} 
+\AxiomC{$( a_0,\sigma) \mapsto k_0$}
  \AxiomC{$( a_1,\sigma) \mapsto k_1$}
  \RightLabel{\hspace{.1in}\small where $k = k_0 - k_1$}
  \BinaryInfC{$( a_0 - a_1, \sigma) \mapsto k$}
@@ -600,18 +601,18 @@ $\sigma \in \Sigma$.
 \vspace{.2in}
 % \end{prooftree}
 %\begin{prooftree}
-\AxiomC{$( a_0,\sigma) \mapsto k_0$} 
+\AxiomC{$( a_0,\sigma) \mapsto k_0$}
 \AxiomC{$( a_1,\sigma) \mapsto k_1$}
 \RightLabel{\hspace{.1in}\small where $k = k_0 \times k_1$}
 \BinaryInfC{$( a_0 * a_1, \sigma) \mapsto k$}
 \DisplayProof\\
 \vspace{.2in}
 %\end{prooftree}
-\AxiomC{$( a,\sigma) \mapsto k$} 
+\AxiomC{$( a,\sigma) \mapsto k$}
 \UnaryInfC{$( (a), \sigma) \mapsto k$}
 \DisplayProof\\
 \vspace{.2in}
-with $k$, $k_0$, $k_1  \in \mathbb{I}$, $a$,$a_0$, $a_1 \in \syntaxset{Aexp}$, and 
+with $k$, $k_0$, $k_1  \in \mathbb{I}$, $a$,$a_0$, $a_1 \in \syntaxset{Aexp}$, and
 $\sigma \in \Sigma$.
 \end{frame}
 
@@ -621,7 +622,7 @@ $\sigma \in \Sigma$.
 \begin{quote}
 with $k$, $k_0$, $k_1  \in \mathbb{I}$, $a$,$a_0$, $a_1 \in \syntaxset{Aexp}$, and $\sigma \in \Sigma$.
 \end{quote}
-on the previous slide and all our semantic definitions is absolutely necessary.  We are dealing with first order logic 
+on the previous slide and all our semantic definitions is absolutely necessary.  We are dealing with first order logic
 and therefore all variables need to be quantified.  Stating
 \[
 k, k_0, k_1  \in \mathbb{I}
@@ -701,4 +702,3 @@ the  initial state $\sigma_0$.
 
 \end{document}
 %%%%%%%%%%%%%%%%%%%%%%%%%%% end of template1.tex %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
