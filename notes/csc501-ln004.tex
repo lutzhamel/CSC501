@@ -192,7 +192,7 @@ independent of the symbols we write is highlighted by the fact that we can defin
 \end{array}
 \]
 Note that each set has precisely as many elements as the standard notation denotes.
-\footnote{\tiny\url{https://lutzhamel.github.io/CSC501/docs/number-systems-as-sets.pdf}}  
+\footnote{\tiny\url{https://lutzhamel.github.io/CSC501/docs/number-systems-as-sets.pdf}}
 The set of all these sets make up the natural numbers $\mathbb{N}$.
 Furthermore, the sets are ordered according to the subset relation,
 \[
@@ -459,7 +459,8 @@ The rules will be rules in the style of natural deduction.
 \small
 
 
-Natural deduction is a formal system that has terms, functions, and relations as alphabet
+Natural deduction\footnote{\tiny Reference: \url{https://lutzhamel.github.io/CSC501/docs/natural-semantics.pdf}}
+is a formal system that has terms, functions, and relations as alphabet
 and that has two kinds of rules:
 \begin{description}
 
@@ -486,7 +487,6 @@ and that has two kinds of rules:
 
 \vspace{.1in}
 
-%Read the paper ``Natural Semantics'' by G. Kahn, sections 1 through 4.
 \end{frame}
 
 \begin{frame}{\large Evaluation of Arithmetic Expressions}
@@ -504,16 +504,18 @@ and that has two kinds of rules:
 \UnaryInfC{$( x, \sigma ) \mapsto \sigma(x)$}
 \end{prooftree}
 
+
 \item[Evaluation of sums]\hspace{1in}\\
 \begin{prooftree}
 \AxiomC{$( a_0,\sigma) \mapsto k_0$}
 \AxiomC{$( a_1,\sigma) \mapsto k_1$}
-\RightLabel{\hspace{.1in}\small where $k= k_0 + k_1$}
-\BinaryInfC{$( a_0 + a_1, \sigma) \mapsto k$}
+\BinaryInfC{$( a_0 + a_1, \sigma) \mapsto k_0 + k_1$}
  \end{prooftree}
 \end{description}
 
-with $k$, $k_0$, $k_1  \in \mathbb{I}$, $a_0$, $a_1 \in \syntaxset{Aexp}$, and
+\vspace{.2in}
+
+where $k_0$, $k_1\in\mathbb{I}$, $n, x, a_0$, $a_1\in\syntaxset{Aexp}$, and
 $\sigma \in \Sigma$.
 
 \end{frame}
@@ -545,16 +547,14 @@ the $\mapsto$ function into a predicate.
 \begin{prooftree}
 \AxiomC{$( a_0,\sigma) \mapsto k_0$}
  \AxiomC{$( a_1,\sigma) \mapsto k_1$}
- \RightLabel{\hspace{.1in}\small where $k = k_0 - k_1$}
- \BinaryInfC{$( a_0 - a_1, \sigma) \mapsto k$}
+ \BinaryInfC{$( a_0 - a_1, \sigma) \mapsto k_0 - k_1$}
  \end{prooftree}
 
  \item[Evaluation of products]\hspace{1in}\\
 \begin{prooftree}
 \AxiomC{$( a_0,\sigma) \mapsto k_0$}
 \AxiomC{$( a_1,\sigma) \mapsto k_1$}
-\RightLabel{\hspace{.1in}\small where $k = k_0 \times k_1$}
-\BinaryInfC{$( a_0 * a_1, \sigma) \mapsto k$}
+\BinaryInfC{$( a_0 * a_1, \sigma) \mapsto k_0 \times k_1$}
 \end{prooftree}
 
  \item[Evaluation of parenthesized terms]\hspace{1in}\\
@@ -564,7 +564,9 @@ the $\mapsto$ function into a predicate.
 \end{prooftree}
 \end{description}
 
-with $k$, $k_0$, $k_1  \in \mathbb{I}$, $a$,$a_0$, $a_1 \in \syntaxset{Aexp}$, and
+\vspace{.2in}
+
+with $k_0$, $k_1  \in \mathbb{I}$, $a$,$a_0$, $a_1 \in \syntaxset{Aexp}$, and
 $\sigma \in \Sigma$.
 \end{frame}
 
@@ -572,14 +574,12 @@ $\sigma \in \Sigma$.
 \scriptsize
 %\begin{prooftree}
 \AxiomC{}
-\RightLabel{\hspace{.1in}for $n\in \syntaxset{I}$}
 \UnaryInfC{$( n, \sigma ) \mapsto \mathit{eval}(n)$}
 \DisplayProof\\
 \vspace{.2in}
 %\end{prooftree}
 %\begin{prooftree}
 \AxiomC{}
-\RightLabel{\hspace{.1in}for $x\in \syntaxset{Loc}$}
 \UnaryInfC{$( x, \sigma ) \mapsto \sigma(x)$}
 \DisplayProof\\
 \vspace{.2in}
@@ -587,24 +587,21 @@ $\sigma \in \Sigma$.
 %\begin{prooftree}
 \AxiomC{$( a_0,\sigma) \mapsto k_0$}
 \AxiomC{$( a_1,\sigma) \mapsto k_1$}
-\RightLabel{\hspace{.1in}\small where $k= k_0 + k_1$}
-\BinaryInfC{$( a_0 + a_1, \sigma) \mapsto k$}
+\BinaryInfC{$( a_0 + a_1, \sigma) \mapsto k_0 + k_1$}
 \DisplayProof\\
 \vspace{.2in}
 % \end{prooftree}
 %\begin{prooftree}
 \AxiomC{$( a_0,\sigma) \mapsto k_0$}
  \AxiomC{$( a_1,\sigma) \mapsto k_1$}
- \RightLabel{\hspace{.1in}\small where $k = k_0 - k_1$}
- \BinaryInfC{$( a_0 - a_1, \sigma) \mapsto k$}
+ \BinaryInfC{$( a_0 - a_1, \sigma) \mapsto k_0 - k_1$}
 \DisplayProof\\
 \vspace{.2in}
 % \end{prooftree}
 %\begin{prooftree}
 \AxiomC{$( a_0,\sigma) \mapsto k_0$}
 \AxiomC{$( a_1,\sigma) \mapsto k_1$}
-\RightLabel{\hspace{.1in}\small where $k = k_0 \times k_1$}
-\BinaryInfC{$( a_0 * a_1, \sigma) \mapsto k$}
+\BinaryInfC{$( a_0 * a_1, \sigma) \mapsto k_0 \times k_1$}
 \DisplayProof\\
 \vspace{.2in}
 %\end{prooftree}
@@ -612,7 +609,7 @@ $\sigma \in \Sigma$.
 \UnaryInfC{$( (a), \sigma) \mapsto k$}
 \DisplayProof\\
 \vspace{.2in}
-with $k$, $k_0$, $k_1  \in \mathbb{I}$, $a$,$a_0$, $a_1 \in \syntaxset{Aexp}$, and
+with $k$, $k_0$, $k_1  \in \mathbb{I}$, $n$,$x$,$a$,$a_0$, $a_1 \in \syntaxset{Aexp}$, and
 $\sigma \in \Sigma$.
 \end{frame}
 
@@ -620,7 +617,7 @@ $\sigma \in \Sigma$.
 
 {\bf Observation:} the line
 \begin{quote}
-with $k$, $k_0$, $k_1  \in \mathbb{I}$, $a$,$a_0$, $a_1 \in \syntaxset{Aexp}$, and $\sigma \in \Sigma$.
+with $k$, $k_0$, $k_1  \in \mathbb{I}$, $n$,$x$,$a$,$a_0$, $a_1 \in \syntaxset{Aexp}$, and $\sigma \in \Sigma$.
 \end{quote}
 on the previous slide and all our semantic definitions is absolutely necessary.  We are dealing with first order logic
 and therefore all variables need to be quantified.  Stating
@@ -639,8 +636,8 @@ considered free variables and it possible to show that inferencing with free var
 
 {\bf Observation:} The inference rules are a structural definition of a function over the syntactic set \syntaxset{Aexp} which together with
 an appropriate state maps each
-syntactic element in that set into a value in the set of all integer values, $\mathbb{I}$, i.e., the meaning of an syntactic expression given some state is an
-integer value,
+syntactic element in that set into a value in the set of all integer values, $\mathbb{I}$, i.e., {\bf the meaning of an syntactic expression given some state is an
+integer value},
 \[
 \xymatrix{
 \mathbb{I}\\
