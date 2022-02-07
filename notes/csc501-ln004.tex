@@ -459,7 +459,7 @@ The rules will be rules in the style of natural deduction.
 \small
 
 
-Natural deduction\footnote{\tiny Reference: \url{https://lutzhamel.github.io/CSC501/docs/natural-semantics.pdf}}
+Natural deduction
 is a formal system that has terms, functions, and relations as alphabet
 and that has two kinds of rules:
 \begin{description}
@@ -517,6 +517,51 @@ and that has two kinds of rules:
 
 where $k_0$, $k_1\in\mathbb{I}$, $n, x, a_0$, $a_1\in\syntaxset{Aexp}$, and
 $\sigma \in \Sigma$.
+
+\end{frame}
+
+\begin{frame}{\large Natural Semantics}
+
+The work shown here is based on the paper ``Natural Semantics'' by Gilles Kahn.\footnote{\tiny Reference: \url{https://lutzhamel.github.io/CSC501/docs/natural-semantics.pdf}}
+He employs a slightly different notation,
+
+\begin{prooftree}
+\AxiomC{}
+\UnaryInfC{$\sigma \vdash n \Rightarrow \mathit{eval}(n)$}
+\end{prooftree}
+
+\begin{prooftree}
+\AxiomC{}
+\UnaryInfC{$\sigma \vdash x \Rightarrow \sigma(x)$}
+\end{prooftree}
+
+\begin{prooftree}
+\AxiomC{$\sigma\vdash a_0 \Rightarrow k_0$}
+\AxiomC{$\sigma\vdash a_1 \Rightarrow k_1$}
+\BinaryInfC{$\sigma\vdash a_0 + a_1 \Rightarrow k_0 + k_1$}
+ \end{prooftree}
+
+\vspace{.1in}
+Here, $\sigma\vdash a \equiv (a,\sigma)$ and $\Rightarrow \equiv \mapsto$.
+
+\vspace{.1in}
+Assume that $k_0$, $k_1\in\mathbb{I}$, $n, x, a, a_0$, $a_1\in\syntaxset{Aexp}$, and
+$\sigma \in \Sigma$.
+
+\end{frame}
+
+\begin{frame}{\large Natural Semantics}
+
+{\bf Reading}: Please read sections 1 through 4 of the Natural Semantics paper:
+
+\vspace{.1in}
+
+{\scriptsize\url{https://lutzhamel.github.io/CSC501/docs/natural-semantics.pdf}}
+
+\vspace{.1in}
+
+If you are interested how an abstract machine can be specified using natural semantics
+then take a peek at section 5.1.
 
 \end{frame}
 
