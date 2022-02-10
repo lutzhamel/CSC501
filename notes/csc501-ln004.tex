@@ -35,6 +35,8 @@
 \include{defs}
 \begin{document}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{frame}{Natural Semantics}
 
 Goals:
@@ -45,6 +47,8 @@ instance of first-order logic; that is, it is the formal language of first-order
 coupled with a ``natural" deductive system based on proof trees.}
 \end{itemize}
 \end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}{A Simple Imperative Language}
 \scriptsize
@@ -76,8 +80,7 @@ The following is the grammar
 }
 \end{frame}
 
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}{Semantics}
 %\scriptsize
@@ -100,6 +103,8 @@ We
 \end{itemize}
 
 \end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}{Semantics}
 As stated above, we want to construct our models using predicates, relations, and functions but when we look at our grammar $G$
@@ -154,6 +159,7 @@ Syntactic Sets:
 
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}{IMP - A Simple Imperative Language}
 
@@ -173,6 +179,8 @@ of Programming Languages.''}
 {\bf NOTE:} $\syntaxset{T} \ne \mathbb{B}$, where $\mathbb{B}$ is the set of all boolean {\em values}.
 
 \end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}{Syntax meets Semantics}
 \scriptsize
@@ -201,6 +209,8 @@ Furthermore, the sets are ordered according to the subset relation,
 
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{frame}{Syntax meets Semantics}
 \scriptsize
 
@@ -224,6 +234,8 @@ with the {\em interpretation} over the set of all derived strings,
 \]
 Given this interpretation, what {\em value} does the symbol $22$ represent.
 \end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}{Syntax meets Semantics}
 \scriptsize
@@ -250,6 +262,8 @@ with the {\em interpretation}, call it $h$, over all derived strings,
 Given this interpretation, what {\em value} does the symbol $@@$ represent.
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{frame}{Syntax meets Semantics}
 \small
 
@@ -274,6 +288,7 @@ That is, the interpretation $h$ takes each symbol in $L(G)$ and assigns it an el
 We will see this as a recurring theme in this class.
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}{Formation Rules for Syntactic Sets}
 \small
@@ -292,6 +307,8 @@ Syntactic Sets:
 There is another way to form the syntactic sets -- {\em inductively} defined syntactic sets.
 
 \end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}{Formation Rules for Syntactic Sets}
 \scriptsize
@@ -333,6 +350,7 @@ given a production we can easily generate an inductive definition of the underly
 
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}{Formation Rules for Syntactic Sets}
 Observations for \syntaxset{Aexp}:
@@ -346,6 +364,7 @@ Observations for \syntaxset{Aexp}:
 \end{itemize}
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}{Formation Rules for Syntactic Sets}
 
@@ -358,7 +377,7 @@ proof technique called {\em structural induction} to show that a property holds 
 
 \end{frame}
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}{\large Evaluation of Arithmetic Expressions}
 %\scriptsize
@@ -374,6 +393,8 @@ way, that is, we want to use {\em functions} and {\em relations} to {\em interpr
 Functions and relations need sets as their domains and co-domains.
 
 \end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}{\large Evaluation of Arithmetic Expressions}
 
@@ -392,7 +413,7 @@ The set $\Sigma$ contains a distinguished state, $\sigma_0$, called the {\em ini
 
 \end{frame}
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}{\large Evaluation of Arithmetic Expressions}
 We define the {\em evaluation}  or {\em interpretation} for arithmetic expressions as a function
@@ -414,6 +435,8 @@ the outcome $k$.
 The pair $\pair{a}{\sigma}$ is called a {\em configuration}.
 
 \end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}{\large Evaluation of Arithmetic Expressions}
 
@@ -439,6 +462,8 @@ drop this operation in later definitions, where it is clear from context that so
 represents a value in $\mathbb I$.
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{frame}{Natural Semantics}
 With all this machinery we are finally in the position to write down rules that define the
 evaluation function `$\mapsto$' for arithmetic expressions.
@@ -453,6 +478,8 @@ of the set \syntaxset{Aexp}.
 
 The rules will be rules in the style of natural deduction.
 \end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}{Natural Deduction}
 
@@ -489,6 +516,8 @@ and that has two kinds of rules:
 
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{frame}{\large Evaluation of Arithmetic Expressions}
 \begin{description}
 
@@ -520,6 +549,8 @@ $\sigma \in \Sigma$.
 
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{frame}{\large Natural Semantics}
 
 The work shown here is based on the paper ``Natural Semantics'' by Gilles Kahn.\footnote{\tiny Reference: \url{https://lutzhamel.github.io/CSC501/docs/natural-semantics.pdf}}
@@ -550,6 +581,8 @@ $\sigma \in \Sigma$.
 
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{frame}{\large Natural Semantics}
 
 {\bf Reading}: Please read sections 1 through 4 of the Natural Semantics paper:
@@ -564,6 +597,8 @@ If you are interested how an abstract machine can be specified using natural sem
 then take a peek at section 5.1.
 
 \end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}{\large Evaluation of Arithmetic Expressions}
 \small
@@ -585,6 +620,7 @@ Which is a cumbersome notation and we will stick with our original notation reme
 the $\mapsto$ function into a predicate.
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}{\large Evaluation of Arithmetic Expressions}
 \begin{description}
@@ -614,6 +650,8 @@ the $\mapsto$ function into a predicate.
 with $k_0$, $k_1  \in \mathbb{I}$, $a$,$a_0$, $a_1 \in \syntaxset{Aexp}$, and
 $\sigma \in \Sigma$.
 \end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}{Arithmetic Expression Summary}
 \scriptsize
@@ -658,6 +696,8 @@ with $k$, $k_0$, $k_1  \in \mathbb{I}$, $n$,$x$,$a$,$a_0$, $a_1 \in \syntaxset{A
 $\sigma \in \Sigma$.
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{frame}{\large Evaluation of Arithmetic Expressions}
 
 {\bf Observation:} the line
@@ -677,6 +717,8 @@ That is, in all our semantic rules we have universal quantification.  If we did 
 considered free variables and it possible to show that inferencing with free variables can get us into trouble.
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{frame}{\large Evaluation of Arithmetic Expressions}
 
 {\bf Observation:} The inference rules are a structural definition of a function over the syntactic set \syntaxset{Aexp} which together with
@@ -692,6 +734,7 @@ integer value},
 
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}{\large Evaluation of Arithmetic Expressions}
 
@@ -712,6 +755,8 @@ integer value},
 $\Rightarrow$ The final result does not depend on the state -- all constant expressions.
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{frame}{\large Evaluation of Arithmetic Expressions}
 
 {\bf Example:}Now, let $ae \equiv v + 1$, where $v \in \syntaxset{Loc}$, prove that the semantic value of this expression in some
@@ -727,6 +772,8 @@ $\Rightarrow$ We cannot fully evaluate this expression because we don't know eno
 about the state $\sigma$.
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{frame}{\large Evaluation of Arithmetic Expressions}
 
 {\bf Example:} Now, let $ae \equiv v + 1$, where $v \in \syntaxset{Loc}$, prove that the semantic value of this expression in the initial state
@@ -741,6 +788,8 @@ $\sigma_0 \in \Sigma$ is equal to $1$.
 $\Rightarrow$ We can fully evaluate this expression because we know the definition of
 the  initial state $\sigma_0$.
 \end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \end{document}
 %%%%%%%%%%%%%%%%%%%%%%%%%%% end of template1.tex %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

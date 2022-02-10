@@ -7,3 +7,4 @@
 *.log
 *.snm
 *.nav
+.DS_Store
