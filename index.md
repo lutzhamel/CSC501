@@ -44,7 +44,7 @@
 
 [Semester Review](https://lutzhamel.github.io/CSC501/notes/semester-review.pdf)<br>
 
-### Additional Resource
+### Additional Resources
 
-[Specs and Proof Scores](specs)
-
+[Prolog Notes](https://lutzhamel.github.io/CSC501/docs/prolog-notes.pdf)<br>
+[Specs and Proof Scores](specs)<br>
