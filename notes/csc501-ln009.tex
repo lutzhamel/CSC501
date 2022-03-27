@@ -541,42 +541,6 @@ with $k\in\mathbb{N}$.  This argument succeeds because we did not look at the st
 
 
 
-\begin{frame}[fragile]{Theorem Proving with Prolog}
-
-\scriptsize
-\begin{center}
-    \includegraphics[height=30mm]{images/swans}
-\end{center}
-
-\vspace{.1in}
-The {\em black swan problem} is a classic problem from machine learning theory set forward by mathematician and logician Karl Popper at the beginning of the past century: looking at all the swans in Europe and
-North America one would conclude that {\em all swans are white} (set D).  However, if you look at the worldwide population of swans (set X) you will also find black swans (in Australia) and therefore the conclusion based on set D is not valid.
-To avoid these invalid inferences, in machine learning theory this often framed as a probabilistic statement:
-\begin{quote}
-Based on set D it is {\bf most likely} that all swans are white.
-\end{quote}
-
-\end{frame}
-
-
-\begin{frame}[fragile]{Theorem Proving with Prolog}
-
-\scriptsize
-Coming back to our universal generalization problem.
-
-\vspace{.1in}
-{\bf Example:} Let $X$ be the set of all swans worldwide, let $x'\in X$ be some arbitrarily selected element
-of that set.  Let,
-\[
-p(x') \equiv x' \mbox{ is a white swan.}
-\] 
- Now, applying universal generalization we have, 
-\[
-\frac{p(x')}{\therefore \forall x[p(x)]}
-\]
-with $x\in X$.  Again, this argument fails because we allowed the predicate to investigate the structure of
-the element  $x'$ directly by looking at its color.
-\end{frame}
 
 
 \begin{frame}[fragile]{\large Proof Scores}
