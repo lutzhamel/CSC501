@@ -26,12 +26,12 @@ $\Rightarrow$ A program specification is a universally quantified sentence over 
 Consider the following program specification for some program $p$ and variables $x$ and $y$:
 \[
 \begin{array}{rl}
-\forall s,\exists Q,VX,VY& [\sem{(p,s)}{Q} \wedge \\
+\forall s,\exists P,Q,VX,VY& [\sem{(P,s)}{Q} \wedge \\
    		& {\rm lookup}(y,s,VY) \wedge {\rm lookup}(x,Q,VY)\wedge \\
 	           & {\rm lookup}(x,s,VX) \wedge{\rm lookup}(y,Q,VX) ]
 \end{array}
 \]
-This specification states that running the program $p$ in state $s$ will give rise to some state $Q$.
+This specification states that running the program $P$ in state $s$ will give rise to some state $Q$.
 Furthermore, looking up the variable $y$ in state $s$ is the same as looking up the variable $x$ in
 state $Q$ and {\em vice versa}.
 
@@ -42,9 +42,9 @@ This is a program specification for a {\em swap} program that swaps the values o
 
 \begin{frame}[fragile]{Program Specifications}
 
-Now, consider the  program $p$ written in our simple language IMP defined in `sem.pl':
+Now, consider the  program $P$ written in our simple language IMP defined in `sem.pl':
 \[
-p \equiv {\bf assign}(t, x)\; {\bf  seq}\; {\bf assign}(x,y) \; {\bf seq}\; {\bf assign}(y, t)
+P \equiv {\bf assign}(t, x)\; {\bf  seq}\; {\bf assign}(x,y) \; {\bf seq}\; {\bf assign}(y, t)
 \]
 Without formal semantics and a program specification we would  simply try ``a bunch'' of values, and if the results
 look good we would infer that the program works.  But there will always be a doubt that it will work for all states
@@ -90,18 +90,18 @@ Now consider the program specification
 {\scriptsize
 \[
 \begin{array}{rl}
-\forall s,\exists Q,V1,V2& [\sem{(p,s)}{Q} \wedge \\
+\forall s,\exists P,Q,V1,V2& [\sem{(P,s)}{Q} \wedge \\
    		& {\rm lookup}(z,s,V1) \wedge {\rm lookup}(z,Q,V2) \wedge\\
 		& V2 =  2 * V1 ]
 \end{array}
 \]
 
 }
-It is easy to see that the program $p \equiv {\bf assign}(z,{\bf mult}(2,z))$ satisfies the specification.
+It is easy to see that the program $P \equiv {\bf assign}(z,{\bf mult}(2,z))$ satisfies the specification.
 
 \vspace{.1in}
 
-But so does this program $p \equiv {\bf assign}(z,{\bf add}(z,z))$.
+But so does this program $P \equiv {\bf assign}(z,{\bf add}(z,z))$.
 
 \vspace{.3in}
 
@@ -117,7 +117,7 @@ $\Rightarrow$ Program specifications are {\em implementation independent}!
 
 :- >>> 'show that program P="assign(z,add(z,z)))"'.
 :- >>> 'satisfies the program specification:'.
-:- >>> ' (p,s) -->> Q,lookup(z,s,V1),lookup(z,Q,V2),V2 = 2*V1'.
+:- >>> ' (P,s) -->> Q,lookup(z,s,V1),lookup(z,Q,V2),V2 = 2*V1'.
 
 program(assign(z,add(z,z))).
 
