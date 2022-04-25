@@ -31,10 +31,11 @@
 [Pre- and Post-Conditions](https://lutzhamel.github.io/CSC501/notes/csc501-ln015.pdf)<br>
 [Program Correctness and Iteration](https://lutzhamel.github.io/CSC501/notes/csc501-ln016.pdf)<br>
 [Loop Invariants](https://lutzhamel.github.io/CSC501/notes/csc501-ln017.pdf)<br>
-<!-- [Program Correctness and Recursive Functions](https://lutzhamel.github.io/CSC501/notes/csc501-ln018.pdf)<br> -->
 [Translational Semantics](https://lutzhamel.github.io/CSC501/notes/csc501-ln019.pdf)<br>
 [Translation, Source and Target Semantics](https://lutzhamel.github.io/CSC501/notes/csc501-ln020.pdf)<br>
 [Compiler Correctness](https://lutzhamel.github.io/CSC501/notes/csc501-ln021.pdf)<br>
+
+<!-- [Program Correctness and Recursive Functions](https://lutzhamel.github.io/CSC501/notes/csc501-ln018.pdf)<br> -->
 
 ### Model Theory
 
