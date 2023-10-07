@@ -1,10 +1,10 @@
 % sem.pl
-% Version 2.2
+% Version 3.0
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% complete semantics of the source language:
+% semantics of the IMP language:
 %
-%  A ::= n
-%     |  x
+%  A ::= n          -- any integer
+%     |  x          -- any variable
 %     |  add(A,A)
 %     |  sub(A,A)
 %     |  mult(A,A)
@@ -28,28 +28,33 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% load our state representation
+:- consult("state.pl").
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % semantics of arithmetic expressions
 
-(C,_) -->> C :-                    % constants
+_:: C ==> C :-                    % constants
     int(C),!.
 
-(X,State) -->> Val :-              % variables
+State:: X ==> Val :-              % variables
     atom(X),
-    lookup(X,State,Val),!.
+    atom_length(X,1),             % we only allow single char vars
+    State:: lookup(X) >--> Val,!.
 
-(add(A,B),State) -->> Val :-       % addition
-    (A,State) -->> ValA,
-    (B,State) -->> ValB,
+State:: add(A,B)  ==> Val :-       % addition
+    State:: A ==> ValA,
+    State:: B ==> ValB,
     Val xis ValA + ValB,!.
 
-(sub(A,B),State) -->> Val :-       % subtraction
-    (A,State) -->> ValA,
-    (B,State) -->> ValB,
+State:: sub(A,B) ==> Val :-       % subtraction
+    State:: A ==> ValA,
+    State:: B ==> ValB,
     Val xis ValA - ValB,!.
 
-(mult(A,B),State) -->> Val :-     % multiplication
-    (A,State) -->> ValA,
-    (B,State) -->> ValB,
+State:: mult(A,B) ==> Val :-     % multiplication
+    State:: A ==> ValA,
+    State:: B ==> ValB,
     Val xis ValA * ValB,!.
 
 
@@ -60,87 +65,62 @@
 % disjunction.  We could have used the built-in ',' and ';'
 % operators but this would make terms difficult to read.
 
-(true,_) -->> true :- !.               % constants
+_:: true ==> true :- !.               % constants
 
-(false,_) -->> false :- !.             % constants
+_:: false ==> false :- !.             % constants
 
-(eq(A,B),State) -->> Val :-            % equality
-    (A,State) -->> ValA,         
-    (B,State) -->> ValB,         
-    Val xis (ValA =:= ValB),!. 
+State:: eq(A,B) ==> Val :-            % equality
+    State:: A ==> ValA,         
+    State:: B ==> ValB,         
+    Val xis ValA == ValB,!. 
     
-(le(A,B),State) -->> Val :-            % le
-    (A,State) -->> ValA,
-    (B,State) -->> ValB,
-    Val xis (ValA =< ValB),!.
+State:: le(A,B) ==> Val :-            % le
+    State:: A ==> ValA,
+    State:: B ==> ValB,
+    Val xis ValA =< ValB,!.
     
-(not(A),State) -->> Val :-             % not
-    (A,State) -->> ValA,
-    Val xis (not ValA),!.
+State:: not(A) ==> Val :-             % not
+    State:: A ==> ValA,
+    Val xis (not ValA),!.             % NOTE: we need the parens here
 
-(and(A,B),State) -->> Val :-           % and
-    (A,State) -->> ValA,
-    (B,State) -->> ValB,
+State:: and(A,B) ==> Val :-           % and
+    State:: A ==> ValA,
+    State:: B ==> ValB,
     Val xis (ValA and ValB),!.
 
-(or(A,B),State) -->> Val :-            % or
-    (A,State) -->> ValA,
-    (B,State) -->> ValB,
+State:: or(A,B) ==> Val :-            % or
+    State:: A ==> ValA,
+    State:: B ==> ValB,
     Val xis (ValA or ValB),!.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % semantics of commands
 
-(skip,State) -->> State :- !.          % skip
+State:: skip ==> State :- !.          % skip
 
-(assign(X,A),State) -->> OState :-     % assignment
-    (A,State) -->> ValA,
-    put(X,ValA,State,OState),!.
+State:: assign(X,A) ==> OState :-     % assignment
+    State:: A ==> ValA,
+    State:: put(X,ValA) >--> OState,!.
 
-(seq(C0,C1),State) -->> OState :-      % composition, seq
-    (C0,State) -->> S0,
-    (C1,S0) -->> OState,!.
+State:: seq(C0,C1) ==> OState :-      % composition, seq
+    State:: C0 ==> S0,
+    S0:: C1 ==> OState,!.
 
-(if(B,C0,_),State) -->> OState :-     % if
-    (B,State) -->> true,
-    (C0,State) -->> OState,!.
+State:: if(B,C0,_) ==> OState :-     % if (true)
+    State:: B ==> true,
+    State:: C0 ==> OState,!.
 
-(if(B,_,C1),State) -->> OState :-     % if
-    (B,State) -->> false,
-    (C1,State) -->> OState,!.
+State:: if(B,_,C1) ==> OState :-     % if (false)
+    State:: B ==> false,
+    State:: C1 ==> OState,!.
 
-(whiledo(B,_),State) -->> OState :-    % while
-    (B,State) -->> false,
-    State=OState,!.
+State:: whiledo(B,_) ==> State :-    % while (false)
+    State:: B ==> false,!.
 
-(whiledo(B,C),State) -->> OState :-    % while
-    (B,State) -->> true,
-    (C,State) -->> SC,
-    (whiledo(B,C),SC) -->> OState,!. 
+State:: whiledo(B,C) ==> OState :-    % while (true)
+    State:: B ==> true,
+    State:: C ==> SC,
+    SC:: whiledo(B,C) ==> OState,!. 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% the predicate 'lookup(+Variable,+State,-Value)' looks up
-% the variable in the state and returns its bound value.
-:- dynamic lookup/3.                % modifiable predicate
-
-lookup(_,s0,0).
-
-lookup(X,state([],S),Val) :-
-    lookup(X,S,Val).
-
-lookup(X,state([bind(Val,X)|_],_),Val).
-
-lookup(X,state([_|Rest],S),Val) :- 
-    lookup(X,state(Rest,S),Val).
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% the predicate 'put(+Variable,+Value,+State,-FinalState)' adds
-% a binding term to the state.
-:- dynamic put/4.                   % modifiable predicate
-
-put(X,Val,state(L,S),state([bind(Val,X)|L],S)).
-
-put(X,Val,S,state([bind(Val,X)],S)) :- 
-    atom(S).
 
 

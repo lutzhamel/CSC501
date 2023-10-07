@@ -1,5 +1,6 @@
 % xis.pl
-% version 4.0
+% version 4.1
+% (C) 2015 - Lutz Hamel, University of Rhode Island
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % the predicate 'xis(-TermOrValue,+term)' takes a term and
 % tries to evaluate it to an int, float, or boolean value.  if it succeeds then
@@ -11,7 +12,7 @@
 
 :- dynamic 'xis'/2.
 :- multifile 'xis'/2.
-:- op(700,xfx,xis).  % infix
+:- op(750,xfx,xis).  % infix
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 'xis' for boolean expressions not supported by 'is'
@@ -46,7 +47,7 @@ A xis B :-                  % recurse through the structure and eval as much as 
 % be evaluated with the builtin 'is' predicate, otherwise false.
 
 is_evaluable(F) :-
-	num(F), !.
+	is_num(F), !.
 
 is_evaluable(F) :-
         current_arithmetic_function(F),
@@ -57,7 +58,7 @@ is_evaluable(F) :-
 % be evaluated with the 'bool_eval' predicate, otherwise false.
 
 bool_evaluable(F) :-
-	bool(F), !.
+	is_bool(F), !.
 
 bool_evaluable(F) :-
         current_bool_op(F),
@@ -73,7 +74,7 @@ bool_evaluable(F) :-
 
 current_relational_op(A) :-
 	functor(A,Name,_),
-	member(Name,[(=:=),(<),(=<),(>),(>=)]).
+	member(Name,[(==),(<),(=<),(>),(>=)]).
 	
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -110,7 +111,7 @@ xis_evalchild(I,B,Input,Output) :-
 
 % constant
 bool_eval(Input,Input) :-
-	bool(Input),!.
+	is_bool(Input),!.
 
 % not
 bool_eval(not A,true) :-
@@ -158,8 +159,8 @@ bool_eval(T,true) :-
 	current_relational_op(T),
 	xis_evalchild(2,T,[],Result),
 	[V1,V2] = Result,
-	num(V1),
-	num(V2),
+	is_num(V1),
+	is_num(V2),
 	functor(T,Name,_),
 	A =.. [Name|Result],
 	call(A),!.
@@ -168,8 +169,8 @@ bool_eval(T,false) :-
 	current_relational_op(T),
 	xis_evalchild(2,T,[],Result),
 	[V1,V2] = Result,
-	num(V1),
-	num(V2),
+	is_num(V1),
+	is_num(V2),
 	functor(T,Name,_),
 	A =.. [Name|Result],
 	not call(A),!.
@@ -179,30 +180,37 @@ bool_eval(T,false) :-
 % dynamic for proof purposes -- the builtins are not dynamic,
 % ie. cannot be extended by the user.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% the predicate 'bool(+term)' takes a term and returns true
+% the predicate 'is_bool(+term)' takes a term and returns true
 % if term is either atom 'true' or 'false'
 
-:- dynamic bool/1.
-bool(true).
-bool(false).
+:- dynamic is_bool/1.
+is_bool(true).
+is_bool(false).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% the predicate 'int(+term)' takes a term and returns true
+% the predicate 'is_int(+term)' takes a term and returns true
 % if term is an int value
 
-:- dynamic int/1.
-int(T) :- integer(T).
+:- dynamic is_int/1.
+is_int(T) :- integer(T).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% the predicate 'num(+term)' takes a term and returns true
+% the predicate 'is_num(+term)' takes a term and returns true
 % if term is a value
 
-:- dynamic num/1.
-num(T) :- number(T).
+:- dynamic is_num/1.
+is_num(T) :- number(T).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% the predicate 'real(+term)' takes a term and returns true
+% the predicate 'is_real(+term)' takes a term and returns true
 % if term is a floating point value
 
-:- dynamic real/1.
-real(T) :- float(T).
+:- dynamic is_real/1.
+is_real(T) :- float(T).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% the predicate 'is_var(+term)' takes a term and returns true
+% if term looks like a variable name
+
+:- dynamic is_var/1.
+is_var(X) :- atom(X).

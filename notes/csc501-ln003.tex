@@ -1,287 +1,796 @@
+% Notes:
+% introduce semantics as follows:
+% try to explain what 1+1 does to somebody who has no knowledge of the natural numbers or addition�
+% one way to proceed is this:
+% first show that 1+1 is an instance of a larger collection of terms I can write -- that is, specify a grammar for these terms
+% next we build a *computational* model of the natural numbers:
+%  \emptyset
+% \{ \emptyset \}
+% \{ \emptyset, \{ \emptyset \}\}
+% \{ \emptyset, \{ \emptyset \}, \{ \emptyset, \{ \emptyset \}\}\}
+% �.
+% notice that this is a definition of the natural numbers without any reference to the "standard" symbols that we usually employ,
+% also the numbers are ordered via set inclusion as you would expect from the natural numbers.
+% We refer to this set as Nat.
+% Also observe that the arity of each set represents exactly what we expect from a natural number -- for example if we count to
+% three we would expect three "items".
+% Now, this notation is cumbersome, we can introduce a function that takes advantage of the fact that the natural numbers
+% are ordered and given any natural number in set notation will compute its successor:
+%   s: Nat -> Nat with the definition s(A) = A \cup \{ A \}
+% with this function we can represent the set Nat much easier
+% \emptyset
+% s(\emptyset)
+% s(s(\emptyset))
+% s(s(s(\emptyset)))
+% �..
+% We now have a nice computational model of counting: we simply apply the successor function s as many times to the set representing zero
+% as there are items to be counted.
+% In addition to counting our original problem of 1+1 also dealt with addition, so we need to construct a computational model of
+% addition call the function add: Nat x Nat -> Nat with
+%   add(X,0) = X
+%   add(X,s(Y)) = s(add(X,Y))
+%
+%
 \documentclass{beamer}
 \include{defs}
 \begin{document}
 
-\begin{frame}[fragile]{Grammars}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Natural Semantics}
 
+Goals:
 \begin{itemize}
-\item
-Grammars play a crucial role in programming languages because they precisely capture the
-syntactic nature of programming languages.
-
-\item
-We start our discussion of grammars by looking at the nature of sequences of symbols,
-where sequences of symbols form the foundation of any language, both natural and
-artificial.
-
-\item
-We will call sequences of symbols {\em strings}.
-
-\end{itemize}
-
-
-\end{frame}
-
-\begin{frame}[fragile]{Strings}
-
-\small
-
-{\bf Definition:} [Strings over an Alphabet]\footnote{\tiny Based on material from the book ``An Introduction to the Theory of Computation,'' Eitan Gurari, Ohio State University,Computer Science Press, 1989.}
-\begin{itemize}
-\item
-An {\em alphabet} is a finite, nonempty set -- we refer to the elements of an alphabet as {\em symbols}.
-\item
-A finite sequence of symbols from a given alphabet is called a {\em string over the alphabet}.
-\item
-A string that consists of a sequence $a_1, a_2,\ldots, a_n$ of symbols is denoted by the juxtaposition $a_1a_2\ldots a_n$.
-\item
-The length of some string $s$  is denoted by $|s|$ and assumed to equal the number of symbols in the string.
-\item
-Strings that have zero symbols, called {\em empty strings}, are denoted by $\epsilon$ with $|\epsilon|=0$.
+\item Define the syntax of a simple imperative language
+\item Define a semantics using {\bf natural deduction}\footnote{Natural deduction is an
+instance of first-order logic; that is, it is the formal language of first-order logic
+coupled with a ``natural" deductive system based on proof trees.}
 \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Strings}
-
-\small
-
-{\bf Example:}    Let $\Gamma_1 = \{a, \ldots, z\}$ and $\Gamma_2 = \{0,\dots, 9\}$ is alphabets. $abb$ is a string over $\Gamma_1$, and $123$ is a string over $\Gamma_2$. $ba12$ is neither a string over $\Gamma_1$ nor a string over $\Gamma_2$ but it is a string over $\Gamma_1\cup\Gamma_2$.
-The string $314 \ldots$ is not a string over $\Gamma_2$, because it is not a finite sequence.
-
-\vspace{.1in}
-
-Some other observations:
-\begin{itemize}
-\item The empty string  $\epsilon$ is a string over any alphabet.
-\item The empty set $\emptyset$ is not an alphabet because it contains no element.
-\item The set of natural numbers is not an alphabet, because it is not finite.
-\end{itemize}
-\end{frame}
-
-\begin{frame}[fragile]{Strings}
-
-{\bf Definition:} [Kleene Closure] Given some alphabet $\Gamma$ then the set of all possible strings over
-$\Gamma$ including the empty string $\epsilon$ is denoted by $\Gamma^*$ and is called the {\em Kleene
-Closure of $\Gamma$}.  (Similar to the power set construction with the exception that the constructed set is always infinite.)
-
-\vspace{.1in}
-{\bf Example:} Let $\Gamma = \{ a \}$, then $\Gamma^* = \{\epsilon, a, aa, aaa, aaaa,\dots\}$.
-
-\vspace{.1in}
-{\bf Example:} Let $\Gamma = \{a,b\}$, then
-\[
-\Gamma^* = \{\epsilon,a,b,aa,bb,ab,ba,aaa,aab,\ldots\}.
-\]
-\end{frame}
-
-\begin{frame}[fragile]{Strings}
-
-{\bf Definition:} [String Concatenation] Given some alphabet $\Gamma$ with $s_1\in\Gamma^*$ and $s_2\in\Gamma^*$,
-then the {\em concatenation of the strings} written as $s_1s_2$ also belongs to $\Gamma^*$, that is
-the string $s_1s_2\in\Gamma^*$.
-\end{frame}
-
-\begin{frame}[fragile]{Grammars}
-
-\small
-
-{\bf Definition:} [Context-Free Grammar] A {\em context-free grammar} is a triple $(\Gamma,\rightarrow,\gamma)$ such that,
-\begin{itemize}
-\item
-$\Gamma = T \cup N$ with $T\cap N = \emptyset$, where $T$ is a set of symbols called the {\em terminals} and $N$ is a set of symbols
-called the {\em non-terminals},\footnote{The fact that $T$ and $N$ are non-overlapping means
-that there will never be confusion between terminals and non-terminals.}
-\item
-$\rightarrow\subseteq N\times\Gamma^*$ is a set of rules of
-the form $u \rightarrow v$ with $u\in N$ and $v\in\Gamma^*$,
-\item
-$\gamma$ is called the {\em start symbol} and $\gamma\in N$.
-\end{itemize}
-\end{frame}
-
-\begin{frame}[fragile]{Grammars}
-
-\small
-{\bf Example:} Grammar for arithmetic expressions.  We define the grammar $(\Gamma, \rightarrow, \gamma)$ as follows:
-\begin{itemize}
-\item $\Gamma = T \cup N$ with $T = \{ a, b, c, +, *, (, )\}$ and $N=\{ E \}$,
-\item $\rightarrow$ is is defined as,
-{\scriptsize
-\[
-\begin{array}{rcl}
-E & \rightarrow & E + E \\
-E & \rightarrow & E * E \\
-E & \rightarrow & ( E )\\
-E & \rightarrow & a\\
-E & \rightarrow & b\\
-E & \rightarrow & c
-\end{array}
-\]
-}
-\item $\gamma = E$ (clearly this satisfies $\gamma\in N$).
-\end{itemize}
-\end{frame}
-
-
-
-
-
-\begin{frame}[fragile]{Rewriting Relation}
-
-\small
-In order for a grammar $(\Gamma,\rightarrow,\gamma)$ to be useful we allow rules
-to be applied to {\em substrings} of given strings;
-let $s = xuy$,$t=xvy$ with $x,y,v \in \Gamma^*$, $u\in N$, and a rule $u\rightarrow v$,
-then we say that {\em $s$ rewrites to $t$} and we write,
-\[
-s \Rightarrow t.
-\]
-More formally,
-
-\vspace{.1in}
-{\bf Definition:} [one-step rewriting relation] Let $(\Gamma,\rightarrow,\gamma)$ be a be context-free grammar,
-then the {\em one-step rewriting relation} $\Rightarrow\subseteq \Gamma^*\times\Gamma^*$ is  the set with $(s,t) \in \Rightarrow$ for strings $s,t \in\Gamma^*$
- if and only if there exist $x, y, v \in\Gamma^*$ and $u\in N$ with $s = xuy, t = xvy$, and $u\rightarrow v$.
-
-\vspace{.1in}
-In plain English: any two strings $s,t$ belong to the relation $\Rightarrow$ if and only if they can be related by
-a rewrite rule.
-\end{frame}
-
-
-
-\begin{frame}[fragile]{Rewriting Relation}
-With grammars, derivations always start with the start symbol $\gamma \in \Gamma^*$. Consider,
-\[
-E\Rightarrow E * E \Rightarrow ( E ) * E \Rightarrow ( E + E ) * E \Rightarrow (a + E) * E \Rightarrow (a + b) * E
-\Rightarrow (a + b) * c.
-\]
-Here, $(a+b)*c$ is a {\em normal form} often also called a {\em terminal-} or {\em derived-string}.
-Normal forms are characterized by the fact that no additional rewriting can be applied to them.
-
-We often write,
-\[
-E \Rightarrow^* (a + b) * c
-\]
-stating that the normal form is derivable from the start symbol in zero or more steps.
-
-\end{frame}
-
-
-
-
-\begin{frame}[fragile]{Grammars}
-
-{\bf Exercise:} Identify the rule that was applied at each rewrite step in the above derivation.
-
-{\bf Exercise:} Derive the string $((a))$.
-
-{\bf Exercise:} Derive the string $a + b * c$.
-
-\end{frame}
-
-\begin{frame}[fragile]{Grammars}
-
-\small
-We are now in the position to define exactly what we mean by a {\em language}.
-
-\vspace{.2in}
-{\bf Definition:}[Language] Let $G = (\Gamma,\rightarrow,\gamma)$ be a
-context-free grammar, then we define the {\em language of
-grammar $G$} as the set of all terminal strings that can be derived from the start symbol $\gamma$ by rewriting
-using the rules in $\rightarrow$.  Formally\footnote{Observe that $T^*$ is the set of all terminal strings.},
-\[
-L(G) = \{ q \mid \gamma \Rightarrow^* q \wedge q\in T^*\}.
-\]
-
-\vspace{.3in}
-{\bf Example:} Let $J = (\Gamma,\rightarrow,\gamma)$ be the grammar of Java, then $L(J)$ is the set of all possible Java
-programs.  The Java language is defined as the set of all possible Java programs.
-\end{frame}
-
-
-\begin{frame}[fragile]{Grammars}
-
-\small
-{\bf Observations:}
-\begin{itemize}
-\item
-With the concept of a language we can now ask interesting questions.  For example,
-given a grammar $G$ and some sentence $p\in T^*$, does $p$ belong to $L(G)$?
-\item
-If we let $J$ be the grammar of Java, then asking whether some string $p\in T^*$ is in $L(J)$
-is equivalent to asking whether $p$ is a {\em syntactically correct program}.
-\end{itemize}
-
-\end{frame}
-
-
-
-\begin{frame}[fragile]{Grammars}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{A Simple Imperative Language}
 \scriptsize
-{\bf Example:} A simple imperative language.  We define grammar $G=(\Gamma,\rightarrow,\gamma)$ as follows:
-\begin{itemize}
-\item $\Gamma = T \cup N$ where
-{\tiny
-\[
-T =\{\term{0},\ldots,\term{9},\term{a},\ldots,\term{z},\term{true},\term{false},\term{skip},
-\term{if},\term{then},\term{else},\term{while},\term{do},\term{end}+,-,*,=,\le,!,\&\&,||,:=,;,(,)\}
-\]
-}
-and
-{\tiny
-\[
-N = \{A,B,C,D,L,V\}.
-\]
-}
-\item The rule set $\rightarrow$ is defined by,
-{\tiny
+The following is the grammar
+ $G=(\Gamma=T\cup N,R,\gamma)$ for our simple imperative language with $T$, the terminal set, and $N$, the non-terminal set, $\gamma=C$ the start symbol (denoted as $C^*$ in the rule set), and $R$ defined as,
+{
 \[
 \begin{array}{rcl}
 \nonterm{A} &\rightarrow& D \orbar V \orbar \nonterm{A} +\nonterm{A} \orbar \nonterm{A} - \nonterm{A} \orbar
 	\nonterm{A} * \nonterm{A}\orbar ( \nonterm{A} )\\
 
-\nonterm{B} &\rightarrow& \mbox{\bf true} \orbar \mbox{\bf false} \orbar \nonterm{A} = \nonterm{A} \orbar
+\nonterm{B} &\rightarrow& \nonterm{T}  \orbar \nonterm{A} = \nonterm{A} \orbar
 	\nonterm{A} \le \nonterm{A} \orbar ! \nonterm{B} \orbar \nonterm{B} \&\& \nonterm{B} \orbar
 	\nonterm{B} || \nonterm{B} \orbar (\nonterm{B})\\
 
-\nonterm{C} &\rightarrow& \mbox{\bf skip} \orbar \nonterm{V} := \nonterm{A} \orbar\nonterm{C}\; ; \nonterm{C} \orbar
+\nonterm{C}^* &\rightarrow& \mbox{\bf skip} \orbar \nonterm{V} := \nonterm{A} \orbar\nonterm{C}\; ; \nonterm{C} \orbar
 	\mbox{\bf if} \; \nonterm{B}\; \mbox{\bf then}\;\nonterm{C}\; \mbox{\bf else}\; \nonterm{C} \; \term{end}\orbar
 	\mbox{\bf while}\; \nonterm{B}\; \mbox{\bf  do}\; \nonterm{C}\; \term{end}\\
 
-\nonterm{D} &\rightarrow& \nonterm{L} \orbar - \nonterm{L}\\
+\nonterm{T} &\rightarrow& \mbox{\bf true} \orbar \mbox{\bf false}\\
 
-\nonterm{L} &\rightarrow& \term{0}\, \nonterm{L} \orbar \ldots \orbar  \term{9} \,\nonterm{L} \orbar \term{0} \orbar \ldots\orbar\term{9}\\
+\nonterm{D} &\rightarrow& \nonterm{Q} \orbar - \nonterm{Q}\\
+
+\nonterm{Q} &\rightarrow& \term{0}\, \nonterm{Q} \orbar \ldots \orbar  \term{9} \,\nonterm{Q} \orbar \term{0} \orbar \ldots\orbar\term{9}\\
 
 \nonterm{V} &\rightarrow& \term{a}\,\nonterm{V} \orbar \ldots\orbar \term{z}\,\nonterm{V} \orbar \term{a} \orbar \ldots \term{z}
 \end{array}
 \]
 }
-\item $\gamma =\nonterm{C}$.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Semantics}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Semantics}
+%\scriptsize
+Our goal is to define a semantics
+for each syntactic component of our language so that composing the semantics of each component
+will then give us a semantics of programs written in that language.
+
+\vspace{.1in}
+Furthermore,
+we want to construct our models or semantics using predicates, relations, and functions; that means
+we need to describe our syntax using {\em sets}.\footnote{\tiny Read Sections 1.1 and 2.1 and 2.2 in the book by David Schmidt.}
+
+\vspace{.1in}
+
+We
+\begin{itemize}
+\item need a more mathematical view of syntax -- {\em abstract syntax}
+\item ignore pragmatics like operator precedence and actual  parsing
+\item introduce  {\em syntactic sets} sometimes also called {\em syntactic domains}  (not to be confused with semantic domains!)
+\end{itemize}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Semantics}
+As stated above, we want to construct our models using predicates, relations, and functions but when we look at our grammar $G$
+we only have a single set: $L(G)$,
+\[
+L(G) = \{ q \mid \gamma \Rightarrow^* q \wedge q \in T^*\}
+\]
+There is not much we can do with this set because we don't see the individual syntactic structures in the strings on this set.
+
+\vspace{.1in}
+
+{\bf Idea:} What if we introduce a set for each non-terminal - non-terminals tend to capture the structure of syntactic units.
+\end{frame}
+
+\begin{frame}{Syntactic Sets}
+
+\scriptsize
+
+Grammar:
+\[
+\begin{array}{rcl}
+\nonterm{A} &\rightarrow& D \orbar V \orbar \nonterm{A} +\nonterm{A} \orbar \nonterm{A} - \nonterm{A} \orbar
+	\nonterm{A} * \nonterm{A}\orbar ( \nonterm{A} )\\
+
+\nonterm{B} &\rightarrow& \nonterm{T}  \orbar \nonterm{A} = \nonterm{A} \orbar
+	\nonterm{A} \le \nonterm{A} \orbar ! \nonterm{B} \orbar \nonterm{B} \&\& \nonterm{B} \orbar
+	\nonterm{B} || \nonterm{B} \orbar (\nonterm{B})\\
+
+\nonterm{C}^* &\rightarrow& \mbox{\bf skip} \orbar \nonterm{V} := \nonterm{A} \orbar\nonterm{C}\; ; \nonterm{C} \orbar
+	\mbox{\bf if} \; \nonterm{B}\; \mbox{\bf then}\;\nonterm{C}\; \mbox{\bf else}\; \nonterm{C} \; \term{end}\orbar
+	\mbox{\bf while}\; \nonterm{B}\; \mbox{\bf  do}\; \nonterm{C}\; \term{end}\\
+
+\nonterm{T} &\rightarrow& \mbox{\bf true} \orbar \mbox{\bf false}\\
+
+\nonterm{D} &\rightarrow& \nonterm{Q} \orbar - \nonterm{Q}\\
+
+\nonterm{Q} &\rightarrow& \term{0}\, \nonterm{Q} \orbar \ldots \orbar  \term{9} \,\nonterm{Q} \orbar \term{0} \orbar \ldots\orbar\term{9}\\
+
+\nonterm{V} &\rightarrow& \term{a}\,\nonterm{V} \orbar \ldots\orbar \term{z}\,\nonterm{V} \orbar \term{a} \orbar \ldots \term{z}
+\end{array}
+\]
+
+Syntactic Sets:
+\begin{itemize}
+\item $\syntaxset{T} = \{  \mbox{\bf true} ,\mbox{\bf false} \}$.
+\item $\syntaxset{I} = \{ q \mid \nonterm{D} \Rightarrow^* q \wedge q \in T^*\}$.
+\item $\syntaxset{Loc} = \{ q \mid \nonterm{V} \Rightarrow^* q \wedge q \in T^*\}$ .
+\item $\syntaxset{Aexp} = \{ q \mid \nonterm{A} \Rightarrow^* q \wedge q \in T^*\}$ .
+\item $\syntaxset{Bexp} = \{ q \mid \nonterm{B} \Rightarrow^* q \wedge q \in T^*\}$ .
+\item $\syntaxset{Com} = L(G) = \{ q \mid \nonterm{C} \Rightarrow^* q \wedge q \in T^*\}$.
+\end{itemize}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{IMP - A Simple Imperative Language}
+
+{\bf Syntactic Sets} (syntax only!!! not to be confused with the mathematical notions of integers, booleans, or variables, {\it etc.}):\footnote{This material is based on the book by Glynn Winskel, ``The Formal Semantics
+of Programming Languages.''}
+\begin{description}
+\item[\syntaxset{I}] This set consists of all positive and negative integer {\bf digits} including zero
+\item[\syntaxset{T}] Truth constants \term{true} and \term{false}.
+\item[\syntaxset{Loc}] Locations (variable names as strings).
+\item[\syntaxset{Aexp}] Arithmetic expressions
+\item[\syntaxset{Bexp}] Boolean expressions
+\item[\syntaxset{Com}] Commands
+\end{description}
+
+{\bf NOTE:} $\syntaxset{I} \ne \mathbb{I}$, where $\mathbb{I}$ is the set of all integer {\em values}.
+
+{\bf NOTE:} $\syntaxset{T} \ne \mathbb{B}$, where $\mathbb{B}$ is the set of all boolean {\em values}.
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Syntax meets Semantics}
+\scriptsize
+
+The two notes on the previous slide put us squarely in the middle of {\em syntax meets semantics}.  The separation
+of these two is especially critical for numbers because our use of standard notation has blurred the fact that the number
+symbols we write are indeed only symbols that need some sort of interpretation.  The fact that the notion of a number is
+independent of the symbols we write is highlighted by the fact that we can define the natural numbers without number symbols:
+\[
+\begin{array}{l}
+\emptyset \\
+\{\emptyset \} \\
+\{ \emptyset , \{\emptyset \} \}\\
+\{ \emptyset , \{\emptyset \}, \{ \emptyset , \{\emptyset \} \} \}\\
+\{ \emptyset , \{\emptyset \}, \{ \emptyset , \{\emptyset \} \} , \{ \emptyset , \{\emptyset \}, \{ \emptyset , \{\emptyset \} \} \}\}\\
+\vdots
+\end{array}
+\]
+Note that each set has precisely as many elements as the standard notation denotes.
+\footnote{\tiny\url{https://lutzhamel.github.io/CSC501/docs/number-systems-as-sets.pdf}}
+The set of all these sets make up the natural numbers $\mathbb{N}$.
+Furthermore, the sets are ordered according to the subset relation,
+\[
+\emptyset \subset \{\emptyset \} \subset \{ \emptyset , \{\emptyset \} \} \subset \{ \emptyset , \{\emptyset \}, \{ \emptyset , \{\emptyset \} \} \} \subset \cdots
+\]
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Syntax meets Semantics}
+\scriptsize
+
+Since our standard notation is nothing but a syntactic representation we can write a grammar and then an interpretation for the symbols,
+\[
+\begin{array}{rcl}
+\nonterm{N} &\rightarrow& \nonterm{D} \orbar \nonterm{D}\nonterm{N}\\
+\nonterm{D} &\rightarrow& 1 \orbar 2 \orbar 3 \orbar 4 \orbar 5 \orbar 6 \orbar 7 \orbar 8 \orbar 9 \orbar 0
+\end{array}
+\]
+with the {\em interpretation} over the set of all derived strings,
+\[
+\begin{array}{rcl}
+0 & \mapsto & \emptyset \\
+1 & \mapsto & \{\emptyset \} \\
+2 & \mapsto & \{ \emptyset , \{\emptyset \} \}\\
+3 & \mapsto &\{ \emptyset , \{\emptyset \}, \{ \emptyset , \{\emptyset \} \} \}\\
+4 & \mapsto & \{ \emptyset , \{\emptyset \}, \{ \emptyset , \{\emptyset \} \} , \{ \emptyset , \{\emptyset \}, \{ \emptyset , \{\emptyset \} \} \}\}\\
+\vdots
+\end{array}
+\]
+Given this interpretation, what {\em value} does the symbol $22$ represent.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Syntax meets Semantics}
+\scriptsize
+
+Why is this interesting?  It shows that the mathematical notion of $\mathbb{N}$ is not tied to our syntactic representation.
+In fact, we could come up with a brand new way of writing the natural numbers by shifting the numeric keys on my computer keyboard:
+\[
+\begin{array}{rcl}
+\nonterm{N} &\rightarrow& \nonterm{D} \orbar \nonterm{D}\nonterm{N}\\
+\nonterm{D} &\rightarrow& ! \orbar @ \orbar \# \orbar \$ \orbar \% \orbar \wedge \orbar \& \orbar * \orbar ( \orbar )
+\end{array}
+\]
+with the {\em interpretation}, call it $h$, over all derived strings,
+\[
+\begin{array}{rcl}
+) & \mapsto & \emptyset \\
+! & \mapsto & \{\emptyset \} \\
+@ & \mapsto & \{ \emptyset , \{\emptyset \} \}\\
+\# & \mapsto &\{ \emptyset , \{\emptyset \}, \{ \emptyset , \{\emptyset \} \} \}\\
+\$ & \mapsto & \{ \emptyset , \{\emptyset \}, \{ \emptyset , \{\emptyset \} \} , \{ \emptyset , \{\emptyset \}, \{ \emptyset , \{\emptyset \} \} \}\}\\
+\vdots
+\end{array}
+\]
+Given this interpretation, what {\em value} does the symbol $@@$ represent.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Syntax meets Semantics}
+\small
+
+This idea can also be represented as the following diagram.  Let $G$ be a grammar for the syntax of some natural number symbols,
+then $L(G)$ is the set of all the symbols we can write, consider,
+{\scriptsize
+\[
+\begin{array}{rcl}
+\nonterm{N}^* &\rightarrow& \nonterm{D} \orbar \nonterm{D}\nonterm{N}\\
+\nonterm{D} &\rightarrow& ! \orbar @ \orbar \# \orbar \$ \orbar \% \orbar \wedge \orbar \& \orbar * \orbar ( \orbar )
+\end{array}
+\]
+}
+Then an interpretation $h$ as defined in the previous slide is
+\[
+\xymatrix{
+\mathbb{N}\\
+L(G)\ar[u]^h
+}
+\]
+That is, the interpretation $h$ takes each symbol in $L(G)$ and assigns it an element in $\mathbb{N}$ -- assigns it {\em meaning}!
+We will see this as a recurring theme in this class.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Formation Rules for Syntactic Sets}
+\small
+
+Back to our small imperative language, we have the {\em deductively} defined syntactic sets:
+Syntactic Sets:
+\begin{itemize}
+\item $\syntaxset{T} = \{  \mbox{\bf true} ,\mbox{\bf false} \}$.
+\item $\syntaxset{I} = \{ q \mid \nonterm{D} \Rightarrow^* q \wedge q \in T^*\}$.
+\item $\syntaxset{Loc} = \{ q \mid \nonterm{V} \Rightarrow^* q \wedge q \in T^*\}$ .
+\item $\syntaxset{Aexp} = \{ q \mid \nonterm{A} \Rightarrow^* q \wedge q \in T^*\}$ .
+\item $\syntaxset{Bexp} = \{ q \mid \nonterm{B} \Rightarrow^* q \wedge q \in T^*\}$ .
+\item $\syntaxset{Com} = L(G) = \{ q \mid \nonterm{C} \Rightarrow^* q \wedge q \in T^*\}$.
+\end{itemize}
+
+There is another way to form the syntactic sets -- {\em inductively} defined syntactic sets.
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Formation Rules for Syntactic Sets}
+\scriptsize
+
+Let us consider the syntactic set \syntaxset{Aexp}.  Our grammar production for arithmetic expressions is
+\[
+\nonterm{A} \rightarrow D \orbar V \orbar \nonterm{A} +\nonterm{A} \orbar \nonterm{A} - \nonterm{A} \orbar
+	\nonterm{A} * \nonterm{A}\orbar ( \nonterm{A} )
+\]
+We already know: $\syntaxset{Aexp} = \{ q \mid A \Rightarrow^* q \wedge q \in T^*\}$.
+
+\vspace{.1in}
+Given the above production we can define membership in the syntactic set as follows,
+\begin{minipage}[t]{2in}
+\begin{itemize}
+\item $n \in  \syntaxset{Aexp}$ if $n \in \syntaxset{I}$,
+\item $x \in \syntaxset{Aexp}$ if $x\in \syntaxset{Loc}$,
+\item $a_0 + a_1 \in \syntaxset{Aexp}$ if $a_0, a_1 \in \syntaxset{Aexp}$,
+\end{itemize}
+\end{minipage}
+\begin{minipage}[t]{2in}
+\begin{itemize}
+\item $a_0 - a_1 \in \syntaxset{Aexp}$ if $a_0, a_1 \in \syntaxset{Aexp}$,
+\item $a_0 * a_1 \in \syntaxset{Aexp}$ if $a_0, a_1 \in \syntaxset{Aexp}$,
+\item $( a )\in \syntaxset{Aexp}$ if $a \in \syntaxset{Aexp}$.
+\end{itemize}
+\end{minipage}
+
+\vspace{.1in}
+
+This is an {\em inductive definition} of the set \syntaxset{Aexp}: we start with the ``primitives" $n$ and
+$x$ and then build more and more complex expressions as part of \syntaxset{Aexp}.
+
+\vspace{.1in}
+
+It is easy to see that the inductive definition and the production rule describe the same structures, that is,
+given a production we can easily generate an inductive definition of the underlying syntactic set and, conversely, given an inductive definition of the syntactic set we can construct a production.
+{\em This means we can use productions and inductive set definitions interchangeably.}\footnote{\tiny Later on we will learn techniques that allow us to prove that these are equivalent definitions.}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Formation Rules for Syntactic Sets}
+Observations for \syntaxset{Aexp}:
+\begin{itemize}
+\item $\syntaxset{I} \subset \syntaxset{Aexp}$,
+\item $\syntaxset{Loc} \subset \syntaxset{Aexp}$,
+\item contains structured {\em syntactic} objects that {\bf look like} arithmetic expressions,
+\[
+\syntaxset{Aexp} = \{1,5,x,\mbox{price},5-3*y,x+1,\ldots\}.
+\]
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Grammars}
-Here are some elements in $L(G)$,
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Formation Rules for Syntactic Sets}
+
+If the deductively defined set and the inductively defined set are equivalent, why bother introducing the inductively defined set?
+
+\vspace{.2in}
+
+Turns out many of our proofs have to establish properties over entire syntactic sets.  The inductive nature of the syntactic sets allows us to use a
+proof technique called {\em structural induction} to show that a property holds for the entire syntactic set.
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{\large Evaluation of Arithmetic Expressions}
+%\scriptsize
+Why are we so keen on representing syntax as sets?
+
+\vspace{.1in}
+
+We want to model computation denoted by the syntax in a mathematically meaningful
+way, that is, we want to use {\em functions} and {\em relations} to {\em interpret} the syntax and model a computation.
+
+\vspace{.1in}
+
+Functions and relations need sets as their domains and co-domains.
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{\large Evaluation of Arithmetic Expressions}
+
+In order to accomplish our goal we need define one additional entity.  Let $\Sigma = \syntaxset{Loc} \rightarrow \mathbb{I}$  be the {\em set of all states}, where each element $\sigma \in \Sigma$ is a {\em state} and is considered
+a function of the form,
 \[
-\begin{array}{l}
-x := 1 ; y := x\\
-v := 1; \ifstmt{v \le 0}{v := (-1)*v}{\term{skip}}\\
-n := 5 ; f := 1 ; \whilestmt{2 \le n}{f := n*f ; n := n - 1}
-\end{array}
+\sigma\co \syntaxset{Loc} \rightarrow \mathbb{I}
 \]
-{\bf Exercise:} Prove that they belong to $L(G)$.
+where $\mathbb{I}$ represents the integer values.
+A state is a {\em function} such that $\sigma(x)$ will give the value of the {\em contents}
+for any $x \in \syntaxset{Loc}$.
+
+\vspace{.1in}
+
+The set $\Sigma$ contains a distinguished state, $\sigma_0$, called the {\em initial state}, where $\sigma_0(x) = 0$, for all $x \in \syntaxset{Loc}$.
 
 \end{frame}
 
-\begin{frame}{Grammars}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Reading: Denotational Semantics/Schmidt -- pages 5 thru 8.
-Assignment \#1 -- see BrightSpace
+\begin{frame}{\large Evaluation of Arithmetic Expressions}
+We define the {\em evaluation}  or {\em interpretation} for arithmetic expressions as a function
+from $\syntaxset{Aexp} \times \Sigma$ into $\mathbb{I}$, that is, we define an evaluation
+call it $\mapsto$ as the function
+\[
+\mapsto \co \syntaxset{Aexp} \times \Sigma \rightarrow \mathbb{I}
+\]
+such that, given an arithmetic expression $a \in \syntaxset{Aexp}$, some state $\sigma \in \Sigma$, and
+an appropriate value $k \in \mathbb{I}$, we write
+\[
+\pair{a}{\sigma} \mapsto k
+\]
+We say that the function evaluates an arithmetic expression  $a$ in the context of a state $\sigma$ to
+the outcome $k$.
+
+\vspace{.1in}
+
+The pair $\pair{a}{\sigma}$ is called a {\em configuration}.
 
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\begin{frame}{\large Evaluation of Arithmetic Expressions}
+
+\small
+We need one more auxiliary function before we can define the actual evaluation function,
+\[
+\mathit{eval}\co \syntaxset{I} \rightarrow \mathbb{I}
+\]
+Given an element of the syntactic representation of numbers \syntaxset{I}, this
+function will return the mathematical equivalent of this representation in $\mathbb{I}$.
+
+\vspace{.1in}
+
+Let $6 \in \syntaxset{I}$, then $\mathit{eval}(6) = 6$, where the latter $6$ is in $\mathbb{I}$.
+Another, perhaps more telling example is that our grammar allows us to generated numbers of
+the form `$007$' for example.  But $\mathit{eval}(007) = 7$.  That is, $007\in\syntaxset{I}$ and
+$7\in\mathbb{I}$.
+
+\vspace{.1in}
+
+We are not very formal about this and will
+drop this operation in later definitions, where it is clear from context that some $n \in \syntaxset{I}$
+represents a value in $\mathbb I$.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Natural Semantics}
+With all this machinery we are finally in the position to write down rules that define the
+evaluation function `$\mapsto$' for arithmetic expressions.
+
+\vspace{.1in}
+
+Observe that the rules mirror precisely the inductive definition of the set \syntaxset{Aexp},
+in this way we are assured that the evaluation function is defined for all possible values/elements
+of the set \syntaxset{Aexp}.
+
+\vspace{.1in}
+
+The rules will be rules in the style of natural deduction.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Natural Deduction}
+
+\small
+
+
+Natural deduction
+is a formal system that has terms, functions, and relations as alphabet
+and that has two kinds of rules:
+\begin{description}
+
+\item[Inference Step]\hspace{1in}\\
+\begin{prooftree}
+\AxiomC{premise$_1$}
+\AxiomC{$\cdots$}
+\AxiomC{premise$_n$}
+\RightLabel{\hspace{.1in}\small (condition)}
+\TrinaryInfC{conclusion}
+ \end{prooftree}
+
+\item[Assumption]\hspace{1in}\\
+\begin{prooftree}
+\AxiomC{}
+\UnaryInfC{conclusion}
+\end{prooftree}
+
+\end{description}
+
+{\bf NOTE:} An inference step is valid if all its premises are true.
+
+{\bf NOTE:} An assumption is an inference step without premises (or with a premise that is always true).
+
+\vspace{.1in}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{\large Evaluation of Arithmetic Expressions}
+\begin{description}
+
+\item[Evaluation of numbers]\hspace{1in}\\
+\begin{prooftree}
+\AxiomC{}
+\UnaryInfC{$( n, \sigma ) \mapsto \mathit{eval}(n)$}
+\end{prooftree}
+
+\item[Evaluation of locations]\hspace{1in}\\
+\begin{prooftree}
+\AxiomC{}
+\UnaryInfC{$( x, \sigma ) \mapsto \sigma(x)$}
+\end{prooftree}
+
+
+\item[Evaluation of sums]\hspace{1in}\\
+\begin{prooftree}
+\AxiomC{$( a_0,\sigma) \mapsto k_0$}
+\AxiomC{$( a_1,\sigma) \mapsto k_1$}
+\BinaryInfC{$( a_0 + a_1, \sigma) \mapsto k_0 + k_1$}
+ \end{prooftree}
+\end{description}
+
+\vspace{.2in}
+
+where $k_0$, $k_1\in\mathbb{I}$, $n, x, a_0$, $a_1\in\syntaxset{Aexp}$, and
+$\sigma \in \Sigma$.
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{\large Natural Semantics}
+
+The work shown here is based on the paper ``Natural Semantics'' by Gilles Kahn.\footnote{\tiny Reference: \url{https://lutzhamel.github.io/CSC501/docs/natural-semantics.pdf}}
+He employs a slightly different notation,
+
+\begin{prooftree}
+\AxiomC{}
+\UnaryInfC{$\sigma \vdash n \Rightarrow \mathit{eval}(n)$}
+\end{prooftree}
+
+\begin{prooftree}
+\AxiomC{}
+\UnaryInfC{$\sigma \vdash x \Rightarrow \sigma(x)$}
+\end{prooftree}
+
+\begin{prooftree}
+\AxiomC{$\sigma\vdash a_0 \Rightarrow k_0$}
+\AxiomC{$\sigma\vdash a_1 \Rightarrow k_1$}
+\BinaryInfC{$\sigma\vdash a_0 + a_1 \Rightarrow k_0 + k_1$}
+ \end{prooftree}
+
+\vspace{.1in}
+Here, $\sigma\vdash a \equiv (a,\sigma)$ and $\Rightarrow \equiv \mapsto$.
+
+\vspace{.1in}
+Assume that $k_0$, $k_1\in\mathbb{I}$, $n, x, a, a_0$, $a_1\in\syntaxset{Aexp}$, and
+$\sigma \in \Sigma$.
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{\large Natural Semantics}
+
+{\bf Reading}: Please read sections 1 through 4 of the Natural Semantics paper:
+
+\vspace{.1in}
+
+{\scriptsize\url{https://lutzhamel.github.io/CSC501/docs/natural-semantics.pdf}}
+
+\vspace{.1in}
+
+If you are interested how an abstract machine can be specified using natural semantics
+then take a peek at section 5.1.
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{\large Evaluation of Arithmetic Expressions}
+\small
+{\bf Observation:} We are abusing notation slightly.  Technically, both the premises and the conclusions should evaluate to a boolean
+value which in our case is not true, the function $\mapsto$ is declared as,
+\[
+\mapsto \co \syntaxset{Aexp} \times \Sigma \rightarrow \mathbb{I}
+\]
+That is, it evaluates to an integer value.  We can easily remedy this by turning the function into a {\em predicate}:
+\[
+\mapsto \co \syntaxset{Aexp} \times \Sigma \times \mathbb{I}  \rightarrow \mathbb{B}
+\]
+so the rule for the evaluation of variable names would become something like,
+\begin{prooftree}
+\AxiomC{}
+\UnaryInfC{$( x, \sigma,\sigma(x)) \mapsto \mbox{\bf true}$}
+\end{prooftree}
+Which is a cumbersome notation and we will stick with our original notation remembering that we can always make this rigorous by turning
+the $\mapsto$ function into a predicate.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{\large Evaluation of Arithmetic Expressions}
+\begin{description}
+\item[Evaluation of subtractions]\hspace{1in}\\
+\begin{prooftree}
+\AxiomC{$( a_0,\sigma) \mapsto k_0$}
+ \AxiomC{$( a_1,\sigma) \mapsto k_1$}
+ \BinaryInfC{$( a_0 - a_1, \sigma) \mapsto k_0 - k_1$}
+ \end{prooftree}
+
+ \item[Evaluation of products]\hspace{1in}\\
+\begin{prooftree}
+\AxiomC{$( a_0,\sigma) \mapsto k_0$}
+\AxiomC{$( a_1,\sigma) \mapsto k_1$}
+\BinaryInfC{$( a_0 * a_1, \sigma) \mapsto k_0 \times k_1$}
+\end{prooftree}
+
+ \item[Evaluation of parenthesized terms]\hspace{1in}\\
+\begin{prooftree}
+\AxiomC{$( a,\sigma) \mapsto k$}
+\UnaryInfC{$( (a), \sigma) \mapsto k$}
+\end{prooftree}
+\end{description}
+
+\vspace{.2in}
+
+with $k_0$, $k_1  \in \mathbb{I}$, $a$,$a_0$, $a_1 \in \syntaxset{Aexp}$, and
+$\sigma \in \Sigma$.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Arithmetic Expression Summary}
+\scriptsize
+%\begin{prooftree}
+\AxiomC{}
+\UnaryInfC{$( n, \sigma ) \mapsto \mathit{eval}(n)$}
+\DisplayProof\\
+\vspace{.2in}
+%\end{prooftree}
+%\begin{prooftree}
+\AxiomC{}
+\UnaryInfC{$( x, \sigma ) \mapsto \sigma(x)$}
+\DisplayProof\\
+\vspace{.2in}
+%\end{prooftree}
+%\begin{prooftree}
+\AxiomC{$( a_0,\sigma) \mapsto k_0$}
+\AxiomC{$( a_1,\sigma) \mapsto k_1$}
+\BinaryInfC{$( a_0 + a_1, \sigma) \mapsto k_0 + k_1$}
+\DisplayProof\\
+\vspace{.2in}
+% \end{prooftree}
+%\begin{prooftree}
+\AxiomC{$( a_0,\sigma) \mapsto k_0$}
+ \AxiomC{$( a_1,\sigma) \mapsto k_1$}
+ \BinaryInfC{$( a_0 - a_1, \sigma) \mapsto k_0 - k_1$}
+\DisplayProof\\
+\vspace{.2in}
+% \end{prooftree}
+%\begin{prooftree}
+\AxiomC{$( a_0,\sigma) \mapsto k_0$}
+\AxiomC{$( a_1,\sigma) \mapsto k_1$}
+\BinaryInfC{$( a_0 * a_1, \sigma) \mapsto k_0 \times k_1$}
+\DisplayProof\\
+\vspace{.2in}
+%\end{prooftree}
+\AxiomC{$( a,\sigma) \mapsto k$}
+\UnaryInfC{$( (a), \sigma) \mapsto k$}
+\DisplayProof\\
+\vspace{.2in}
+with $k$, $k_0$, $k_1  \in \mathbb{I}$, $n$,$x$,$a$,$a_0$, $a_1 \in \syntaxset{Aexp}$, and
+$\sigma \in \Sigma$.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{\large Evaluation of Arithmetic Expressions}
+
+{\bf Observation:} the line
+\begin{quote}
+with $k$, $k_0$, $k_1  \in \mathbb{I}$, $n$,$x$,$a$,$a_0$, $a_1 \in \syntaxset{Aexp}$, and $\sigma \in \Sigma$.
+\end{quote}
+on the previous slide and all our semantic definitions is absolutely necessary.  We are dealing with first order logic
+and therefore all variables need to be quantified.  Stating
+\[
+k, k_0, k_1  \in \mathbb{I}
+\]
+is the same thing as saying
+\[
+\forall k, k_0, k_1  \in \mathbb{I}
+\]
+That is, in all our semantic rules we have universal quantification.  If we did not state this then the variables in the rules would be
+considered free variables and it possible to show that inferencing with free variables can get us into trouble.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{\large Evaluation of Arithmetic Expressions}
+
+{\bf Observation:} The inference rules are a structural definition of a function over the syntactic set \syntaxset{Aexp} which together with
+an appropriate state maps each
+syntactic element in that set into a value in the set of all integer values, $\mathbb{I}$, i.e., {\bf the meaning of an syntactic expression given some state is an
+integer value},
+\[
+\xymatrix{
+\mathbb{I}\\
+\syntaxset{Aexp}\times\Sigma\ar[u]
+}
+\]
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{\large Evaluation of Arithmetic Expressions}
+
+{\bf Example:} Let $ae \equiv (2 * 3) + 5$, prove that the semantic value of this expression in some state $\sigma$ is equal  to $11$ using the rules  above
+{\scriptsize
+\begin{prooftree}
+\AxiomC{}
+\UnaryInfC{$( 2,\sigma) \mapsto \mathit{eval}(2)=2$}
+\AxiomC{}
+\UnaryInfC{$( 3,\sigma) \mapsto \mathit{eval}(3)=3$}
+\BinaryInfC{$( 2 * 3,\sigma) \mapsto 6$}
+\UnaryInfC{$( (2 * 3),\sigma) \mapsto 6$}
+\AxiomC{}
+\UnaryInfC{$( 5,\sigma) \mapsto \mathit{eval}(5)=5$}
+\BinaryInfC{$( (2*3)+5, \sigma ) \mapsto 11$}
+\end{prooftree}
+}
+$\Rightarrow$ The final result does not depend on the state -- all constant expressions.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{\large Evaluation of Arithmetic Expressions}
+
+{\bf Example:}Now, let $ae \equiv v + 1$, where $v \in \syntaxset{Loc}$, prove that the semantic value of this expression in some
+state $\sigma \in \Sigma$ is equal to $\sigma(v)+1$.
+\begin{prooftree}
+\AxiomC{}
+\UnaryInfC{$( v,\sigma )  \mapsto \sigma(v)$}
+\AxiomC{}
+\UnaryInfC{$( 1,\sigma ) \mapsto 1$}
+\BinaryInfC{$( v + 1, \sigma) \mapsto \sigma(v) + 1$}
+\end{prooftree}
+$\Rightarrow$ We cannot fully evaluate this expression because we don't know enough
+about the state $\sigma$.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{\large Evaluation of Arithmetic Expressions}
+
+{\bf Example:} Now, let $ae \equiv v + 1$, where $v \in \syntaxset{Loc}$, prove that the semantic value of this expression in the initial state
+$\sigma_0 \in \Sigma$ is equal to $1$.
+\begin{prooftree}
+\AxiomC{}
+\UnaryInfC{$( v,\sigma_0 )  \mapsto \sigma_0(v)=0$}
+\AxiomC{}
+\UnaryInfC{$( 1,\sigma_0 ) \mapsto 1$}
+\BinaryInfC{$( v + 1, \sigma_0) \mapsto 1$}
+\end{prooftree}
+$\Rightarrow$ We can fully evaluate this expression because we know the definition of
+the  initial state $\sigma_0$.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%% end of template1.tex %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

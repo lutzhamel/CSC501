@@ -19,8 +19,12 @@
 \end{frame}
 
 \begin{frame}{Books}
-There are no required books in this course; however, occasionally I will assign readings based on material
-available on the web.
+\begin{center}
+    \includegraphics[height=35mm]{images/programming-in-prolog}
+\end{center}
+
+For the majority of the course we will rely on Prolog skills.  We will use ``Programming in Prolog: Using The Iso Standard'', 5th Edition, by Clocksin and Mellish.
+
 \end{frame}
 
 \begin{frame}{Course Objectives}
@@ -31,49 +35,76 @@ The aim of this course is to
 
 \item This includes constructing models for programming languages and using these models to prove properties such as correctness and equivalence of programs.
 
-\item Look at all major programming language constructs including assignments, loops, type systems, and procedure calls together with their models.
+\item Look at all major programming language constructs including assignments, loops, type systems, and function calls together with their models.
 
-\item Introduce mechanical theorem provers so that we can test and prove properties of non-trivial programs.
+\item Introduce mechanical theorem proving assistants so that we can test and prove properties of non-trivial programs.
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Some Definitions}
+\begin{frame}{Semantics}
 \vspace{.1in}
-{\bf Definition}: In {\bf programming language semantics} we are concerned with the {\em rigorous mathematical study} of the {\em meaning} of programming languages. The meaning of a language is given by a {\em formal system} that describes the possible computations expressible within that language.
+{\bf Programming Language Semantics:}
+\begin{itemize}
+\item
+Programming language semantics refers to the rules and principles that define the {\bf meaning and behavior} of a programming language. 
+
+\item
+It provides a formal specification of how programs written in a particular programming language should be executed or interpreted. 
+
+\item
+Semantics help programmers and programming language implementers understand how code should behave, allowing for correct and predictable program execution.
+\end{itemize}
 \end{frame}
 
-\begin{frame}{Some Definitions}
-\vspace{.1in}
-{\bf Definition:} In computer science and software engineering, {\bf formal methods} are  techniques for the specification, development and verification of software and hardware systems based on {\em formal systems}.
 
+\begin{frame}{Formal Methods}
+\begin{itemize}
+\item
+{\bf Formal methods} refer to a set of mathematical techniques and tools used in computer science and software engineering to specify, design, and verify software and hardware systems. 
+
+\item
+These methods employ rigorous and precise mathematical models to describe system behavior and properties, aiming to improve the reliability, correctness, and safety of complex systems. 
+
+\item
+Formal methods are particularly valuable in critical systems where errors can have severe consequences, such as in aerospace, healthcare, and automotive industries.
+\end{itemize}
 \end{frame}
+
+\begin{frame}{Formal Methods}
+
+
+Key components of formal methods include:
+
+\begin{itemize}
+\item
+{\bf Formal Specification:} This involves the use of  {\bf formal systems} to precisely define the requirements and behavior of a system. Formal specifications eliminate ambiguity and provide a clear, unambiguous representation of system functionality.
+
+\item
+{\bf Modeling:} Formal methods often use mathematical models, such as finite state machines,  logic, and set theory, to represent the behavior and structure of a system. Models enable the analysis of system properties, such as correctness and safety.
+
+\item
+{\bf Verification:} Formal methods allow for the rigorous verification of system properties and requirements. This can include formal proofs of correctness, model checking, and theorem proving to ensure that a system adheres to its specified behavior and constraints.
+\end{itemize}
+\end{frame}
+
 
 
 \begin{frame}{Formal Systems}
-\vspace{.1in}
-{\bf Definition:}
+\begin{itemize}
+\item
 A {\bf formal system} consists of a {\em formal language} and a set of  {\em inference rules}.
 The formal language is composed of
-primitive symbols that make up well formed formulas and the inference rules are used to derive expressions from other expressions within the formal system. A formal system may be formulated and studied for its intrinsic properties, or it may be intended as a description (i.e. a model) of external phenomena.\footnote{Wikipedia}
+primitive symbols that make up well formed formulas and the inference rules are used to derive expressions from other expressions within the formal system. 
 
-\vspace{.1in}
+\item
+These systems are employed in various fields, including mathematics, computer science, logic, linguistics, and philosophy, to provide a precise and rigorous means of reasoning and constructing proofs.
+
+\item
 In order to be truly useful in computer science, we require our formal systems to be {\em machine executable}.
 
+\end{itemize}
+
 \end{frame}
-
-\begin{frame}{Uses of Formal Methods}
-
-\begin{description}
-\item[\em Implementation Issues] Formally specified models can be considered machine-independent specifications of
-program behavior. They can act as ``yard sticks'' for the correctness of program implementations, transformations, and
-optimizations.
-\item[\em Verification] Basis of methods for reasoning about program
-properties (e.g. equivalence) and program specifications (program correctness).
-\item[\em Language Design] Can bring to light ambiguities and unforeseen
-subtleties in programming language constructs.
-\end{description}
-\end{frame}
-
 
 
 
@@ -100,13 +131,18 @@ will generate a list of integers from 1 through 10.
 
 Mirroring our intuition, language definitions consist of two parts:
 
-\begin{description}
-\item[\em Syntax] The formal description of the
+\begin{itemize}
+
+\item
+{\bf Syntax:} The formal description of the
 {\bf structure} of  well-formed expressions, phrases, programs, etc.
-\item[\em Semantics] The formal description of the {\bf  meaning} of the syntactic features of a programming language
+
+\item
+{\bf Semantics:} The formal description of the {\bf  meaning} of the syntactic features of a programming language
 usually understood in terms of the runtime {\bf behavior} each syntactic construct evokes.  The formal description of the behavior of all
 the syntactic features of a language is considered a {\bf model} of the language.
-\end{description}
+
+\end{itemize}
 \end{frame}
 
 \begin{frame}{Evaluation/Interpretation}
@@ -119,12 +155,14 @@ maps it into the appropriate semantic construct.
 We often represent this with the diagram
 \[
 \xymatrix{
-\mathit{Semantics}\\
-\mathit{Syntax}\ar[u]^h
+&\mathit{Semantics}\\
+\mathit{(Background)}& \mathit{Syntax}\ar[u]^h
 }
 \]
 {\bf Note:} In order for the interpretation $h$ to make any sense we will have to define the syntax and
 semantics in terms of sets.
+
+{\bf Note:} Syntax is often evaluated in the context of some background like machine state.
 
 \end{frame}
 
@@ -133,8 +171,8 @@ semantics in terms of sets.
 
 The formal systems we will be using in this course are:
 \begin{itemize}
-\item First-order logic extended with natural deduction -- natural semantics.
-\item The {\em first order predicate calculus} (often also called first order logic) to construct semantics of programming languages.
+\item First-order logic extended with {\bf natural deduction} -- natural semantics.
+\item Horn Clause Logic as implemented by Prolog, a subset of first-order logic.
 \end{itemize}
 \end{frame}
 
